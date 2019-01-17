@@ -10,7 +10,15 @@ export type IconProps = CommonIconProps & SrcIconPropsFragment;
 
 const Icon = (props: IconProps) => {
   const { src, size, ...passthrough } = props;
-  return <img src={src} width={size} height={size} css={{ margin: 0 }} {...passthrough} />;
+  return (
+    <img
+      src={src}
+      width={size}
+      height={size}
+      css={{ margin: 0, userSelect: 'none' }}
+      {...passthrough}
+    />
+  );
 };
 
 Icon.displayName = 'Icon';

@@ -1,10 +1,35 @@
-import { rhythm as createRhythm } from '../utils/typography';
+import { rhythm as createRhythm, groteskSansFamily, textColors } from '../utils/typography';
 import { ObjectInterpolation } from '@emotion/core';
 
-export const stretch: React.CSSProperties = {
+export const variables = {
+  colors: {
+    text: textColors,
+  },
+};
+
+export const stretch: ObjectInterpolation<any> = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+};
+
+export const grotesk: ObjectInterpolation<any> = {
+  fontFamily: groteskSansFamily.join(', '),
+};
+
+const unanchor: ObjectInterpolation<any> = {
+  color: 'unset',
+  textDecoration: 'none',
+};
+
+export const resets = {
+  unanchor,
+};
+
+export const textColor = {
+  primary: { color: variables.colors.text.primary },
+  secondary: { color: variables.colors.text.secondary },
+  disabled: { color: variables.colors.text.disabled },
 };
 
 export enum Side {
