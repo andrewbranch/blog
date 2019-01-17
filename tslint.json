@@ -1,11 +1,14 @@
 {
   "extends": ["tslint:latest", "tslint-react"],
+  "defaultSeverity": "warning",
   "rules": {
     "array-type": [true, "array"],
     "arrow-parens": [true, "ban-single-arg-parens"],
     "interface-name": [true, "never-prefix"],
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
+    "no-bitwise": false,
+    "object-literal-key-quotes": [true, "as-needed"],
     "object-literal-sort-keys": false,
     "ordered-imports": false,
     "quotemark": [true, "single", "avoid-template", "jsx-double"]

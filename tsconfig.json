@@ -6,6 +6,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react",
+    "types": [
+      "@emotion/core"
+    ]
   }
 }
