@@ -14,6 +14,9 @@ export interface IndexPageProps {
             title: string;
             date: string;
           };
+          fields: {
+            slug: string;
+          };
           excerpt: string;
         };
       }[];
@@ -32,6 +35,9 @@ export const query = graphql`
             title
             date(formatString: "DD MMMM, YYYY")
           }
+          fields {
+            slug
+          }
           excerpt(format: HTML)
         }
       }
@@ -44,6 +50,7 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
     {data.allMarkdownRemark.edges.map(({ node }) => (
       <PostPreview
         key={node.id}
+        slug={node.fields.slug}
         title={node.frontmatter.title}
         date={node.frontmatter.date}
         excerpt={node.excerpt}

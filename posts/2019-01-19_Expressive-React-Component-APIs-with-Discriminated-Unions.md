@@ -1,6 +1,7 @@
 ---
 title: "Expressive React Component APIs with Discriminated Unions"
 date: "2019-01-19"
+slug: "expressive-react-component-apis-with-discriminated-unions"
 ---
 
 One of TypeScript’s most underrated features is _discriminated union types_. Borrowed primarily from functional programming (FP) languages, they match an elegant FP concept to a pattern people intuitively write in JavaScript. Discriminated unions also enable a useful pattern for typing complex React component props more safely and expressively. But first, we’ll review what discriminated unions look like independent of React.
