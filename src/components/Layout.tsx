@@ -1,10 +1,10 @@
 import React from 'react';
 import { StaticQuery, graphql } from 'gatsby';
-
+import { Global } from '@emotion/core';
 import Header from './Header';
 import { rhythm } from '../utils/typography';
-import { Global } from '@emotion/core';
 import { padding, Side, grotesk, textColor } from '../styles/utils';
+import '../styles/fonts/fonts.css';
 
 const Layout: React.FunctionComponent = ({ children }) => (
   <StaticQuery

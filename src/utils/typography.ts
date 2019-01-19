@@ -1,7 +1,10 @@
 import Typography from 'typography';
 
-export const groteskSansFamily = ['Questrial', 'Helvetica Neue', 'Helvetica', '-apple-system', 'sans-serif'];
-export const serifFamily = ['Cormorant Garamond', 'Garamond', 'Georgia', 'serif'];
+const serifTypefaceName = 'Crimson Pro';
+const sansTypefaceName = 'Questrial';
+
+export const groteskSansFamily = [sansTypefaceName, 'Helvetica Neue', 'Helvetica', '-apple-system', 'sans-serif'];
+export const serifFamily = [serifTypefaceName, 'Georgia', 'serif'];
 
 export function gray(alpha: number) {
   return `rgba(0, 0, 0, ${alpha})`;
@@ -9,8 +12,8 @@ export function gray(alpha: number) {
 
 export const textColors = {
   primary: gray(0.9),
-  secondary: gray(0.56),
-  disabled: gray(0.42),
+  secondary: gray(0.51),
+  disabled: gray(0.32),
 };
 
 const typography = new Typography({
@@ -19,15 +22,12 @@ const typography = new Typography({
   baseFontSize: '18px',
   baseLineHeight: 1.6,
   scaleRatio: 2.8,
-  bodyWeight: 500,
+  bodyWeight: 300,
   bodyFontFamily: serifFamily,
-  headerFontFamily: groteskSansFamily,
+  headerFontFamily: serifFamily,
   googleFonts: [{
-    name: 'Questrial',
+    name: sansTypefaceName,
     styles: ['Regular'],
-  }, {
-    name: 'Cormorant Garamond',
-    styles: ['Medium', 'Medium Italic', 'Bold'],
   }],
 });
 

@@ -4,13 +4,30 @@ import { ObjectInterpolation } from '@emotion/core';
 export const variables = {
   colors: {
     text: textColors,
+    red: '#992E37',
+    blue: '#2E8099',
   },
 };
 
-export const stretch: ObjectInterpolation<any> = {
+const stretch: ObjectInterpolation<any> = {
   display: 'flex',
   justifyContent: 'space-between',
+};
+
+const verticallyCenter: ObjectInterpolation<any> = {
+  display: 'flex',
   alignItems: 'center',
+};
+
+const alignBaselines: ObjectInterpolation<any> = {
+  display: 'flex',
+  alignItems: 'baseline',
+}
+
+export const flex = {
+  stretch,
+  verticallyCenter,
+  alignBaselines,
 };
 
 export const grotesk: ObjectInterpolation<any> = {

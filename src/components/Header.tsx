@@ -1,17 +1,28 @@
 import React from 'react';
-import { stretch, padding, Side, resets } from '../styles/utils';
+import { flex, padding, Side, resets, grotesk, textColor, margin } from '../styles/utils';
 import { Spacer } from './Spacer';
 import { Icon } from './Icon';
 import { Link } from 'gatsby';
+import { Logo } from './Logo';
 
 export interface HeaderProps {
   siteTitle: string;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({ siteTitle }) => (
-  <div css={[stretch, padding(1, Side.Vertical)]}>
-    <Link to="/" css={resets.unanchor}>
-      <h3 css={{ margin: 0, textTransform: 'lowercase' }}>{siteTitle}</h3>
+  <div css={[flex.stretch, flex.verticallyCenter, padding(1, Side.Top), padding(2, Side.Bottom)]}>
+    <Link to="/" css={[resets.unanchor, flex.alignBaselines]}>
+      <Logo />
+      <h3
+        css={[
+          grotesk,
+          textColor.secondary,
+          { margin: 0, textTransform: 'lowercase' },
+          margin(0.5, Side.Left),
+        ]}
+      >
+        {siteTitle}
+      </h3>
     </Link>
     <Spacer space={0.5}>
       <a href="https://github.com/andrewbranch">

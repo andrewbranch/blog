@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { margin, Side } from '../styles/utils';
+import { margin, Side, flex } from '../styles/utils';
 
 export interface SpacerProps extends React.HTMLAttributes<HTMLElement> {
   space: number;
@@ -9,13 +9,14 @@ export interface SpacerProps extends React.HTMLAttributes<HTMLElement> {
 export const Spacer = React.memo<SpacerProps>(({ space, vertical, ...props }) => (
   <div
     {...props}
-    css={{
-      display: 'flex',
-      flexDirection: vertical ? 'column' : 'row',
-      alignItems: 'center',
-      ...margin(-space / 2, vertical ? Side.Vertical : Side.Horizontal),
-      '& > *': margin(space / 2, vertical ? Side.Vertical : Side.Horizontal),
-    }}
+    css={[
+      flex.verticallyCenter,
+      margin(-space / 2, vertical ? Side.Vertical : Side.Horizontal),
+      {
+        flexDirection: vertical ? 'column' : 'row',
+        '& > *': margin(space / 2, vertical ? Side.Vertical : Side.Horizontal),
+      },
+    ]}
   />
 ));
 
