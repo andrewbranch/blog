@@ -4,10 +4,12 @@
   "rules": {
     "array-type": [true, "array"],
     "arrow-parens": [true, "ban-single-arg-parens"],
+    "forin": false,
     "interface-name": [true, "never-prefix"],
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
     "no-bitwise": false,
+    "no-submodule-imports": false,
     "object-literal-key-quotes": [true, "as-needed"],
     "object-literal-sort-keys": false,
     "ordered-imports": false,
