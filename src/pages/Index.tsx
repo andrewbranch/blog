@@ -4,8 +4,15 @@ import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import ts from 'typescript';
-import { createPrismTokenizer, PrismGrammar, composeTokenizers, createTypeScriptTokenizer, TypeScriptTokenType } from '../components/InteractiveCodeBlock/tokenizers';
+import {
+  createPrismTokenizer,
+  PrismGrammar,
+  composeTokenizers,
+  createTypeScriptTokenizer,
+  TypeScriptTokenType,
+} from '../components/InteractiveCodeBlock/tokenizers';
 import { prismVSCode } from '../components/InteractiveCodeBlock/themes';
+import { Tooltip } from '../components/InteractiveCodeBlock/Tooltip';
 
 export interface IndexPageProps {
   data: {
@@ -77,6 +84,15 @@ const tokenizer = composeTokenizers(
   createTypeScriptTokenizer({ sourceFile: ts.createSourceFile('/example.ts', code, ts.ScriptTarget.ES2015) }),
 );
 
+function TSIdentifierToken(props: { className: string }) {
+  return (
+    <Tooltip
+      renderTrigger={triggerProps => <span {...props} {...triggerProps} />}
+      renderTooltip={tooltipProps => <span {...tooltipProps}>Hello!</span>}
+    />
+  );
+}
+
 const IndexPage = React.memo<IndexPageProps>(({ data }) => (
   <Layout>
     {data.allMarkdownRemark.edges.map(({ node }) => (
@@ -92,8 +108,14 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
     <InteractiveCodeBlock
       initialValue={code}
       {...tokenizer}
-      tokenStyles={{ ...prismVSCode.tokens, [TypeScriptTokenType.Identifier]: { cursor: 'pointer' } }}
+      tokenStyles={prismVSCode.tokens}
       css={prismVSCode.block}
+      renderToken={(token, props) => {
+        if (token.type === TypeScriptTokenType.Identifier) {
+          return <TSIdentifierToken  {...props} />;
+        }
+        return <span {...props} />;
+      }}
     />
   </Layout>
 ));

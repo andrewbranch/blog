@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
 import { Value, PointProperties, MarkProperties, NodeJSON } from 'slate';
-import { Global } from '@emotion/core';
+import { Global, ClassNames } from '@emotion/core';
 import { commonBlockStyles } from './themes';
 import { Token } from './tokenizers';
 
@@ -27,14 +27,18 @@ export type TokenStyles<TokenTypeT extends string> = {
   [K in TokenTypeT]?: React.CSSProperties & { [key: string]: string | number }
 };
 
-function createMarkRenderer<TokenTypeT extends string>(tokenStyles: TokenStyles<TokenTypeT>) {
+function createMarkRenderer<TokenTypeT extends string>(
+  tokenStyles: TokenStyles<TokenTypeT>,
+  renderToken: InteractiveCodeBlockProps<TokenTypeT>['renderToken'],
+) {
   const renderMark: EditorProps['renderMark'] = props => {
     return (
-      <span
-        css={tokenStyles[props.mark.type as TokenTypeT]}
-      >
-        {props.children}
-      </span>
+      <ClassNames>
+        {({ css }) => renderToken(props.mark.data.get('token'), {
+          children: props.children,
+          className: css(tokenStyles[props.mark.type as TokenTypeT]),
+        })}
+      </ClassNames>
     );
   };
 
@@ -86,7 +90,7 @@ function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string)
       decorations.push({
         anchor: startPoint,
         focus: endPoint,
-        mark: { type: token.type },
+        mark: { type: token.type, data: { token } },
       });
     }
 
@@ -96,10 +100,16 @@ function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string)
   return decorateNode;
 }
 
+interface InjectedTokenProps {
+  className: string;
+  children: React.ReactNode;
+}
+
 export interface InteractiveCodeBlockProps<TokenTypeT extends string> {
   tokenTypes: TokenTypeT[];
   tokenize: (text: string) => Token<TokenTypeT>[];
   tokenStyles: TokenStyles<TokenTypeT>;
+  renderToken: (token: Token<TokenTypeT>, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
   className?: string;
   padding: number | string;
@@ -109,7 +119,7 @@ export interface InteractiveCodeBlockProps<TokenTypeT extends string> {
 export function InteractiveCodeBlock<TokenTypeT extends string>(props: InteractiveCodeBlockProps<TokenTypeT>) {
   const [state, setState] = useState(createValueFromString(props.initialValue));
   const decorateNode = useMemo(() => createNodeDecorator(props.tokenize), [props.tokenize]);
-  const renderMark = useMemo(() => createMarkRenderer(props.tokenStyles), [props.tokenStyles]);
+  const renderMark = useMemo(() => createMarkRenderer(props.tokenStyles, props.renderToken), [props.tokenStyles]);
   return (
     <>
       <Global
@@ -140,4 +150,10 @@ export function InteractiveCodeBlock<TokenTypeT extends string>(props: Interacti
   );
 }
 
-InteractiveCodeBlock.defaultProps = { padding: 20 };
+const defaultProps: Pick<InteractiveCodeBlockProps<any>, 'padding' | 'tokenStyles' | 'renderToken'> = {
+  padding: 20,
+  tokenStyles: {},
+  renderToken: (_, props) => <span {...props} />,
+};
+
+InteractiveCodeBlock.defaultProps = defaultProps;
