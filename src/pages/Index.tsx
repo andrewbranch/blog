@@ -3,7 +3,8 @@ import { graphql } from 'gatsby';
 import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
-import { createPrismTokenizer, Grammar } from '../components/InteractiveCodeBlock/tokenizers';
+import ts from 'typescript';
+import { createPrismTokenizer, PrismGrammar, composeTokenizers, createTypeScriptTokenizer, TypeScriptTokenType } from '../components/InteractiveCodeBlock/tokenizers';
 import { prismVSCode } from '../components/InteractiveCodeBlock/themes';
 
 export interface IndexPageProps {
@@ -71,6 +72,11 @@ class Select extends React.Component<SelectProps> {
   // ...
 }`;
 
+const tokenizer = composeTokenizers(
+  createPrismTokenizer({ grammar: PrismGrammar.TypeScript }),
+  createTypeScriptTokenizer({ sourceFile: ts.createSourceFile('/example.ts', code, ts.ScriptTarget.ES2015) }),
+);
+
 const IndexPage = React.memo<IndexPageProps>(({ data }) => (
   <Layout>
     {data.allMarkdownRemark.edges.map(({ node }) => (
@@ -85,8 +91,8 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
     <hr />
     <InteractiveCodeBlock
       initialValue={code}
-      {...createPrismTokenizer({ grammar: Grammar.TypeScript })}
-      tokenStyles={prismVSCode.tokens}
+      {...tokenizer}
+      tokenStyles={{ ...prismVSCode.tokens, [TypeScriptTokenType.Identifier]: { cursor: 'pointer' } }}
       css={prismVSCode.block}
     />
   </Layout>

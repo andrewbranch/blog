@@ -1,18 +1,5 @@
 import Prism from 'prismjs';
-import { Token } from './InteractiveCodeBlock';
-
-export enum Grammar {
-  TypeScript = 'ts',
-}
-
-interface TokenizerOptions {
-  grammar: Grammar;
-}
-
-interface Tokenizer<T extends string> {
-  tokenTypes: T[];
-  tokenize: (text: string) => Token<T>[];
-}
+import { Tokenizer, Token } from './types';
 
 export enum PrismTokenType {
   Boolean = 'boolean',
@@ -30,7 +17,15 @@ export enum PrismTokenType {
   String = 'string',
 }
 
-export function createPrismTokenizer(options: TokenizerOptions): Tokenizer<PrismTokenType> {
+export enum PrismGrammar {
+  TypeScript = 'ts',
+}
+
+export interface PrismTokenizerOptions {
+  grammar: PrismGrammar;
+}
+
+export function createPrismTokenizer(options: PrismTokenizerOptions): Tokenizer<PrismTokenType> {
   return {
     tokenTypes: Object.values(PrismTokenType),
     tokenize: (text: string) => {

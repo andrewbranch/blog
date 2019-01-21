@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
 import { Value, PointProperties, MarkProperties, NodeJSON } from 'slate';
-import { commonBlockStyles } from './themes';
 import { Global } from '@emotion/core';
+import { commonBlockStyles } from './themes';
+import { Token } from './tokenizers';
 
 function createValueFromString(text: string): Value {
   return Value.fromJSON({
@@ -22,11 +23,19 @@ function createValueFromString(text: string): Value {
   });
 }
 
-export type TokenStyles<TokenTypeT extends string> = { [K in TokenTypeT]?: React.CSSProperties };
+export type TokenStyles<TokenTypeT extends string> = {
+  [K in TokenTypeT]?: React.CSSProperties & { [key: string]: string | number }
+};
 
 function createMarkRenderer<TokenTypeT extends string>(tokenStyles: TokenStyles<TokenTypeT>) {
   const renderMark: EditorProps['renderMark'] = props => {
-    return <span css={tokenStyles[props.mark.type as TokenTypeT] as any}>{props.children}</span>;
+    return (
+      <span
+        css={tokenStyles[props.mark.type as TokenTypeT]}
+      >
+        {props.children}
+      </span>
+    );
   };
 
   return renderMark;
@@ -85,12 +94,6 @@ function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string)
   };
 
   return decorateNode;
-}
-
-export interface Token<TokenTypeT extends string> {
-  type: TokenTypeT;
-  start: number;
-  end: number;
 }
 
 export interface InteractiveCodeBlockProps<TokenTypeT extends string> {

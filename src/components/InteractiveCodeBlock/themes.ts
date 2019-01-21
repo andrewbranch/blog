@@ -1,5 +1,5 @@
 import { TokenStyles } from './InteractiveCodeBlock';
-import { PrismTokenType } from './tokenizers';
+import { PrismTokenType } from './tokenizers/prism';
 import { variables } from '../../styles/utils';
 
 export interface InteractiveCodeBlockTheme<TokenTypeT extends string> {
