@@ -5,7 +5,7 @@ export interface UseHoverOptions {
   mouseOutDelayMS?: number;
 }
 
-export type HoverProps = Pick<React.HTMLAttributes<HTMLElement>, 'onMouseEnter' | 'onMouseLeave'>;
+export type HoverProps = Required<Pick<React.HTMLAttributes<HTMLElement>, 'onMouseEnter' | 'onMouseLeave'>>;
 
 export function useHover({
   mouseEnterDelayMS = 200,

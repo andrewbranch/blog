@@ -3,7 +3,7 @@ import { StaticQuery, graphql } from 'gatsby';
 import { Global } from '@emotion/core';
 import Header from './Header';
 import { rhythm } from '../utils/typography';
-import { padding, Side, grotesk, textColor } from '../styles/utils';
+import { padding, Side, type, textColor } from '../styles/utils';
 import '../styles/fonts/fonts.css';
 
 const Layout: React.FunctionComponent = ({ children }) => (
@@ -44,7 +44,7 @@ const Layout: React.FunctionComponent = ({ children }) => (
           <Header siteTitle={data.site.siteMetadata.title} />
           {children}
         </div>
-        <footer css={[padding(0.5, Side.Vertical), grotesk, textColor.secondary]}>
+        <footer css={[padding(0.5, Side.Vertical), type.grotesk, textColor.secondary]}>
           <small>© {new Date().getFullYear()}. All rights reserved.</small>
         </footer>
       </div>

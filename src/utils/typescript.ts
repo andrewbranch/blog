@@ -24,3 +24,21 @@ export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[]): ts.Comp
     writeFile: () => null,
   };
 }
+
+export function createVirtualLanguageServiceHost(sourceFiles: ts.SourceFile[]): ts.LanguageServiceHost {
+  const fileNames = sourceFiles.map(file => file.fileName);
+  const compilerHost = createVirtualCompilerHost(sourceFiles);
+  return {
+    ...compilerHost,
+    getCompilationSettings: () => ({ sourceFiles: fileNames }),
+    getScriptFileNames: () => fileNames,
+    getScriptSnapshot: fileName => {
+      const sourceFile = compilerHost.getSourceFile(fileName, ts.ScriptTarget.ES2015);
+      if (sourceFile) {
+        return ts.ScriptSnapshot.fromString(sourceFile.text);
+      }
+    },
+    getScriptVersion: () => '0',
+    writeFile: () => null,
+  };
+}

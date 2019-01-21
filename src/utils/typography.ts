@@ -5,6 +5,7 @@ const sansTypefaceName = 'Questrial';
 
 export const groteskSansFamily = [sansTypefaceName, 'Helvetica Neue', 'Helvetica', '-apple-system', 'sans-serif'];
 export const serifFamily = [serifTypefaceName, 'Georgia', 'serif'];
+export const monoFamily = ['monospace'];
 
 export function gray(alpha: number) {
   return `rgba(0, 0, 0, ${alpha})`;

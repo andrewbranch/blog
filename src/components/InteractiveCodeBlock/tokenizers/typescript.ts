@@ -1,5 +1,6 @@
 import ts from 'typescript';
-import { Tokenizer, Token } from './types';
+import { Tokenizer } from './types';
+import { Token } from './token';
 
 export enum TypeScriptTokenType {
   Identifier = 'identifier',
@@ -20,11 +21,11 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
       const tokens: Token<TypeScriptTokenType>[] = [];
       ts.forEachChild(options.sourceFile, function walk(node) {
         if (node.kind === ts.SyntaxKind.Identifier) {
-          tokens.push({
+          tokens.push(Token({
             type: TypeScriptTokenType.Identifier,
             start: node.getStart(options.sourceFile),
             end: node.getEnd(),
-          });
+          }));
         } else {
           ts.forEachChild(node, walk);
         }

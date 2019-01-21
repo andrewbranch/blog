@@ -1,8 +1,4 @@
-export interface Token<TokenTypeT extends string> {
-  type: TokenTypeT;
-  start: number;
-  end: number;
-}
+import { Token } from './token';
 
 export interface Tokenizer<T extends string> {
   tokenTypes: T[];

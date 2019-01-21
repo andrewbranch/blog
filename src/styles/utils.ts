@@ -1,4 +1,4 @@
-import { rhythm as createRhythm, groteskSansFamily, textColors } from '../utils/typography';
+import { rhythm as createRhythm, groteskSansFamily, textColors, monoFamily } from '../utils/typography';
 import { ObjectInterpolation } from '@emotion/core';
 
 export const variables = {
@@ -22,7 +22,7 @@ const verticallyCenter: ObjectInterpolation<any> = {
 const alignBaselines: ObjectInterpolation<any> = {
   display: 'flex',
   alignItems: 'baseline',
-}
+};
 
 export const flex = {
   stretch,
@@ -30,9 +30,15 @@ export const flex = {
   alignBaselines,
 };
 
-export const grotesk: ObjectInterpolation<any> = {
+const grotesk: ObjectInterpolation<any> = {
   fontFamily: groteskSansFamily.join(', '),
 };
+
+const mono: ObjectInterpolation<any> = {
+  fontFamily: monoFamily.join(', '),
+};
+
+export const type = { grotesk, mono };
 
 const unanchor: ObjectInterpolation<any> = {
   color: 'unset',

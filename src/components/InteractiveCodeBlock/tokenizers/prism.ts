@@ -1,5 +1,6 @@
 import Prism from 'prismjs';
-import { Tokenizer, Token } from './types';
+import { Tokenizer } from './types';
+import { Token } from './token';
 
 export enum PrismTokenType {
   Boolean = 'boolean',
@@ -44,11 +45,11 @@ export function createPrismTokenizer(options: PrismTokenizerOptions): Tokenizer<
         }
 
         const length: number = (token as any).length;
-        syntaxHighlighterTokens.push({
+        syntaxHighlighterTokens.push(Token({
           start: consumedLength,
           end: consumedLength + length,
           type: token.type,
-        });
+        }));
 
         consumedLength += length;
       }

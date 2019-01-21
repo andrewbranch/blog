@@ -1,9 +1,9 @@
 import React from 'react';
+import ts from 'typescript';
 import { graphql } from 'gatsby';
 import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
-import ts from 'typescript';
 import {
   createPrismTokenizer,
   PrismGrammar,
@@ -12,7 +12,8 @@ import {
   TypeScriptTokenType,
 } from '../components/InteractiveCodeBlock/tokenizers';
 import { prismVSCode } from '../components/InteractiveCodeBlock/themes';
-import { Tooltip } from '../components/InteractiveCodeBlock/Tooltip';
+import { createVirtualLanguageServiceHost } from '../utils/typescript';
+import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 
 export interface IndexPageProps {
   data: {
@@ -79,19 +80,14 @@ class Select extends React.Component<SelectProps> {
   // ...
 }`;
 
+const sourceFile = ts.createSourceFile('/example.ts', code, ts.ScriptTarget.ES2015);
+const languageServiceHost = createVirtualLanguageServiceHost([sourceFile]);
+export const languageService = ts.createLanguageService(languageServiceHost);
+
 const tokenizer = composeTokenizers(
   createPrismTokenizer({ grammar: PrismGrammar.TypeScript }),
-  createTypeScriptTokenizer({ sourceFile: ts.createSourceFile('/example.ts', code, ts.ScriptTarget.ES2015) }),
+  createTypeScriptTokenizer({ sourceFile }),
 );
-
-function TSIdentifierToken(props: { className: string }) {
-  return (
-    <Tooltip
-      renderTrigger={triggerProps => <span {...props} {...triggerProps} />}
-      renderTooltip={tooltipProps => <span {...tooltipProps}>Hello!</span>}
-    />
-  );
-}
 
 const IndexPage = React.memo<IndexPageProps>(({ data }) => (
   <Layout>
@@ -111,8 +107,15 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
       tokenStyles={prismVSCode.tokens}
       css={prismVSCode.block}
       renderToken={(token, props) => {
-        if (token.type === TypeScriptTokenType.Identifier) {
-          return <TSIdentifierToken  {...props} />;
+        if (token.is(TypeScriptTokenType.Identifier)) {
+          return (
+            <TypeScriptIdentifierToken
+              languageService={languageService}
+              position={token.start}
+              sourceFileName="/example.ts"
+              {...props}
+            />
+          );
         }
         return <span {...props} />;
       }}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { flex, padding, Side, resets, grotesk, textColor, margin } from '../styles/utils';
+import { flex, padding, Side, resets, type, textColor, margin } from '../styles/utils';
 import { Spacer } from './Spacer';
 import { Icon } from './Icon';
 import { Link } from 'gatsby';
@@ -15,7 +15,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({ siteTitle }) => (
       <Logo />
       <h3
         css={[
-          grotesk,
+          type.grotesk,
           textColor.secondary,
           { margin: 0, textTransform: 'lowercase' },
           margin(0.5, Side.Left),
