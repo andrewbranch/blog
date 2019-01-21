@@ -3,7 +3,8 @@ import { graphql } from 'gatsby';
 import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
-import { createPrismTokenizer, Grammar, PrismTokenType } from '../components/InteractiveCodeBlock/tokenizers';
+import { createPrismTokenizer, Grammar } from '../components/InteractiveCodeBlock/tokenizers';
+import { prismVSCode } from '../components/InteractiveCodeBlock/themes';
 
 export interface IndexPageProps {
   data: {
@@ -85,10 +86,8 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
     <InteractiveCodeBlock
       initialValue={code}
       {...createPrismTokenizer({ grammar: Grammar.TypeScript })}
-      tokenStyles={{
-        [PrismTokenType.Keyword]: { color: 'blue' },
-        [PrismTokenType.ClassName]: { color: 'green' },
-      }}
+      tokenStyles={prismVSCode.tokens}
+      css={prismVSCode.block}
     />
   </Layout>
 ));

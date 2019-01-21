@@ -16,6 +16,7 @@ interface Tokenizer<T extends string> {
 
 export enum PrismTokenType {
   Boolean = 'boolean',
+  Builtin = 'builtin',
   ClassName = 'class-name',
   Comment = 'comment',
   Constant = 'constant',
