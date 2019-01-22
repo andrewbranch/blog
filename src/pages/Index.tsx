@@ -12,7 +12,7 @@ import {
   TypeScriptTokenType,
 } from '../components/InteractiveCodeBlock/tokenizers';
 import { prismVSCode } from '../components/InteractiveCodeBlock/themes';
-import { createVirtualTypeScriptEnvironment } from '../utils/typescript';
+import { createVirtualTypeScriptEnvironment, libraryFiles } from '../utils/typescript';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 
 export interface IndexPageProps {
@@ -57,6 +57,7 @@ export const query = graphql`
   }
 `;
 
+const preamble = 'import * as React from "react";\n';
 const code = `interface CommonSelectProps {
   placeholder?: string;
   options: string[];
@@ -80,12 +81,12 @@ class Select extends React.Component<SelectProps> {
   // ...
 }`;
 
-const sourceFile = ts.createSourceFile('/example.ts', code, ts.ScriptTarget.ES2015);
-const { languageService, updateFile } = createVirtualTypeScriptEnvironment([sourceFile]);
+const sourceFile = ts.createSourceFile('/example.ts', preamble + code, ts.ScriptTarget.ES2015);
+const { languageService, updateFileFromText } = createVirtualTypeScriptEnvironment([sourceFile], [libraryFiles.react]);
 
 const tokenizer = composeTokenizers(
   createPrismTokenizer({ grammar: PrismGrammar.TypeScript }),
-  createTypeScriptTokenizer({ languageService, fileName: '/example.ts' }),
+  createTypeScriptTokenizer({ languageService, preambleCode: preamble, fileName: '/example.ts' }),
 );
 
 const IndexPage = React.memo<IndexPageProps>(({ data }) => (
@@ -104,14 +105,14 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
       initialValue={code}
       {...tokenizer}
       tokenStyles={prismVSCode.tokens}
-      onChange={value => updateFile(ts.createSourceFile('/example.ts', value, ts.ScriptTarget.ES2015))}
+      onChange={value => updateFileFromText('/example.ts', preamble + value)}
       css={prismVSCode.block}
       renderToken={(token, props) => {
         if (token.is(TypeScriptTokenType.Identifier)) {
           return (
             <TypeScriptIdentifierToken
               languageService={languageService}
-              position={token.start}
+              position={token.start + preamble.length}
               sourceFileName="/example.ts"
               {...props}
             />

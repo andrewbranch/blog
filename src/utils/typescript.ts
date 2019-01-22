@@ -1,6 +1,25 @@
 import ts from 'typescript';
 
-export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[]): {
+export interface LibraryFile {
+  moduleName: string;
+  modulePath: string;
+  typingsSourceFile: ts.SourceFile;
+}
+
+const reactLibraryFile: LibraryFile = {
+  moduleName: 'react',
+  modulePath: '/node_modules/react/index.js',
+  typingsSourceFile: ts.createSourceFile(
+    '/node_modules/@types/react/index.d.ts',
+    // tslint:disable-next-line:no-implicit-dependencies
+    require('!raw-loader!@types/react/index.d.ts'),
+    ts.ScriptTarget.ES2015,
+  ),
+};
+
+export const libraryFiles = { react: reactLibraryFile };
+
+export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[], libraries: LibraryFile[] = []): {
   compilerHost: ts.CompilerHost,
   updateFile: (sourceFile: ts.SourceFile) => boolean,
 } {
@@ -10,13 +29,14 @@ export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[]): {
     require('!raw-loader!typescript/lib/lib.d.ts'),
     ts.ScriptTarget.ES2015,
   );
-  const sourceFileMap = new Map([libSourceFile, ...sourceFiles].map(
+
+  const sourceFileMap = new Map([libSourceFile, ...libraries.map(lib => lib.typingsSourceFile), ...sourceFiles].map(
     (file): [string, ts.SourceFile] => [file.fileName, file],
   ));
 
   return {
     compilerHost: {
-      fileExists: fileName => sourceFileMap.has(fileName),
+      fileExists: fileName => sourceFileMap.has(fileName) || libraries.some(lib => lib.modulePath === fileName),
       getCanonicalFileName: fileName => fileName,
       getCurrentDirectory: () => '/',
       getDefaultLibFileName: () => libSourceFile.fileName,
@@ -35,13 +55,13 @@ export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[]): {
   };
 }
 
-export function createVirtualWatchHost(sourceFiles: ts.SourceFile[]): {
+export function createVirtualWatchHost(sourceFiles: ts.SourceFile[], libraries: LibraryFile[] = []): {
   watchHost: ts.CompilerHost & ts.WatchCompilerHost<ts.BuilderProgram>,
   updateFile: (sourceFile: ts.SourceFile) => void,
 } {
   const fileNames = sourceFiles.map(file => file.fileName);
   const watchedFiles = new Map<string, Set<ts.FileWatcherCallback>>();
-  const { compilerHost, updateFile } = createVirtualCompilerHost(sourceFiles);
+  const { compilerHost, updateFile } = createVirtualCompilerHost(sourceFiles, libraries);
   return {
     watchHost: {
       ...compilerHost,
@@ -117,13 +137,14 @@ export function createVirtualLanguageServiceHost(
   };
 }
 
-export function createVirtualTypeScriptEnvironment(sourceFiles: ts.SourceFile[]): {
+export function createVirtualTypeScriptEnvironment(sourceFiles: ts.SourceFile[], libraries: LibraryFile[] = []): {
   watchProgram: ts.WatchOfFilesAndCompilerOptions<ts.BuilderProgram>,
   languageService: ts.LanguageService,
   typeChecker: ts.TypeChecker,
   updateFile: (sourceFile: ts.SourceFile) => void,
+  updateFileFromText: (fileName: string, content: string) => void,
 } {
-  const watchHostController = createVirtualWatchHost(sourceFiles);
+  const watchHostController = createVirtualWatchHost(sourceFiles, libraries);
   const languageServiceHostController = createVirtualLanguageServiceHost(sourceFiles, watchHostController.watchHost);
   const languageService = ts.createLanguageService(languageServiceHostController.languageServiceHost);
   const watchProgram = ts.createWatchProgram({
@@ -131,14 +152,18 @@ export function createVirtualTypeScriptEnvironment(sourceFiles: ts.SourceFile[])
     rootFiles: languageServiceHostController.languageServiceHost.getScriptFileNames(),
     options: {},
   });
+  const updateFile = (sourceFile: ts.SourceFile) => {
+    languageServiceHostController.updateFile(sourceFile);
+    watchHostController.updateFile(sourceFile);
+  };
 
   return {
     watchProgram,
     languageService,
     typeChecker: watchProgram.getProgram().getProgram().getTypeChecker(),
-    updateFile: sourceFile => {
-      languageServiceHostController.updateFile(sourceFile);
-      watchHostController.updateFile(sourceFile);
+    updateFile,
+    updateFileFromText: (fileName, content) => {
+      updateFile(ts.createSourceFile(fileName, content, ts.ScriptTarget.ES2015));
     },
   };
 }
