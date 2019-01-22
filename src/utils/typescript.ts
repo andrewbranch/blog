@@ -1,12 +1,12 @@
 import ts from 'typescript';
 
-export interface LibraryFile {
+export interface ThirdPartyLibraryFile {
   moduleName: string;
   modulePath: string;
   typingsSourceFile: ts.SourceFile;
 }
 
-const reactLibraryFile: LibraryFile = {
+const reactLibraryFile: ThirdPartyLibraryFile = {
   moduleName: 'react',
   modulePath: '/node_modules/react/index.js',
   typingsSourceFile: ts.createSourceFile(
@@ -18,31 +18,96 @@ const reactLibraryFile: LibraryFile = {
 };
 
 export const libraryFiles = { react: reactLibraryFile };
+export const tsLibFiles = new Map<string, ts.SourceFile>([
+  ['/lib.es5.d.ts', ts.createSourceFile(
+    '/lib.es5.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es5.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.d.ts', ts.createSourceFile(
+    '/lib.es2015.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.core.d.ts', ts.createSourceFile(
+    '/lib.es2015.core.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.core.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.collection.d.ts', ts.createSourceFile(
+    '/lib.es2015.collection.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.collection.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.generator.d.ts', ts.createSourceFile(
+    '/lib.es2015.generator.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.generator.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.promise.d.ts', ts.createSourceFile(
+    '/lib.es2015.promise.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.promise.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.iterable.d.ts', ts.createSourceFile(
+    '/lib.es2015.iterable.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.iterable.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.proxy.d.ts', ts.createSourceFile(
+    '/lib.es2015.proxy.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.proxy.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.reflect.d.ts', ts.createSourceFile(
+    '/lib.es2015.reflect.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.reflect.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.symbol.d.ts', ts.createSourceFile(
+    '/lib.es2015.symbol.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.symbol.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+  ['/lib.es2015.symbol.wellknown.d.ts', ts.createSourceFile(
+    '/lib.es2015.symbol.wellknown.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.es2015.symbol.wellknown.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
+]);
 
-export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[], libraries: LibraryFile[] = []): {
+export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[], libraries: ThirdPartyLibraryFile[] = []): {
   compilerHost: ts.CompilerHost,
   updateFile: (sourceFile: ts.SourceFile) => boolean,
 } {
-  const libSourceFile = ts.createSourceFile(
-    '/lib.d.ts',
-    // tslint:disable-next-line:no-implicit-dependencies
-    require('!raw-loader!typescript/lib/lib.d.ts'),
-    ts.ScriptTarget.ES2015,
-  );
-
-  const sourceFileMap = new Map([libSourceFile, ...libraries.map(lib => lib.typingsSourceFile), ...sourceFiles].map(
+  const sourceFileMap = new Map([...libraries.map(lib => lib.typingsSourceFile), ...sourceFiles].map(
     (file): [string, ts.SourceFile] => [file.fileName, file],
   ));
 
   return {
     compilerHost: {
-      fileExists: fileName => sourceFileMap.has(fileName) || libraries.some(lib => lib.modulePath === fileName),
+      fileExists: fileName => {
+        return sourceFileMap.has(fileName)
+          || tsLibFiles.has(fileName)
+          || libraries.some(lib => lib.modulePath === fileName);
+      },
       getCanonicalFileName: fileName => fileName,
       getCurrentDirectory: () => '/',
-      getDefaultLibFileName: () => libSourceFile.fileName,
+      getDefaultLibFileName: () => '/lib.es2015.d.ts',
       getDirectories: () => [],
       getNewLine: () => '\n',
-      getSourceFile: fileName => sourceFileMap.get(fileName),
+      getSourceFile: fileName => sourceFileMap.get(fileName) || tsLibFiles.get(fileName),
       readFile: fileName => sourceFileMap.get(fileName)!.text,
       useCaseSensitiveFileNames: () => true,
       writeFile: () => null,
@@ -55,7 +120,7 @@ export function createVirtualCompilerHost(sourceFiles: ts.SourceFile[], librarie
   };
 }
 
-export function createVirtualWatchHost(sourceFiles: ts.SourceFile[], libraries: LibraryFile[] = []): {
+export function createVirtualWatchHost(sourceFiles: ts.SourceFile[], libraries: ThirdPartyLibraryFile[] = []): {
   watchHost: ts.CompilerHost & ts.WatchCompilerHost<ts.BuilderProgram>,
   updateFile: (sourceFile: ts.SourceFile) => void,
 } {
@@ -137,7 +202,10 @@ export function createVirtualLanguageServiceHost(
   };
 }
 
-export function createVirtualTypeScriptEnvironment(sourceFiles: ts.SourceFile[], libraries: LibraryFile[] = []): {
+export function createVirtualTypeScriptEnvironment(
+  sourceFiles: ts.SourceFile[],
+  libraries: ThirdPartyLibraryFile[] = []
+): {
   watchProgram: ts.WatchOfFilesAndCompilerOptions<ts.BuilderProgram>,
   languageService: ts.LanguageService,
   typeChecker: ts.TypeChecker,
