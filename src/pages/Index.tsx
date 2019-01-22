@@ -12,7 +12,7 @@ import {
   TypeScriptTokenType,
 } from '../components/InteractiveCodeBlock/tokenizers';
 import { prismVSCode } from '../components/InteractiveCodeBlock/themes';
-import { createVirtualLanguageServiceHost } from '../utils/typescript';
+import { createVirtualTypeScriptEnvironment } from '../utils/typescript';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 
 export interface IndexPageProps {
@@ -81,12 +81,11 @@ class Select extends React.Component<SelectProps> {
 }`;
 
 const sourceFile = ts.createSourceFile('/example.ts', code, ts.ScriptTarget.ES2015);
-const languageServiceHost = createVirtualLanguageServiceHost([sourceFile]);
-export const languageService = ts.createLanguageService(languageServiceHost);
+const { languageService, updateFile } = createVirtualTypeScriptEnvironment([sourceFile]);
 
 const tokenizer = composeTokenizers(
   createPrismTokenizer({ grammar: PrismGrammar.TypeScript }),
-  createTypeScriptTokenizer({ sourceFile }),
+  createTypeScriptTokenizer({ languageService, fileName: '/example.ts' }),
 );
 
 const IndexPage = React.memo<IndexPageProps>(({ data }) => (
@@ -105,6 +104,7 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
       initialValue={code}
       {...tokenizer}
       tokenStyles={prismVSCode.tokens}
+      onChange={value => updateFile(ts.createSourceFile('/example.ts', value, ts.ScriptTarget.ES2015))}
       css={prismVSCode.block}
       renderToken={(token, props) => {
         if (token.is(TypeScriptTokenType.Identifier)) {

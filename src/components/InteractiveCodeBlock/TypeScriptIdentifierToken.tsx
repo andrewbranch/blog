@@ -1,5 +1,6 @@
 import React from 'react';
 import ts from 'typescript';
+import shallowEqual from 'shallowequal';
 import { Tooltip } from './Tooltip';
 import { TypeScriptQuickInfo } from './TypeScriptQuickInfo';
 import { gray } from '../../utils/typography';
@@ -38,4 +39,8 @@ export const TypeScriptIdentifierToken = React.memo(({
       )}
     />
   );
+// Ignore `position` in memoization because it’s only used on hover callback
+},
+({ position: prevPosition, ...prevProps }, { position: nextPosition, ...nextProps }) => {
+  return shallowEqual(prevProps, nextProps);
 });

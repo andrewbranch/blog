@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
-import { Value, PointProperties, MarkProperties, NodeJSON } from 'slate';
+import { Value, PointProperties, MarkProperties, NodeJSON, Operation } from 'slate';
 import { Global, ClassNames } from '@emotion/core';
 import { commonBlockStyles } from './themes';
 import { Token } from './tokenizers';
@@ -111,6 +111,7 @@ export interface InteractiveCodeBlockProps<TokenTypeT extends string> {
   tokenStyles: TokenStyles<TokenTypeT>;
   renderToken: (token: Token<TokenTypeT>, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
+  onChange?: (value: string, operations: Operation[]) => void;
   className?: string;
   padding: number | string;
   css?: React.DOMAttributes<any>['css'];
@@ -138,7 +139,12 @@ export function InteractiveCodeBlock<TokenTypeT extends string>(props: Interacti
       />
       <Editor
         value={state}
-        onChange={({ value }) => setState(value)}
+        onChange={({ value, operations }) => {
+          if (props.onChange) {
+            props.onChange(value.document.getTexts().map(t => t!.text).join('\n'), operations.toArray());
+          }
+          setState(value);
+        }}
         renderMark={renderMark}
         decorateNode={decorateNode}
         className={props.className}

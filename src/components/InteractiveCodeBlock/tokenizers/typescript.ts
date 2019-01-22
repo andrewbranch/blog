@@ -7,23 +7,25 @@ export enum TypeScriptTokenType {
 }
 
 export interface TypeScriptTokenizerOptions {
-  sourceFile: ts.SourceFile;
+  fileName: string;
+  languageService: ts.LanguageService;
 }
 
 export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): Tokenizer<TypeScriptTokenType> {
   return {
     tokenTypes: Object.values(TypeScriptTokenType),
     tokenize: text => {
-      if (text !== options.sourceFile.text) {
+      const sourceFile = options.languageService.getProgram()!.getSourceFile(options.fileName)!;
+      if (text !== sourceFile.text) {
         throw new Error('InteractiveCodeBlock is out of sync with TypeScript program');
       }
 
       const tokens: Token<TypeScriptTokenType>[] = [];
-      ts.forEachChild(options.sourceFile, function walk(node) {
+      ts.forEachChild(sourceFile, function walk(node) {
         if (node.kind === ts.SyntaxKind.Identifier) {
           tokens.push(Token({
             type: TypeScriptTokenType.Identifier,
-            start: node.getStart(options.sourceFile),
+            start: node.getStart(sourceFile),
             end: node.getEnd(),
           }));
         } else {
