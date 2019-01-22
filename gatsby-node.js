@@ -5,6 +5,7 @@
  */
 
 // @ts-check
+const webpack = require('webpack');
 const path = require('path');
 const deburr = require('lodash.deburr');
 const kebabCase = require('lodash.kebabcase');
@@ -49,3 +50,17 @@ exports.createPages = ({ graphql, actions }) => {
   });
 };
 
+exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
+  /** @type {webpack.Configuration} */
+  const oldConfig = getConfig();
+  /** @type {webpack.Configuration} */
+  const config = {
+    ...oldConfig,
+    output: {
+      ...oldConfig.output,
+      globalObject: 'this'
+    }
+  };
+
+  actions.replaceWebpackConfig(config);
+}

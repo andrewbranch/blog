@@ -39,7 +39,8 @@
     "slate": "^0.44.9",
     "slate-react": "^0.21.15",
     "typescript": "^3.2.2",
-    "typography": "^0.16.18"
+    "typography": "^0.16.18",
+    "worker-loader": "^2.0.0"
   },
   "devDependencies": {
     "@types/lodash.sortedindex": "^4.1.4",
@@ -52,6 +53,7 @@
     "@types/slate": "^0.43.8",
     "@types/slate-react": "^0.20.3",
     "@types/typography": "^0.16.2",
+    "@types/webpack": "^4.4.23",
     "babel-plugin-prismjs": "^1.0.2",
     "babel-preset-gatsby": "^0.1.6",
     "tslint": "^5.12.1",
