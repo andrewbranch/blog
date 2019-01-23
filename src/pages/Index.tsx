@@ -4,14 +4,8 @@ import { graphql } from 'gatsby';
 import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
-import {
-  createPrismTokenizer,
-  PrismGrammar,
-  composeTokenizers,
-  createTypeScriptTokenizer,
-  TypeScriptTokenType,
-} from '../components/InteractiveCodeBlock/tokenizers';
-import { prismVSCode } from '../components/InteractiveCodeBlock/themes';
+import { createTypeScriptTokenizer, isIdentifierClassification, } from '../components/InteractiveCodeBlock/tokenizers';
+import { prismVSCode, typeScriptVSCode } from '../components/InteractiveCodeBlock/themes';
 import { createVirtualTypeScriptEnvironment, libraryFiles } from '../utils/typescript';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 
@@ -83,11 +77,7 @@ class Select extends React.Component<SelectProps> {
 
 const sourceFile = ts.createSourceFile('/example.ts', preamble + code, ts.ScriptTarget.ES2015);
 const { languageService, updateFileFromText } = createVirtualTypeScriptEnvironment([sourceFile], [libraryFiles.react]);
-
-const tokenizer = composeTokenizers(
-  createPrismTokenizer({ grammar: PrismGrammar.TypeScript }),
-  createTypeScriptTokenizer({ languageService, preambleCode: preamble, fileName: '/example.ts' }),
-);
+const tokenizer = createTypeScriptTokenizer({ languageService, preambleCode: preamble, fileName: '/example.ts' });
 
 const IndexPage = React.memo<IndexPageProps>(({ data }) => (
   <Layout>
@@ -104,21 +94,22 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
     <InteractiveCodeBlock
       initialValue={code}
       {...tokenizer}
-      tokenStyles={prismVSCode.tokens}
+      tokenStyles={typeScriptVSCode.tokens}
       onChange={value => updateFileFromText('/example.ts', preamble + value)}
       css={prismVSCode.block}
       renderToken={(token, props) => {
-        if (token.is(TypeScriptTokenType.Identifier)) {
+        if (isIdentifierClassification(token.type)) {
           return (
             <TypeScriptIdentifierToken
               languageService={languageService}
               position={token.start + preamble.length}
               sourceFileName="/example.ts"
+              data-syntax-kind={token.type}
               {...props}
             />
           );
         }
-        return <span {...props} />;
+        return <span data-syntax-kind={token.type} {...props} />;
       }}
     />
   </Layout>
