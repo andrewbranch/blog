@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
-import { Value, PointProperties, MarkProperties, NodeJSON, Operation } from 'slate';
+import { Value, MarkProperties, NodeJSON, Operation, Point } from 'slate';
 import { Global, ClassNames } from '@emotion/core';
 import { commonBlockStyles } from './themes';
 import { Token } from './tokenizers';
@@ -50,31 +50,32 @@ function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string)
     if (node.object !== 'document') {
       return next();
     }
+
     const texts = node.getTextsAsArray();
     const textStrings = texts.map(text => text.text);
     const fullText = textStrings.join('\n');
-    const decorations: { anchor: PointProperties, focus: PointProperties, mark: MarkProperties }[] = [];
+    const decorations: { anchor: Point, focus: Point, mark: MarkProperties }[] = [];
     let lastTextIndex = 0;
     const consumedLengthByLine: number[] = [];
     for (const token of tokenize(fullText)) {
-      let startPoint: PointProperties | undefined;
-      let endPoint: PointProperties | undefined;
+      let startPoint: Point | undefined;
+      let endPoint: Point | undefined;
       for (let i = lastTextIndex; i < texts.length; i++) {
         const text = texts[i];
         const textString = text.text;
         const consumedLength = consumedLengthByLine[i - 1] || 0;
         if (!startPoint && token.start >= consumedLength && token.start <= consumedLength + textString.length) {
           lastTextIndex = i;
-          startPoint = {
+          startPoint = node.createPoint({
             key: text.key,
             offset: token.start - consumedLength,
-          };
+          });
         }
         if (!endPoint && token.end >= consumedLength && token.end <= consumedLength + textString.length) {
-          endPoint = {
+          endPoint = node.createPoint({
             key: text.key,
             offset: token.end - consumedLength,
-          };
+          });
         }
         if (!consumedLengthByLine[i]) {
           consumedLengthByLine[i] = consumedLength + textString.length + 1;
