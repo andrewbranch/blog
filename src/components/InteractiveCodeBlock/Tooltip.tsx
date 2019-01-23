@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useHover, HoverProps, UseHoverOptions } from '../../hooks';
 import { ClassNames, ObjectInterpolation } from '@emotion/core';
 import { gray } from '../../utils/typography';
+import { isSSR } from '../../utils/ssr';
 
 export interface InjectedTriggerProps extends HoverProps, React.RefAttributes<HTMLElement> {
 
@@ -58,7 +59,7 @@ export function Tooltip({
         ...hoverProps,
         ref: triggerRef,
       }, isHovering)}
-      {createPortal(
+      {isSSR ? null : createPortal(
         isHovering ? (
           <ClassNames>
             {({ css }) => renderTooltip({
@@ -74,4 +75,7 @@ export function Tooltip({
   );
 }
 
-Tooltip.defaultProps = { portalNode: document.body, triggerMargin: 2 };
+Tooltip.defaultProps = {
+  portalNode: isSSR ? undefined : document.body,
+  triggerMargin: 2,
+};
