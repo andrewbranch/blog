@@ -151,7 +151,7 @@ export function InteractiveCodeBlock<TokenTypeT extends string>(props: Interacti
         className={props.className}
         css={commonBlockStyles}
         spellCheck={false}
-        style={{ whiteSpace: 'nowrap', padding: props.padding }}
+        style={{ wordWrap: 'normal', whiteSpace: 'pre', padding: props.padding }}
       />
     </>
   );
