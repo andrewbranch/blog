@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
-import { Value, MarkProperties, NodeJSON, Operation, Point } from 'slate';
-import { Global, ClassNames } from '@emotion/core';
+import { Value, MarkProperties, NodeJSON, Operation, Point, Node, PointProperties } from 'slate';
+import { Global } from '@emotion/core';
 import { commonBlockStyles } from './themes';
 import { Token } from './tokenizers';
 
@@ -32,21 +32,17 @@ function createMarkRenderer<TokenTypeT extends string>(
   renderToken: InteractiveCodeBlockProps<TokenTypeT>['renderToken'],
 ) {
   const renderMark: EditorProps['renderMark'] = props => {
-    return (
-      <ClassNames>
-        {({ css }) => renderToken(props.mark.data.get('token'), {
-          children: props.children,
-          className: css(tokenStyles[props.mark.type as TokenTypeT]),
-        })}
-      </ClassNames>
-    );
+    return renderToken(props.mark.data.get('token'), {
+      children: props.children,
+      style: tokenStyles[props.mark.type as TokenTypeT],
+    });
   };
 
   return renderMark;
 }
 
 function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string) => Token<TokenTypeT>[]) {
-  const decorateNode: EditorProps['decorateNode'] = (node, _, next) => {
+  function decorateNode(node: Node, _: any, next: () => void) {
     if (node.object !== 'document') {
       return next();
     }
@@ -54,33 +50,39 @@ function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string)
     const texts = node.getTextsAsArray();
     const textStrings = texts.map(text => text.text);
     const fullText = textStrings.join('\n');
-    const decorations: { anchor: Point, focus: Point, mark: MarkProperties }[] = [];
+    const decorations: { anchor: Point | PointProperties, focus: Point | PointProperties, mark: MarkProperties }[] = [];
     let lastTextIndex = 0;
     const consumedLengthByLine: number[] = [];
     for (const token of tokenize(fullText)) {
-      let startPoint: Point | undefined;
-      let endPoint: Point | undefined;
+      let startPoint: Point | PointProperties | undefined;
+      let endPoint: Point | PointProperties | undefined;
       for (let i = lastTextIndex; i < texts.length; i++) {
         const text = texts[i];
         const textString = text.text;
         const consumedLength = consumedLengthByLine[i - 1] || 0;
         if (!startPoint && token.start >= consumedLength && token.start <= consumedLength + textString.length) {
           lastTextIndex = i;
-          startPoint = node.createPoint({
+          startPoint = {
             key: text.key,
             offset: token.start - consumedLength,
-          });
+          };
         }
         if (!endPoint && token.end >= consumedLength && token.end <= consumedLength + textString.length) {
-          endPoint = node.createPoint({
+          endPoint = {
             key: text.key,
             offset: token.end - consumedLength,
-          });
+          };
         }
         if (!consumedLengthByLine[i]) {
           consumedLengthByLine[i] = consumedLength + textString.length + 1;
         }
         if (startPoint && endPoint) {
+          // Optimization: createPoint() is actually pretty expensive (it fills in `path` from `key`
+          // with the document structure) and it’s only needed if the mark spans multiple blocks.
+          if (startPoint.key !== endPoint.key) {
+            startPoint = node.createPoint(startPoint);
+            endPoint = node.createPoint(endPoint);
+          }
           break;
         }
       }
@@ -96,13 +98,13 @@ function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string)
     }
 
     return decorations;
-  };
+  }
 
   return decorateNode;
 }
 
 interface InjectedTokenProps {
-  className: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }
 

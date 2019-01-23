@@ -4,6 +4,17 @@ import shallowEqual from 'shallowequal';
 import { Tooltip } from './Tooltip';
 import { TypeScriptQuickInfo } from './TypeScriptQuickInfo';
 import { gray } from '../../utils/typography';
+import { css } from '@emotion/core';
+
+const styles = css({
+  borderRadius: 2,
+});
+
+const hoveringStyles = css({
+  borderRadius: 2,
+  backgroundColor: gray(0.05),
+  boxShadow: `0 0 0 2px ${gray(0.05)}`,
+});
 
 interface TypeScriptIdentifierTokenProps extends React.HTMLAttributes<HTMLSpanElement> {
   languageService: ts.LanguageService;
@@ -24,11 +35,7 @@ export const TypeScriptIdentifierToken = React.memo(({
         <span
           {...props}
           {...triggerProps}
-          css={{
-            borderRadius: 2,
-            backgroundColor: isHovering ? gray(0.05) : undefined,
-            boxShadow: isHovering ? `0 0 0 2px ${gray(0.05)}` : undefined,
-          }}
+          css={[styles, isHovering ? hoveringStyles : undefined]}
         />
       )}
       renderTooltip={tooltipProps => (

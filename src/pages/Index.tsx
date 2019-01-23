@@ -76,8 +76,17 @@ class Select extends React.Component<SelectProps> {
 }`;
 
 const sourceFile = ts.createSourceFile('/example.ts', preamble + code, ts.ScriptTarget.ES2015);
-const { languageService, updateFileFromText } = createVirtualTypeScriptEnvironment([sourceFile], [libraryFiles.react]);
-const tokenizer = createTypeScriptTokenizer({ languageService, preambleCode: preamble, fileName: '/example.ts' });
+const {
+  languageService,
+  updateFileFromText,
+  watchProgram,
+} = createVirtualTypeScriptEnvironment([sourceFile], [libraryFiles.react]);
+const tokenizer = createTypeScriptTokenizer({
+  languageService,
+  watchProgram,
+  preambleCode: preamble,
+  fileName: '/example.ts',
+});
 
 const IndexPage = React.memo<IndexPageProps>(({ data }) => (
   <Layout>

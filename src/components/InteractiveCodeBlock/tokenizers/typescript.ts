@@ -6,6 +6,7 @@ export interface TypeScriptTokenizerOptions {
   fileName: string;
   preambleCode?: string;
   languageService: ts.LanguageService;
+  watchProgram: ts.WatchOfFilesAndCompilerOptions<ts.BuilderProgram>;
 }
 
 const ignoredClassifications = new Set([
@@ -17,8 +18,8 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
   return {
     tokenTypes: Object.values(ts.ClassificationTypeNames),
     tokenize: text => {
-      const { fileName, languageService } = options;
-      const sourceFile = options.languageService.getProgram()!.getSourceFile(fileName)!;
+      const { fileName, languageService, watchProgram } = options;
+      const sourceFile = watchProgram.getProgram().getProgram().getSourceFile(fileName)!;
       const preambleCode = options.preambleCode || '';
       if (preambleCode + text !== sourceFile.text) {
         throw new Error('InteractiveCodeBlock is out of sync with TypeScript program');
