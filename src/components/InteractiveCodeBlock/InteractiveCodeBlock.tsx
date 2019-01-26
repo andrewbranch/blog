@@ -24,26 +24,25 @@ function createValueFromString(text: string): Value {
   });
 }
 
-export type TokenStyles<TokenTypeT extends string> = {
-  [K in TokenTypeT]?: React.CSSProperties & { [key: string]: string | number }
+export type TokenStyles<ScopeNameT extends string> = {
+  [K in ScopeNameT]?: React.CSSProperties & { [key: string]: string | number }
 };
 
-function createMarkRenderer<TokenTypeT extends string>(
-  tokenStyles: TokenStyles<TokenTypeT>,
-  renderToken: InteractiveCodeBlockProps<TokenTypeT, any>['renderToken'],
+function createMarkRenderer<ScopeNameT extends string>(
+  renderToken: InteractiveCodeBlockProps<any, ScopeNameT, any>['renderToken'],
 ) {
   const renderMark: EditorProps['renderMark'] = props => {
-    return renderToken(props.mark.data.get('token'), {
+    const token = props.mark.data.get('token') as Token<any, ScopeNameT>;
+    return renderToken(token, {
       children: props.children,
-      style: tokenStyles[props.mark.type as TokenTypeT],
     });
   };
 
   return renderMark;
 }
 
-function createNodeDecorator<TokenT extends Token<string>>(
-  tokenize: InteractiveCodeBlockProps<any, TokenT>['tokenize'],
+function createNodeDecorator<TokenT extends Token<string, string>>(
+  tokenize: InteractiveCodeBlockProps<any, any, TokenT>['tokenize'],
 ) {
   const lineCache = new WeakMap<Node, Map<string, List<Decoration>>>();
   function decorateNode(node: Node, _: CoreEditor, next: () => any) {
@@ -86,13 +85,16 @@ function createNodeDecorator<TokenT extends Token<string>>(
 }
 
 interface InjectedTokenProps {
-  style?: React.CSSProperties;
   children: React.ReactNode;
 }
 
-export interface InteractiveCodeBlockProps<TokenTypeT extends string, TokenT extends Token<TokenTypeT>> {
+export interface InteractiveCodeBlockProps<
+  TokenTypeT extends string,
+  ScopeNameT extends string,
+  TokenT extends Token<TokenTypeT, ScopeNameT>
+> {
   tokenize: Tokenizer<TokenT>['tokenize'];
-  tokenStyles: TokenStyles<TokenTypeT>;
+  tokenStyles: TokenStyles<ScopeNameT>;
   renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
   onChange?: (value: string, operations: Operation[]) => void;
@@ -103,11 +105,12 @@ export interface InteractiveCodeBlockProps<TokenTypeT extends string, TokenT ext
 
 export function InteractiveCodeBlock<
   TokenTypeT extends string,
-  TokenT extends Token<TokenTypeT>
->(props: InteractiveCodeBlockProps<TokenTypeT, TokenT>) {
+  ScopeNameT extends string,
+  TokenT extends Token<TokenTypeT, ScopeNameT>
+>(props: InteractiveCodeBlockProps<TokenTypeT, ScopeNameT, TokenT>) {
   const [state, setState] = useState(createValueFromString(props.initialValue));
   const decorateNode = useMemo(() => createNodeDecorator(props.tokenize), [props.tokenize]);
-  const renderMark = useMemo(() => createMarkRenderer(props.tokenStyles, props.renderToken), [props.tokenStyles]);
+  const renderMark = useMemo(() => createMarkRenderer(props.renderToken), [props.renderToken]);
   return (
     <>
       <Global
@@ -144,7 +147,7 @@ export function InteractiveCodeBlock<
   );
 }
 
-const defaultProps: Pick<InteractiveCodeBlockProps<any, any>, 'padding' | 'tokenStyles' | 'renderToken'> = {
+const defaultProps: Pick<InteractiveCodeBlockProps<any, any, any>, 'padding' | 'tokenStyles' | 'renderToken'> = {
   padding: 20,
   tokenStyles: {},
   renderToken: (_, props) => <span {...props} />,

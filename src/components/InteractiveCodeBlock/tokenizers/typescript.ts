@@ -3,6 +3,7 @@ import memoize from 'memoizee';
 import { Tokenizer, CacheableLineTokens } from './types';
 import { Token, TokenProperties } from './token';
 import sortedIndex from 'lodash.sortedindex';
+import { Omit } from '../../../utils/types';
 // import { createNodeWalker } from '../../../utils/typescript';
 
 export interface TypeScriptTokenizerOptions {
@@ -11,21 +12,21 @@ export interface TypeScriptTokenizerOptions {
   languageService: ts.LanguageService;
 }
 
-export interface TypeScriptTokenProperties extends TokenProperties<ts.ClassificationTypeNames> {
+export interface TypeScriptTokenProperties extends TokenProperties<'ts', ts.ClassificationTypeNames> {
   sourcePosition: number;
   isCallLikeExpression?: boolean;
 }
 
 export type TypeScriptTokenType = ts.ClassificationTypeNames | 'functionDeclaration' | 'callExpression';
-export type TypeScriptToken = Token<ts.ClassificationTypeNames> & TypeScriptTokenProperties;
+export type TypeScriptToken = Token<'ts', ts.ClassificationTypeNames> & TypeScriptTokenProperties;
 
 export function TypeScriptToken({
   sourcePosition,
   isCallLikeExpression,
   ...tokenProperties
-}: TypeScriptTokenProperties): TypeScriptToken {
+}: Omit<TypeScriptTokenProperties, 'type'>): TypeScriptToken {
   return {
-    ...Token(tokenProperties),
+    ...Token({ ...tokenProperties, type: 'ts' }),
     sourcePosition,
     isCallLikeExpression,
   };
@@ -94,7 +95,7 @@ const memoizedGetTokensByLine = memoize((
       for (let i = startLine; i <= endLine; i++) {
         const lineTokens = tokens[i] || { hash: '', tokens: [] };
         const token = TypeScriptToken({
-          type,
+          scopes: [type],
           sourcePosition: span.textSpan.start,
           isCallLikeExpression: false,
           start: i === startLine ? start : 0,

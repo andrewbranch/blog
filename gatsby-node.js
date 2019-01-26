@@ -56,10 +56,27 @@ exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
   /** @type {webpack.Configuration} */
   const config = {
     ...oldConfig,
+    module: {
+      ...oldConfig.module,
+      rules: [
+        ...oldConfig.module.rules,
+        {
+          test: /\.wasm$/,
+          loader: "file-loader",
+          type: "javascript/auto",
+        }
+      ]
+    },
     output: {
       ...oldConfig.output,
       globalObject: 'this'
-    }
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env.TEST_PSEUDOMAP': 'this["_____"]'
+      }),
+      ...oldConfig.plugins,
+    ]
   };
 
   actions.replaceWebpackConfig(config);

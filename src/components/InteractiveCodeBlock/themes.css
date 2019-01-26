@@ -1,0 +1,76 @@
+:root {
+  --function: #795E26;
+  --types: #267f99;
+  --controlflow: #AF00DB;
+  --variablename: #001080;
+  --regexp: #d16969;
+  --comment: #008000;
+  --keyword: #0000ff;
+  --numeric: #09885a;
+  --string: #a31515;
+  --property: #0451a5;
+  --punctuation: #000000;
+  --operator: #000000;
+}
+
+.tm-theme .storage.modifier { color: var(--keyword); }
+.tm-theme .storage.type { color: var(--keyword); }
+.tm-theme .keyword.control { color: var(--keyword); }
+.tm-theme .keyword.other { color: var(--keyword); }
+.tm-theme .keyword.operator.expression { color: var(--keyword); }
+.tm-theme .keyword.operator.new { color: var(--keyword); }
+.tm-theme .keyword.generator.asterisk { color: var(--keyword); }
+.tm-theme .punctuation.definition.template-expression { color: var(--keyword); }
+.tm-theme .support.type { color: var(--keyword); }
+.tm-theme .constant.language { color: var(--keyword); }
+.tm-theme .variable.language { color: var(--keyword); }
+.tm-theme .string { color: var(--string); }
+.tm-theme .punctuation.definition.string { color: var(--string); }
+.tm-theme .constant.character { color: var(--string); }
+.tm-theme .keyword.control.anchor.regexp { color: var(--regexp); }
+.tm-theme .keyword.other.back-reference.regexp { color: var(--regexp); }
+.tm-theme .keyword.operator.quantifier.regexp { color: var(--regexp); }
+.tm-theme .keyword.operator.or.regexp { color: var(--regexp); }
+.tm-theme .keyword.operator.negation.regexp { color: var(--regexp); }
+.tm-theme .punctuation.definition.group.regexp { color: var(--regexp); }
+.tm-theme .punctuation.definition.group.assertion.regexp { color: var(--regexp); }
+.tm-theme .meta.assertion.look-ahead.regexp { color: var(--regexp); }
+.tm-theme .meta.assertion.negative-look-ahead.regexp { color: var(--regexp); }
+.tm-theme .punctuation.definition.group.capture.regexp { color: var(--regexp); }
+.tm-theme .punctuation.definition.character-class.regexp { color: var(--regexp); }
+.tm-theme .constant.other.character-class.range.regexp { color: var(--regexp); }
+.tm-theme .constant.numeric { color: var(--numeric); }
+.tm-theme .meta.delimiter.decimal.period.tsx { color: var(--numeric); }
+.tm-theme .constant.language.nan.tsx { color: var(--numeric); }
+.tm-theme .constant.language.infinity.tsx { color: var(--numeric); }
+.tm-theme .keyword.operator { color: var(--operator); }
+.tm-theme .storage.type.function.arrow.tsx { color: var(--operator); }
+.tm-theme .meta.brace.angle.tsx { color: var(--punctuation); }
+.tm-theme .meta.brace.round.tsx { color: var(--punctuation); }
+.tm-theme .meta.brace.square.tsx { color: var(--punctuation); }
+.tm-theme .punctuation { color: var(--punctuation); }
+.tm-theme .constant.language.import-export-all.tsx { color: var(--punctuation); }
+.tm-theme .meta.delimiter.object.comma.tsx { color: var(--punctuation); }
+.tm-theme .comment { color: var(--comment); }
+.tm-theme .comment.block.tsx { color: var(--comment); }
+.tm-theme .comment.line.double-slash.tsx { color: var(--comment); }
+.tm-theme .punctuation.definition.comment.tsx { color: var(--comment); }
+.tm-theme .comment.block.documentation.tsx { color: var(--comment); }
+.tm-theme .other.meta.jsdoc { color: var(--comment); }
+.tm-theme .other.description.jsdoc { color: var(--comment); }
+.tm-theme .entity.name.type.instance.jsdoc { color: var(--variablename); }
+.tm-theme .variable.other.jsdoc { color: var(--variablename); }
+.tm-theme .storage.type.class.jsdoc { color: var(--types); }
+.tm-theme .entity.name.type.class.tsx { color: var(--types); }
+.tm-theme .entity.name.type.module.tsx { color: var(--controlflow); }
+.tm-theme .entity.name.type.enum.tsx { color: var(--types); }
+.tm-theme .entity.name.function { color: var(--function); }
+.tm-theme .entity.name.type { color: var(--types); }
+.tm-theme .meta.template.expression.tsx { color: var(--types); }
+.tm-theme .variable { color: var(--variablename); }
+.tm-theme .entity.other.inherited-class.tsx { color: var(--types); }
+.tm-theme .constant.language.undefined.tsx { color: var(--keyword); }
+.tm-theme .variable.language.arguments.tsx { color: var(--variablename); }
+.tm-theme .support.type.object { color: var(--variablename); }
+.tm-theme .entity.name.tag { color: var(--types); }
+.tm-theme .entity.other.attribute-name { color: var(--variablename); }

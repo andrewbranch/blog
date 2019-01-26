@@ -31,9 +31,11 @@
     "lodash.kebabcase": "^4.1.1",
     "lodash.sortedindex": "^4.1.0",
     "memoizee": "^0.4.14",
+    "onigasm": "^2.2.1",
     "prismjs": "^1.15.0",
     "prop-types": "^15.6.2",
     "react": "^16.8.0-alpha.1",
+    "react-async-hook": "^1.0.0",
     "react-dom": "^16.8.0-alpha.1",
     "react-helmet": "^5.2.0",
     "react-typography": "^0.16.18",
@@ -42,6 +44,7 @@
     "slate-react": "^0.21.15",
     "typescript": "^3.2.2",
     "typography": "^0.16.18",
+    "vscode-textmate": "^4.0.1",
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
