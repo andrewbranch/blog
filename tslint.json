@@ -9,6 +9,7 @@
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
     "no-bitwise": false,
+    "no-object-literal-type-assertion": false,
     "no-submodule-imports": false,
     "object-literal-key-quotes": [true, "as-needed"],
     "object-literal-sort-keys": false,

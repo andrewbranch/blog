@@ -4,8 +4,8 @@ import { graphql } from 'gatsby';
 import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
-import { createTypeScriptTokenizer, isIdentifierClassification, } from '../components/InteractiveCodeBlock/tokenizers';
-import { prismVSCode, typeScriptVSCode } from '../components/InteractiveCodeBlock/themes';
+import { createTypeScriptTokenizer, isIdentifierClassification } from '../components/InteractiveCodeBlock/tokenizers';
+import { typeScriptVSCode } from '../components/InteractiveCodeBlock/themes';
 import { createVirtualTypeScriptEnvironment, libraryFiles } from '../utils/typescript';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 
@@ -79,11 +79,9 @@ const sourceFile = ts.createSourceFile('/example.ts', preamble + code, ts.Script
 const {
   languageService,
   updateFileFromText,
-  watchProgram,
 } = createVirtualTypeScriptEnvironment([sourceFile], [libraryFiles.react]);
 const tokenizer = createTypeScriptTokenizer({
   languageService,
-  watchProgram,
   preambleCode: preamble,
   fileName: '/example.ts',
 });
@@ -105,15 +103,14 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => (
       {...tokenizer}
       tokenStyles={typeScriptVSCode.tokens}
       onChange={value => updateFileFromText('/example.ts', preamble + value)}
-      css={prismVSCode.block}
+      css={typeScriptVSCode.block}
       renderToken={(token, props) => {
         if (isIdentifierClassification(token.type)) {
           return (
             <TypeScriptIdentifierToken
               languageService={languageService}
-              position={token.start + preamble.length}
+              position={token.sourcePosition}
               sourceFileName="/example.ts"
-              data-syntax-kind={token.type}
               {...props}
             />
           );

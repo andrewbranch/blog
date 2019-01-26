@@ -1,7 +1,5 @@
 import ts from 'typescript';
 import { TokenStyles } from './InteractiveCodeBlock';
-import { PrismTokenType } from './tokenizers/prism';
-import { variables } from '../../styles/utils';
 
 export interface InteractiveCodeBlockTheme<TokenTypeT extends string> {
   tokens: TokenStyles<TokenTypeT>;
@@ -29,25 +27,6 @@ export const commonBlockStyles: React.CSSProperties & { [key: string]: string | 
   borderRadius: 3,
   overflow: 'auto',
   whiteSpace: 'nowrap',
-};
-
-export const prismVSCode: InteractiveCodeBlockTheme<PrismTokenType> = {
-  tokens: {
-    [PrismTokenType.Boolean]: { color: SyntacticColors.Keyword },
-    [PrismTokenType.Builtin]: { color: SyntacticColors.VariableName },
-    [PrismTokenType.ClassName]: { color: SyntacticColors.Types },
-    [PrismTokenType.Comment]: { color: SyntacticColors.Comment },
-    [PrismTokenType.Constant]: { color: SyntacticColors.Types },
-    [PrismTokenType.Function]: { color: SyntacticColors.Function },
-    [PrismTokenType.FunctionVariable]: { color: SyntacticColors.Function },
-    [PrismTokenType.Keyword]: { color: SyntacticColors.Keyword },
-    [PrismTokenType.Number]: { color: SyntacticColors.Numeric },
-    [PrismTokenType.Operator]: { color: variables.colors.text.primary },
-    [PrismTokenType.Punctuation]: { color: variables.colors.text.primary },
-    [PrismTokenType.RegExp]: { color: SyntacticColors.RegExp },
-    [PrismTokenType.String]: { color: SyntacticColors.String },
-  },
-  block: {},
 };
 
 export const typeScriptVSCode: InteractiveCodeBlockTheme<ts.ClassificationTypeNames> = {

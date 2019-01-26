@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
-import { Value, MarkProperties, NodeJSON, Operation, Point, Node, PointProperties } from 'slate';
+import { List } from 'immutable';
+import { Value, NodeJSON, Operation, Decoration, Point, Mark, Editor as CoreEditor, Node } from 'slate';
 import { Global } from '@emotion/core';
 import { commonBlockStyles } from './themes';
-import { Token } from './tokenizers';
+import { Token, Tokenizer } from './tokenizers';
 
 function createValueFromString(text: string): Value {
   return Value.fromJSON({
@@ -29,7 +30,7 @@ export type TokenStyles<TokenTypeT extends string> = {
 
 function createMarkRenderer<TokenTypeT extends string>(
   tokenStyles: TokenStyles<TokenTypeT>,
-  renderToken: InteractiveCodeBlockProps<TokenTypeT>['renderToken'],
+  renderToken: InteractiveCodeBlockProps<TokenTypeT, any>['renderToken'],
 ) {
   const renderMark: EditorProps['renderMark'] = props => {
     return renderToken(props.mark.data.get('token'), {
@@ -41,63 +42,44 @@ function createMarkRenderer<TokenTypeT extends string>(
   return renderMark;
 }
 
-function createNodeDecorator<TokenTypeT extends string>(tokenize: (text: string) => Token<TokenTypeT>[]) {
-  function decorateNode(node: Node, _: any, next: () => void) {
+function createNodeDecorator<TokenT extends Token<string>>(
+  tokenize: InteractiveCodeBlockProps<any, TokenT>['tokenize'],
+) {
+  const lineCache = new WeakMap<Node, Map<string, List<Decoration>>>();
+  function decorateNode(node: Node, _: CoreEditor, next: () => any) {
     if (node.object !== 'document') {
       return next();
     }
 
-    const texts = node.getTextsAsArray();
-    const textStrings = texts.map(text => text.text);
-    const fullText = textStrings.join('\n');
-    const decorations: { anchor: Point | PointProperties, focus: Point | PointProperties, mark: MarkProperties }[] = [];
-    let lastTextIndex = 0;
-    const consumedLengthByLine: number[] = [];
-    for (const token of tokenize(fullText)) {
-      let startPoint: Point | PointProperties | undefined;
-      let endPoint: Point | PointProperties | undefined;
-      for (let i = lastTextIndex; i < texts.length; i++) {
-        const text = texts[i];
-        const textString = text.text;
-        const consumedLength = consumedLengthByLine[i - 1] || 0;
-        if (!startPoint && token.start >= consumedLength && token.start <= consumedLength + textString.length) {
-          lastTextIndex = i;
-          startPoint = {
-            key: text.key,
-            offset: token.start - consumedLength,
-          };
-        }
-        if (!endPoint && token.end >= consumedLength && token.end <= consumedLength + textString.length) {
-          endPoint = {
-            key: text.key,
-            offset: token.end - consumedLength,
-          };
-        }
-        if (!consumedLengthByLine[i]) {
-          consumedLengthByLine[i] = consumedLength + textString.length + 1;
-        }
-        if (startPoint && endPoint) {
-          // Optimization: createPoint() is actually pretty expensive (it fills in `path` from `key`
-          // with the document structure) and it’s only needed if the mark spans multiple blocks.
-          if (startPoint.key !== endPoint.key) {
-            startPoint = node.createPoint(startPoint);
-            endPoint = node.createPoint(endPoint);
-          }
-          break;
-        }
+    const blocks = node.getBlocks();
+    const fullText = blocks.map(line => line!.text).join('\n');
+    return blocks.reduce((decorations, block, index) => {
+      const textNode = block!.getTexts().get(0);
+      const decorationsForLineCache = lineCache.get(textNode) || new Map<string, List<Decoration>>();
+      const { hash, tokens } = tokenize(fullText, index!);
+      const decorationsForLine = decorationsForLineCache.get(hash);
+      if (decorationsForLine) {
+        return decorations!.concat(decorationsForLine) as List<Decoration>;
       }
-      if (!startPoint || !endPoint) {
-        throw new Error(`Invalid range found for token of type ${token.type}: [${token.start}, ${token.end}]`);
-      }
-
-      decorations.push({
-        anchor: startPoint,
-        focus: endPoint,
-        mark: { type: token.type, data: { token } },
-      });
-    }
-
-    return decorations;
+      decorationsForLineCache.clear();
+      const newDecorations = tokens.reduce((decs, token) => decs.push(Decoration.create({
+        anchor: {
+          key: textNode.key,
+          offset: token.start,
+        } as Point,
+        focus: {
+          key: textNode.key,
+          offset: token.end,
+        } as Point,
+        mark: Mark.create({
+          type: token.type,
+          data: { token },
+        }),
+      })), Decoration.createList());
+      decorationsForLineCache.set(hash, newDecorations);
+      lineCache.set(textNode, decorationsForLineCache);
+      return decorations!.concat(newDecorations) as List<Decoration>;
+    }, Decoration.createList());
   }
 
   return decorateNode;
@@ -108,11 +90,10 @@ interface InjectedTokenProps {
   children: React.ReactNode;
 }
 
-export interface InteractiveCodeBlockProps<TokenTypeT extends string> {
-  tokenTypes: TokenTypeT[];
-  tokenize: (text: string) => Token<TokenTypeT>[];
+export interface InteractiveCodeBlockProps<TokenTypeT extends string, TokenT extends Token<TokenTypeT>> {
+  tokenize: Tokenizer<TokenT>['tokenize'];
   tokenStyles: TokenStyles<TokenTypeT>;
-  renderToken: (token: Token<TokenTypeT>, props: InjectedTokenProps) => JSX.Element;
+  renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
   onChange?: (value: string, operations: Operation[]) => void;
   className?: string;
@@ -120,7 +101,10 @@ export interface InteractiveCodeBlockProps<TokenTypeT extends string> {
   css?: React.DOMAttributes<any>['css'];
 }
 
-export function InteractiveCodeBlock<TokenTypeT extends string>(props: InteractiveCodeBlockProps<TokenTypeT>) {
+export function InteractiveCodeBlock<
+  TokenTypeT extends string,
+  TokenT extends Token<TokenTypeT>
+>(props: InteractiveCodeBlockProps<TokenTypeT, TokenT>) {
   const [state, setState] = useState(createValueFromString(props.initialValue));
   const decorateNode = useMemo(() => createNodeDecorator(props.tokenize), [props.tokenize]);
   const renderMark = useMemo(() => createMarkRenderer(props.tokenStyles, props.renderToken), [props.tokenStyles]);
@@ -146,6 +130,7 @@ export function InteractiveCodeBlock<TokenTypeT extends string>(props: Interacti
           if (props.onChange) {
             props.onChange(value.document.getTexts().map(t => t!.text).join('\n'), operations.toArray());
           }
+
           setState(value);
         }}
         renderMark={renderMark}
@@ -159,7 +144,7 @@ export function InteractiveCodeBlock<TokenTypeT extends string>(props: Interacti
   );
 }
 
-const defaultProps: Pick<InteractiveCodeBlockProps<any>, 'padding' | 'tokenStyles' | 'renderToken'> = {
+const defaultProps: Pick<InteractiveCodeBlockProps<any, any>, 'padding' | 'tokenStyles' | 'renderToken'> = {
   padding: 20,
   tokenStyles: {},
   renderToken: (_, props) => <span {...props} />,

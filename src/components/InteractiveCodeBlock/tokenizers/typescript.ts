@@ -1,12 +1,26 @@
 import ts from 'typescript';
-import { Tokenizer } from './types';
-import { Token } from './token';
+import memoize from 'memoizee';
+import { Tokenizer, CacheableLineTokens } from './types';
+import { Token, TokenProperties } from './token';
+import sortedIndex from 'lodash.sortedindex';
 
 export interface TypeScriptTokenizerOptions {
   fileName: string;
   preambleCode?: string;
   languageService: ts.LanguageService;
-  watchProgram: ts.WatchOfFilesAndCompilerOptions<ts.BuilderProgram>;
+}
+
+export interface TypeScriptTokenProperties extends TokenProperties<ts.ClassificationTypeNames> {
+  sourcePosition: number;
+}
+
+export type TypeScriptToken = Token<ts.ClassificationTypeNames> & TypeScriptTokenProperties;
+
+export function TypeScriptToken({ sourcePosition, ...tokenProperties }: TypeScriptTokenProperties): TypeScriptToken {
+  return {
+    ...Token(tokenProperties),
+    sourcePosition,
+  };
 }
 
 const ignoredClassifications = new Set([
@@ -14,42 +28,68 @@ const ignoredClassifications = new Set([
   ts.ClassificationTypeNames.whiteSpace,
 ]);
 
-export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): Tokenizer<ts.ClassificationTypeNames> {
-  return {
-    tokenTypes: Object.values(ts.ClassificationTypeNames),
-    tokenize: text => {
-      const { fileName, languageService, watchProgram } = options;
-      const sourceFile = watchProgram.getProgram().getProgram().getSourceFile(fileName)!;
-      const preambleCode = options.preambleCode || '';
-      if (preambleCode + text !== sourceFile.text) {
-        throw new Error('InteractiveCodeBlock is out of sync with TypeScript program');
+const memoizedGetTokensByLine = memoize((
+  fullText: string,
+  preambleCode: string,
+  fileName: string,
+  languageService: ts.LanguageService,
+): CacheableLineTokens<TypeScriptToken>[] => {
+  const lines = fullText.split('\n');
+  const characterAccumByLine = lines.reduce((indices: number[], line, index) => (
+    [...indices, (indices[index - 1] || preambleCode.length) + line.length + 1] // Add one for '\n'
+  ), []);
+  const visibleSpan = { start: preambleCode.length, length: fullText.length };
+  const semanticClassifications = languageService.getSemanticClassifications(fileName, visibleSpan);
+  return languageService.getSyntacticClassifications(fileName, visibleSpan)
+    .reduce((tokens: CacheableLineTokens<TypeScriptToken>[], span) => {
+      // No need to tokenize whitespace etc.; it will just make rendering slower
+      if (ignoredClassifications.has(span.classificationType)) {
+        return tokens;
       }
 
-      const visibleSpan = { start: preambleCode.length, length: sourceFile.text.length - preambleCode.length };
-      const semanticClassifications = languageService.getSemanticClassifications(fileName, visibleSpan);
-      return languageService.getSyntacticClassifications(fileName, visibleSpan)
-        .reduce((tokens: Token<ts.ClassificationTypeNames>[], span) => {
-          // No need to tokenize whitespace etc.; it will just make rendering slower
-          if (ignoredClassifications.has(span.classificationType)) {
-            return tokens;
-          }
+      const startLine = sortedIndex(characterAccumByLine, span.textSpan.start);
+      const absoluteEnd = span.textSpan.start + span.textSpan.length;
+      const start = span.textSpan.start - (characterAccumByLine[startLine - 1] || preambleCode.length);
+      // Micro-optimization: endLine will almost always be equal to startLine,
+      // so check that location first before doing the binary sort.
+      const endLine = absoluteEnd <= characterAccumByLine[startLine]
+        ? startLine
+        : sortedIndex(characterAccumByLine, absoluteEnd);
+      const end = absoluteEnd - (characterAccumByLine[endLine - 1] || preambleCode.length);
 
-          // Let semantic classification win over syntactic classification
-          if (semanticClassifications[0] && semanticClassifications[0].textSpan.start === span.textSpan.start) {
-            const classification = semanticClassifications.shift()!;
-            return tokens.concat(Token({
-              type: classification.classificationType,
-              start: classification.textSpan.start - preambleCode.length,
-              end: classification.textSpan.start + classification.textSpan.length - preambleCode.length,
-            }));
-          }
+      // Let semantic classification win over syntactic classification
+      let type = span.classificationType;
+      if (semanticClassifications[0] && semanticClassifications[0].textSpan.start === span.textSpan.start) {
+        type = semanticClassifications.shift()!.classificationType;
+      }
 
-          return tokens.concat(Token({
-            type: span.classificationType,
-            start: span.textSpan.start - preambleCode.length,
-            end: span.textSpan.start + span.textSpan.length - preambleCode.length,
-          }));
-        }, []);
+      for (let i = startLine; i <= endLine; i++) {
+        const lineTokens = tokens[i] || { hash: '', tokens: [] };
+        const token = TypeScriptToken({
+          type,
+          sourcePosition: span.textSpan.start,
+          start: i === startLine ? start : 0,
+          end: i === endLine ? end : lines[i].length,
+        });
+        lineTokens.hash += `:${token.getHash()}`;
+        lineTokens.tokens.push(token);
+        tokens[i] = lineTokens;
+      }
+
+      return tokens;
+    }, []);
+}, {
+  length: 2,
+  max: 1,
+});
+
+export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): Tokenizer<TypeScriptToken> {
+  return {
+    tokenize: (fullText, lineIndex) => {
+      const { fileName, languageService } = options;
+      const preambleCode = options.preambleCode || '';
+      const tokensByLine = memoizedGetTokensByLine(fullText, preambleCode, fileName, languageService);
+      return tokensByLine[lineIndex] || { hash: '', tokens: [] };
     },
   };
 }
