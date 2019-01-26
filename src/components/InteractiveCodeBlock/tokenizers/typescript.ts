@@ -3,6 +3,7 @@ import memoize from 'memoizee';
 import { Tokenizer, CacheableLineTokens } from './types';
 import { Token, TokenProperties } from './token';
 import sortedIndex from 'lodash.sortedindex';
+// import { createNodeWalker } from '../../../utils/typescript';
 
 export interface TypeScriptTokenizerOptions {
   fileName: string;
@@ -12,14 +13,21 @@ export interface TypeScriptTokenizerOptions {
 
 export interface TypeScriptTokenProperties extends TokenProperties<ts.ClassificationTypeNames> {
   sourcePosition: number;
+  isCallLikeExpression?: boolean;
 }
 
+export type TypeScriptTokenType = ts.ClassificationTypeNames | 'functionDeclaration' | 'callExpression';
 export type TypeScriptToken = Token<ts.ClassificationTypeNames> & TypeScriptTokenProperties;
 
-export function TypeScriptToken({ sourcePosition, ...tokenProperties }: TypeScriptTokenProperties): TypeScriptToken {
+export function TypeScriptToken({
+  sourcePosition,
+  isCallLikeExpression,
+  ...tokenProperties
+}: TypeScriptTokenProperties): TypeScriptToken {
   return {
     ...Token(tokenProperties),
     sourcePosition,
+    isCallLikeExpression,
   };
 }
 
@@ -38,8 +46,13 @@ const memoizedGetTokensByLine = memoize((
   const characterAccumByLine = lines.reduce((indices: number[], line, index) => (
     [...indices, (indices[index - 1] || preambleCode.length) + line.length + 1] // Add one for '\n'
   ), []);
+
   const visibleSpan = { start: preambleCode.length, length: fullText.length };
   const semanticClassifications = languageService.getSemanticClassifications(fileName, visibleSpan);
+  // const program = languageService.getProgram()!;
+  // const sourceFile = program.getSourceFile(fileName)!;
+  // const identifierIterator = createNodeWalker(sourceFile, ts.isCallLikeExpression);
+  // let currentNode = identifierIterator.next();
   return languageService.getSyntacticClassifications(fileName, visibleSpan)
     .reduce((tokens: CacheableLineTokens<TypeScriptToken>[], span) => {
       // No need to tokenize whitespace etc.; it will just make rendering slower
@@ -63,11 +76,27 @@ const memoizedGetTokensByLine = memoize((
         type = semanticClassifications.shift()!.classificationType;
       }
 
+      // let isCallLikeExpression = false;
+      // if (type === ts.ClassificationTypeNames.identifier) {
+      //   while (
+      //     currentNode.value
+      //     && currentNode.value.pos + currentNode.value.getLeadingTriviaWidth() < span.textSpan.start
+      //   ) {
+      //     currentNode = identifierIterator.next();
+      //   }
+      //   if (currentNode.value
+      //     && currentNode.value.pos + currentNode.value.getLeadingTriviaWidth() === span.textSpan.start
+      //   ) {
+      //     isCallLikeExpression = true;
+      //   }
+      // }
+
       for (let i = startLine; i <= endLine; i++) {
         const lineTokens = tokens[i] || { hash: '', tokens: [] };
         const token = TypeScriptToken({
           type,
           sourcePosition: span.textSpan.start,
+          isCallLikeExpression: false,
           start: i === startLine ? start : 0,
           end: i === endLine ? end : lines[i].length,
         });
