@@ -41,44 +41,43 @@ function createMarkRenderer<ScopeNameT extends string>(
   return renderMark;
 }
 
-function createNodeDecorator<TokenT extends Token<string, string>>(
-  tokenize: InteractiveCodeBlockProps<any, any, TokenT>['tokenize'],
-) {
+function createNodeDecorator<TokenT extends Token<string, string>>(tokenizer: Tokenizer<TokenT>) {
   const lineCache = new WeakMap<Node, Map<string, List<Decoration>>>();
   function decorateNode(node: Node, _: CoreEditor, next: () => any) {
-    if (node.object !== 'document') {
+    if (node.object === 'document' && tokenizer.tokenizeDocument) {
+      const blocks = node.getBlocks();
+      const fullText = blocks.map(line => line!.text).join('\n');
+      return tokenizer.tokenizeDocument(fullText);
+    }
+    if (node.object !== 'block' || !tokenizer.tokenizeLine) {
       return next();
     }
 
-    const blocks = node.getBlocks();
-    const fullText = blocks.map(line => line!.text).join('\n');
-    return blocks.reduce((decorations, block, index) => {
-      const textNode = block!.getTexts().get(0);
-      const decorationsForLineCache = lineCache.get(textNode) || new Map<string, List<Decoration>>();
-      const { hash, tokens } = tokenize(fullText, index!);
-      const decorationsForLine = decorationsForLineCache.get(hash);
-      if (decorationsForLine) {
-        return decorations!.concat(decorationsForLine) as List<Decoration>;
-      }
-      decorationsForLineCache.clear();
-      const newDecorations = tokens.reduce((decs, token) => decs.push(Decoration.create({
-        anchor: {
-          key: textNode.key,
-          offset: token.start,
-        } as Point,
-        focus: {
-          key: textNode.key,
-          offset: token.end,
-        } as Point,
-        mark: Mark.create({
-          type: token.type,
-          data: { token },
-        }),
-      })), Decoration.createList());
-      decorationsForLineCache.set(hash, newDecorations);
-      lineCache.set(textNode, decorationsForLineCache);
-      return decorations!.concat(newDecorations) as List<Decoration>;
-    }, Decoration.createList());
+    const textNode = node!.getTexts().get(0);
+    const decorationsForLineCache = lineCache.get(textNode) || new Map<string, List<Decoration>>();
+    const { hash, tokens } = tokenizer.tokenizeLine(textNode.text);
+    const decorationsForLine = decorationsForLineCache.get(hash);
+    if (decorationsForLine) {
+      return decorationsForLine;
+    }
+    decorationsForLineCache.clear();
+    const newDecorations = tokens.reduce((decs, token) => decs.push(Decoration.create({
+      anchor: {
+        key: textNode.key,
+        offset: token.start,
+      } as Point,
+      focus: {
+        key: textNode.key,
+        offset: token.end,
+      } as Point,
+      mark: Mark.create({
+        type: token.type,
+        data: { token },
+      }),
+    })), Decoration.createList());
+    decorationsForLineCache.set(hash, newDecorations);
+    lineCache.set(textNode, decorationsForLineCache);
+    return newDecorations;
   }
 
   return decorateNode;
@@ -93,7 +92,7 @@ export interface InteractiveCodeBlockProps<
   ScopeNameT extends string,
   TokenT extends Token<TokenTypeT, ScopeNameT>
 > {
-  tokenize: Tokenizer<TokenT>['tokenize'];
+  tokenizer: Tokenizer<TokenT>;
   tokenStyles: TokenStyles<ScopeNameT>;
   renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
@@ -109,7 +108,7 @@ export function InteractiveCodeBlock<
   TokenT extends Token<TokenTypeT, ScopeNameT>
 >(props: InteractiveCodeBlockProps<TokenTypeT, ScopeNameT, TokenT>) {
   const [state, setState] = useState(createValueFromString(props.initialValue));
-  const decorateNode = useMemo(() => createNodeDecorator(props.tokenize), [props.tokenize]);
+  const decorateNode = useMemo(() => createNodeDecorator(props.tokenizer), [props.tokenizer]);
   const renderMark = useMemo(() => createMarkRenderer(props.renderToken), [props.renderToken]);
   return (
     <>

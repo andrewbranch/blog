@@ -8,10 +8,9 @@ export interface TmGrammarTokenizerOptions {
 
 export function createTmGrammarTokenizer(options: TmGrammarTokenizerOptions): Tokenizer<Token<'tm', string>> {
   return {
-    tokenize: (fullText, lineIndex) => {
+    tokenizeLine: text => {
       const { grammar } = options;
-      const lines = fullText.split('\n');
-      return grammar.tokenizeLine(lines[lineIndex], undefined as any)
+      return grammar.tokenizeLine(text, undefined as any)
         .tokens
         .reduce((container: CacheableLineTokens<any>, tmToken) => {
           const token = Token({

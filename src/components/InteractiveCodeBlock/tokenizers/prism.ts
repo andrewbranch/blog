@@ -37,7 +37,7 @@ export function PrismToken(properties: Omit<TokenProperties<'prism', PrismTokenT
 export function createPrismTokenizer(options: PrismTokenizerOptions): Tokenizer<PrismToken> {
   loadCustomTsLanguage(Prism);
   return {
-    tokenize: (text, lineIndex) => {
+    tokenizeLine: text => {
       const language = Prism.languages[options.grammar];
       if (!language) {
         throw new Error(`Language not found: '${options.grammar}'`);
@@ -45,7 +45,7 @@ export function createPrismTokenizer(options: PrismTokenizerOptions): Tokenizer<
 
       let hash = '';
       const syntaxHighlighterTokens: PrismToken[] = [];
-      const tokens = Prism.tokenize(text.split('\n')[lineIndex], language);
+      const tokens = Prism.tokenize(text, language);
       let consumedLength = 0;
       for (const token of tokens) {
         if (typeof token === 'string') {

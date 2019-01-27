@@ -6,5 +6,6 @@ export interface CacheableLineTokens<T extends Token<string, string>> {
 }
 
 export interface Tokenizer<TokenT extends Token<string, string>> {
-  tokenize: (fullText: string, lineIndex: number) => CacheableLineTokens<TokenT>;
+  tokenizeDocument?: (fullText: string) => CacheableLineTokens<TokenT>[];
+  tokenizeLine?: (lineText: string) => CacheableLineTokens<TokenT>;
 }

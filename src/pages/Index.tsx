@@ -104,11 +104,11 @@ const sourceFile = ts.createSourceFile('/example.ts', preamble + code, ts.Script
 const {
   updateFileFromText,
 } = createVirtualTypeScriptEnvironment([sourceFile], [libraryFiles.react]);
-const tokenizer = createPrismTokenizer({ grammar: PrismGrammar.TypeScript });
+// const tokenizer = createPrismTokenizer({ grammar: PrismGrammar.TypeScript });
 
 const IndexPage = React.memo<IndexPageProps>(({ data }) => {
-  // const grammar = useAsync(tmRegistry.loadGrammar.bind(tmRegistry), 'source.tsx');
-  // const tokenizer = grammar.result ? createTmGrammarTokenizer({ grammar: grammar.result }) : undefined;
+  const grammar = useAsync(tmRegistry.loadGrammar.bind(tmRegistry), 'source.tsx');
+  const tokenizer = grammar.result ? createTmGrammarTokenizer({ grammar: grammar.result }) : undefined;
   return (
     <Layout>
       {data.allMarkdownRemark.edges.map(({ node }) => (
@@ -125,7 +125,7 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => {
         <InteractiveCodeBlock
           className="tm-theme"
           initialValue={code}
-          {...tokenizer}
+          tokenizer={tokenizer}
           tokenStyles={tmVSCode.tokens}
           onChange={value => updateFileFromText('/example.ts', preamble + value)}
           css={typeScriptVSCode.block}
@@ -142,7 +142,8 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => {
             // }
             return (
               <span
-                css={prismVSCode.tokens[token.scopes[0]]}
+                // css={prismVSCode.tokens[token.scopes[0]]}
+                className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
                 data-token-hash={token.getHash()}
                 {...props}
               />
