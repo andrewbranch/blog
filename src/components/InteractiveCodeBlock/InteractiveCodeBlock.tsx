@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
 import { List } from 'immutable';
-import { Value, NodeJSON, Operation, Decoration, Point, Mark, Editor as CoreEditor, Node, Text } from 'slate';
-import { Global } from '@emotion/core';
+import { Value, NodeJSON, Operation, Decoration, Point, Mark, Node, Text, Document } from 'slate';
+import { Global, css } from '@emotion/core';
 import { commonBlockStyles } from './themes';
 import { Token, Tokenizer, CacheableLineTokens } from './tokenizers';
+import 'requestidlecallback';
 
 function createValueFromString(text: string): Value {
   return Value.fromJSON({
@@ -69,8 +70,8 @@ function createNodeDecorator<TokenT extends Token<string, string>>(tokenizer: To
     return newDecorations;
   }
 
-  function decorateNode(node: Node, _: CoreEditor, next: () => any) {
-    if (node.object === 'document' && tokenizer.tokenizeDocument) {
+  function decorateDocument(node: Document): List<Decoration> {
+    if (tokenizer.tokenizeDocument) {
       const blocks = node.getBlocks();
       const fullText = blocks.map(line => line!.text).join('\n');
       return tokenizer.tokenizeDocument(fullText).reduce((decorations, line, index) => {
@@ -79,14 +80,21 @@ function createNodeDecorator<TokenT extends Token<string, string>>(tokenizer: To
         return decorations.concat(decorateLine(textNode, line)) as List<Decoration>;
       }, Decoration.createList());
     }
+    return Decoration.createList();
+  }
+
+  function decorateNode(node: Node): List<Decoration> {
+    if (node.object === 'document' && tokenizer.tokenizeDocument) {
+      return decorateDocument(node);
+    }
     if (node.object === 'block' && node.type === 'line' && tokenizer.tokenizeLine) {
       const textNode = node.getTexts().get(0);
       return decorateLine(textNode, tokenizer.tokenizeLine(textNode.text));
     }
-    return next();
+    return Decoration.createList();
   }
 
-  return decorateNode;
+  return { decorateDocument, decorateLine, decorateNode };
 }
 
 interface InjectedTokenProps {
@@ -101,47 +109,63 @@ export interface InteractiveCodeBlockProps<
   tokenizer: Tokenizer<TokenT>;
   renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
-  onChange?: (value: string, operations: Operation[]) => void;
+  onChange?: (value: string, operations: List<Operation>) => void;
   className?: string;
   padding: number | string;
   css?: React.DOMAttributes<any>['css'];
 }
+
+let callbackId: number;
 
 export function InteractiveCodeBlock<
   TokenTypeT extends string,
   ScopeNameT extends string,
   TokenT extends Token<TokenTypeT, ScopeNameT>
 >(props: InteractiveCodeBlockProps<TokenTypeT, ScopeNameT, TokenT>) {
-  const [state, setState] = useState(createValueFromString(props.initialValue));
-  const decorateNode = useMemo(() => createNodeDecorator(props.tokenizer), [props.tokenizer]);
+  const { decorateDocument, decorateNode } = useMemo(() => createNodeDecorator(props.tokenizer), [props.tokenizer]);
+  const decorateValue = useMemo(() => {
+    return (value: Value) => value.set('decorations', decorateDocument(value.document)) as Value;
+  }, [decorateDocument]);
+  const decorateLineSync = useMemo(() => (node: Node, _: any, next: () => any) => {
+    if (node.object === 'block' && node.type === 'line') {
+      return decorateNode(node);
+    }
+    return next();
+  }, [decorateNode]);
+  const [state, setState] = useState(() => decorateValue(createValueFromString(props.initialValue)));
   const renderMark = useMemo(() => createMarkRenderer(props.renderToken), [props.renderToken]);
+  const globalStyles = useMemo(() => css({
+    '[data-slate-leaf]:last-child': {
+      position: 'relative',
+      '&:after': {
+        content: '""',
+        position: 'relative',
+        top: 0,
+        right: typeof props.padding === 'string' ? `-${props.padding}` : -props.padding,
+        width: props.padding,
+      },
+    },
+  }), [props.padding]);
+
   return (
     <>
-      <Global
-        styles={{
-          '[data-slate-leaf]:last-child': {
-            position: 'relative',
-            '&:after': {
-              content: '""',
-              position: 'relative',
-              top: 0,
-              right: typeof props.padding === 'string' ? `-${props.padding}` : -props.padding,
-              width: props.padding,
-            },
-          },
-        }}
-      />
+      <Global styles={globalStyles} />
       <Editor
         value={state}
         onChange={({ value, operations }) => {
           if (props.onChange) {
-            props.onChange(value.document.getTexts().map(t => t!.text).join('\n'), operations.toArray());
+            props.onChange(value.document.getTexts().map(t => t!.text).join('\n'), operations);
           }
 
           setState(value);
+          cancelIdleCallback(callbackId);
+          callbackId = requestIdleCallback(() => {
+            const x = value.set('decorations', decorateDocument(value.document)) as Value;
+            setState(x);
+          });
         }}
         renderMark={renderMark}
-        decorateNode={decorateNode}
+        decorateNode={decorateLineSync}
         className={props.className}
         css={commonBlockStyles}
         spellCheck={false}
