@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { Editor, EditorProps } from 'slate-react';
 import { List } from 'immutable';
-import { Value, NodeJSON, Operation, Decoration, Point, Mark, Editor as CoreEditor, Node } from 'slate';
+import { Value, NodeJSON, Operation, Decoration, Point, Mark, Editor as CoreEditor, Node, Text } from 'slate';
 import { Global } from '@emotion/core';
 import { commonBlockStyles } from './themes';
-import { Token, Tokenizer } from './tokenizers';
+import { Token, Tokenizer, CacheableLineTokens } from './tokenizers';
 
 function createValueFromString(text: string): Value {
   return Value.fromJSON({
@@ -43,19 +43,8 @@ function createMarkRenderer<ScopeNameT extends string>(
 
 function createNodeDecorator<TokenT extends Token<string, string>>(tokenizer: Tokenizer<TokenT>) {
   const lineCache = new WeakMap<Node, Map<string, List<Decoration>>>();
-  function decorateNode(node: Node, _: CoreEditor, next: () => any) {
-    if (node.object === 'document' && tokenizer.tokenizeDocument) {
-      const blocks = node.getBlocks();
-      const fullText = blocks.map(line => line!.text).join('\n');
-      return tokenizer.tokenizeDocument(fullText);
-    }
-    if (node.object !== 'block' || !tokenizer.tokenizeLine) {
-      return next();
-    }
-
-    const textNode = node!.getTexts().get(0);
+  function decorateLine(textNode: Text, { hash, tokens }: CacheableLineTokens<TokenT>): List<Decoration> {
     const decorationsForLineCache = lineCache.get(textNode) || new Map<string, List<Decoration>>();
-    const { hash, tokens } = tokenizer.tokenizeLine(textNode.text);
     const decorationsForLine = decorationsForLineCache.get(hash);
     if (decorationsForLine) {
       return decorationsForLine;
@@ -78,6 +67,23 @@ function createNodeDecorator<TokenT extends Token<string, string>>(tokenizer: To
     decorationsForLineCache.set(hash, newDecorations);
     lineCache.set(textNode, decorationsForLineCache);
     return newDecorations;
+  }
+
+  function decorateNode(node: Node, _: CoreEditor, next: () => any) {
+    if (node.object === 'document' && tokenizer.tokenizeDocument) {
+      const blocks = node.getBlocks();
+      const fullText = blocks.map(line => line!.text).join('\n');
+      return tokenizer.tokenizeDocument(fullText).reduce((decorations, line, index) => {
+        const block = blocks.get(index);
+        const textNode = block.getTexts().get(0);
+        return decorations.concat(decorateLine(textNode, line)) as List<Decoration>;
+      }, Decoration.createList());
+    }
+    if (node.object === 'block' && node.type === 'line' && tokenizer.tokenizeLine) {
+      const textNode = node.getTexts().get(0);
+      return decorateLine(textNode, tokenizer.tokenizeLine(textNode.text));
+    }
+    return next();
   }
 
   return decorateNode;
