@@ -15,7 +15,7 @@
 
 .tm-theme .storage.modifier { color: var(--keyword); }
 .tm-theme .storage.type { color: var(--keyword); }
-.tm-theme .keyword.control { color: var(--keyword); }
+.tm-theme .keyword.control { color: var(--controlflow); }
 .tm-theme .keyword.other { color: var(--keyword); }
 .tm-theme .keyword.operator.expression { color: var(--keyword); }
 .tm-theme .keyword.operator.new { color: var(--keyword); }
@@ -62,7 +62,7 @@
 .tm-theme .variable.other.jsdoc { color: var(--variablename); }
 .tm-theme .storage.type.class.jsdoc { color: var(--types); }
 .tm-theme .entity.name.type.class.tsx { color: var(--types); }
-.tm-theme .entity.name.type.module.tsx { color: var(--controlflow); }
+.tm-theme .entity.name.type.module.tsx { color: var(--types); }
 .tm-theme .entity.name.type.enum.tsx { color: var(--types); }
 .tm-theme .entity.name.function { color: var(--function); }
 .tm-theme .entity.name.type { color: var(--types); }

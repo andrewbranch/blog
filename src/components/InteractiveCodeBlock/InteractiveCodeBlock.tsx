@@ -93,7 +93,6 @@ export interface InteractiveCodeBlockProps<
   TokenT extends Token<TokenTypeT, ScopeNameT>
 > {
   tokenizer: Tokenizer<TokenT>;
-  tokenStyles: TokenStyles<ScopeNameT>;
   renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
   onChange?: (value: string, operations: Operation[]) => void;
@@ -146,9 +145,8 @@ export function InteractiveCodeBlock<
   );
 }
 
-const defaultProps: Pick<InteractiveCodeBlockProps<any, any, any>, 'padding' | 'tokenStyles' | 'renderToken'> = {
+const defaultProps: Pick<InteractiveCodeBlockProps<any, any, any>, 'padding' | 'renderToken'> = {
   padding: 20,
-  tokenStyles: {},
   renderToken: (_, props) => <span {...props} />,
 };
 

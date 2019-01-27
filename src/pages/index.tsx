@@ -8,9 +8,8 @@ import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import { createTmGrammarTokenizer } from '../components/InteractiveCodeBlock/tokenizers';
-import { typeScriptVSCode, tmVSCode, prismVSCode } from '../components/InteractiveCodeBlock/themes';
+import { typeScriptVSCode } from '../components/InteractiveCodeBlock/themes';
 import { createVirtualTypeScriptEnvironment, libraryFiles } from '../utils/typescript';
-import { createPrismTokenizer, PrismGrammar } from '../components/InteractiveCodeBlock/tokenizers/prism';
 // import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 
 export interface IndexPageProps {
@@ -126,7 +125,6 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => {
           className="tm-theme"
           initialValue={code}
           tokenizer={tokenizer}
-          tokenStyles={tmVSCode.tokens}
           onChange={value => updateFileFromText('/example.ts', preamble + value)}
           css={typeScriptVSCode.block}
           renderToken={(token, props) => {
