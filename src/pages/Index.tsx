@@ -8,8 +8,9 @@ import Layout from '../components/layout';
 import { PostPreview } from '../components/PostPreview';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import { createTmGrammarTokenizer } from '../components/InteractiveCodeBlock/tokenizers';
-import { typeScriptVSCode, tmVSCode } from '../components/InteractiveCodeBlock/themes';
+import { typeScriptVSCode, tmVSCode, prismVSCode } from '../components/InteractiveCodeBlock/themes';
 import { createVirtualTypeScriptEnvironment, libraryFiles } from '../utils/typescript';
+import { createPrismTokenizer, PrismGrammar } from '../components/InteractiveCodeBlock/tokenizers/prism';
 // import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 
 export interface IndexPageProps {
@@ -103,10 +104,11 @@ const sourceFile = ts.createSourceFile('/example.ts', preamble + code, ts.Script
 const {
   updateFileFromText,
 } = createVirtualTypeScriptEnvironment([sourceFile], [libraryFiles.react]);
+const tokenizer = createPrismTokenizer({ grammar: PrismGrammar.TypeScript });
 
 const IndexPage = React.memo<IndexPageProps>(({ data }) => {
-  const grammar = useAsync(tmRegistry.loadGrammar.bind(tmRegistry), 'source.tsx');
-  const tokenizer = grammar.result ? createTmGrammarTokenizer({ grammar: grammar.result }) : undefined;
+  // const grammar = useAsync(tmRegistry.loadGrammar.bind(tmRegistry), 'source.tsx');
+  // const tokenizer = grammar.result ? createTmGrammarTokenizer({ grammar: grammar.result }) : undefined;
   return (
     <Layout>
       {data.allMarkdownRemark.edges.map(({ node }) => (
@@ -140,7 +142,7 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => {
             // }
             return (
               <span
-                className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
+                css={prismVSCode.tokens[token.scopes[0]]}
                 data-token-hash={token.getHash()}
                 {...props}
               />

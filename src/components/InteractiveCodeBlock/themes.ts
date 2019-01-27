@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import { TokenStyles } from './InteractiveCodeBlock';
+import { PrismTokenType } from './tokenizers/prism';
 import './themes.css';
 
 export interface InteractiveCodeBlockTheme<ScopeNameT extends string> {
@@ -124,6 +125,26 @@ export const tmVSCode: InteractiveCodeBlockTheme<string> = {
     'support.type.object': { color: SyntacticColors.VariableName },
     'entity.name.tag': { color: SyntacticColors.Types },
     'entity.other.attribute-name': { color: SyntacticColors.VariableName },
+  },
+  block: {},
+};
+
+export const prismVSCode: InteractiveCodeBlockTheme<PrismTokenType> = {
+  tokens: {
+    [PrismTokenType.Boolean]: { color: SyntacticColors.Keyword },
+    [PrismTokenType.Builtin]: { color: SyntacticColors.VariableName },
+    [PrismTokenType.ClassName]: { color: SyntacticColors.Types },
+    [PrismTokenType.Comment]: { color: SyntacticColors.Comment },
+    [PrismTokenType.Constant]: { color: SyntacticColors.VariableName },
+    [PrismTokenType.Function]: { color: SyntacticColors.Function },
+    [PrismTokenType.FunctionVariable]: { color: SyntacticColors.Function },
+    [PrismTokenType.Keyword]: { color: SyntacticColors.Keyword },
+    [PrismTokenType.Number]: { color: SyntacticColors.Numeric },
+    [PrismTokenType.Operator]: { color: SyntacticColors.Operator },
+    [PrismTokenType.Punctuation]: { color: SyntacticColors.Punctuation },
+    [PrismTokenType.RegExp]: { color: SyntacticColors.RegExp },
+    [PrismTokenType.String]: { color: SyntacticColors.String },
+    [PrismTokenType.Type]: { color: SyntacticColors.Keyword },
   },
   block: {},
 };
