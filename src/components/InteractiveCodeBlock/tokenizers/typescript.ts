@@ -99,7 +99,7 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
               start: i === startLine ? start : 0,
               end: i === endLine ? end : lines[i].length,
             });
-            lineTokens.hash += `:${token.getHash()}`;
+            lineTokens.hash += `:${token.hash}`;
             lineTokens.tokens.push(token);
             tokens[i] = lineTokens;
           }

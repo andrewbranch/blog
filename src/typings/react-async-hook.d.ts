@@ -1,7 +1,7 @@
 declare module 'react-async-hook' {
   export function useAsync<T, P>(
     asyncFn: (param: P) => PromiseLike<T>,
-    param: P
+    param?: P
   ): {
     result: T | undefined;
     loading: boolean;

@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   siteMetadata: {
     title: 'Andrew Branch',
@@ -31,7 +33,14 @@ module.exports = {
         path: `${__dirname}/posts`,
       },
     },
-    'gatsby-transformer-remark',
+    {
+      resolve: 'gatsby-transformer-remark',
+      options: {
+        plugins: [{
+          resolve: `${__dirname}/gatsby-remark-id-code-blocks`
+        }]
+      }
+    },
     {
       resolve: 'gatsby-plugin-manifest',
       options: {

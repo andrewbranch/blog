@@ -61,7 +61,7 @@ export function createPrismTokenizer(options: PrismTokenizerOptions): Tokenizer<
         });
 
         syntaxHighlighterTokens.push(prismToken);
-        hash += `:${prismToken.getHash()}`;
+        hash += `:${prismToken.hash}`;
 
         consumedLength += length;
       }

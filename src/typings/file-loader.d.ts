@@ -1,8 +1,8 @@
 declare module '!file-loader!*' {
   const content: any;
-  export default content;
+  export = content;
 }
 declare module '*.wasm' {
   const content: any;
-  export default content;
+  export = content;
 }

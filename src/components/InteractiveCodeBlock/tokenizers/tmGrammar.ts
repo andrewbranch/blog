@@ -24,7 +24,7 @@ export function createTmGrammarTokenizer(options: TmGrammarTokenizerOptions): To
             });
             return {
               tokens: container.tokens.concat(token),
-              hash: container.hash + `:${token.getHash()}`,
+              hash: container.hash + `:${token.hash}`,
             };
           }, { tokens: [], hash: '' })),
         };
