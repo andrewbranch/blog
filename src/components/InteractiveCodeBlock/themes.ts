@@ -3,7 +3,7 @@ import { css } from '@emotion/core';
 import { TokenStyles } from './InteractiveCodeBlock';
 import { PrismTokenType } from './tokenizers/prism';
 import './themes.css';
-import { rhythm } from '../../utils/typography';
+import { rhythm, monoFamily } from '../../utils/typography';
 
 export interface InteractiveCodeBlockTheme<ScopeNameT extends string> {
   tokens: TokenStyles<ScopeNameT>;
@@ -26,11 +26,10 @@ export enum SyntacticColors {
 }
 
 export const commonBlockStyles = css({
-  fontFamily: 'monospace',
+  fontFamily: monoFamily.join(', '),
   fontVariantLigatures: 'none',
   fontFeatureSettings: 'normal',
-  fontSize: '90%',
-  border: '1px solid rgba(0, 0, 0, 0.1)',
+  fontSize: '80%',
   borderRadius: 3,
   overflow: 'auto',
   whiteSpace: 'nowrap',

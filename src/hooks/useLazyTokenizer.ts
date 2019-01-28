@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAsync } from 'react-async-hook';
 import {
   CacheableLineTokens,
   Token,
@@ -13,18 +12,27 @@ export interface UseLazyTokenizerOptions {
   editable: boolean;
 }
 
+const getTmTokenizer = async () => {
+  const grammar = await tmRegistry.loadGrammar('source.tsx');
+  return {
+    initialized: true,
+    loading: false,
+    tokenizer: createTmGrammarTokenizer({ grammar }),
+  };
+};
+
 export function useLazyTokenizer({ initialTokens, editable }: UseLazyTokenizerOptions) {
   const staticTokenizer = createStaticTokenizer(initialTokens);
-  const getTokenizer = React.useMemo(() => {
-    if (editable) {
-      return async () => staticTokenizer;
-    } else {
-      return async () => {
-        const grammar = await tmRegistry.loadGrammar('source.tsx');
-        return createTmGrammarTokenizer({ grammar });
-      };
-    }
-  }, [editable]);
-  const { result } = useAsync(getTokenizer);
-  return result || staticTokenizer;
+  const [tokenizer, setTokenizer] = React.useState({
+    initialized: false,
+    loading: false,
+    tokenizer: staticTokenizer,
+  });
+
+  if (editable && !tokenizer.initialized && !tokenizer.loading) {
+    setTokenizer({ ...tokenizer, loading: true });
+    getTmTokenizer().then(setTokenizer);
+  }
+
+  return tokenizer.tokenizer;
 }

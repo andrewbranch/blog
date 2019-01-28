@@ -10,6 +10,6 @@ module.exports = ({ markdownAST }) => {
         id: `code-${id++}`
       }
     };
+    node.value = node.value.trim();
   });
-  return markdownAST;
 };

@@ -36,9 +36,10 @@ module.exports = {
     {
       resolve: 'gatsby-transformer-remark',
       options: {
-        plugins: [{
-          resolve: `${__dirname}/gatsby-remark-id-code-blocks`
-        }]
+        plugins: [
+          `${__dirname}/gatsby-remark-id-code-blocks`,
+          'gatsby-remark-katex',
+        ]
       }
     },
     {

@@ -32,6 +32,7 @@ export const flex = {
 
 const grotesk: ObjectInterpolation<any> = {
   fontFamily: groteskSansFamily.join(', '),
+  fontWeight: 400,
 };
 
 const mono: ObjectInterpolation<any> = {

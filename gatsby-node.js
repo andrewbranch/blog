@@ -46,7 +46,7 @@ exports.createPages = async ({ graphql, actions }) => {
   const tokens = {};
   result.data.allMarkdownRemark.edges.forEach(({ node }) => {
     visit(node.htmlAst, node => node.tagName === 'code', code => {
-      const text = code.children[0].value;
+      const text = code.children[0].value.trimEnd();
       tokens[code.properties.id] = tokenizer.tokenizeDocument(text);
     });
     actions.createPage({
@@ -88,20 +88,4 @@ exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
   });
 
   actions.replaceWebpackConfig(config);
-};
-
-exports.setFieldsOnGraphQLNodeType = ({
-  type,
-  pathPrefix,
-  getNode,
-  getNodesByType,
-  cache,
-  getCache: possibleGetCache,
-  reporter,
-  ...rest
-}, pluginOptions) => {
-  if (type.name !== 'MarkdownRemark') {
-    return {}
-  }
-
 };

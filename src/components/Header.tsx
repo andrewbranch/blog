@@ -17,7 +17,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({ siteTitle }) => (
         css={[
           type.grotesk,
           textColor.secondary,
-          { margin: 0, textTransform: 'lowercase' },
+          { margin: 0, textTransform: 'lowercase', color: 'black', opacity: 0.54 },
           margin(0.5, Side.Left),
         ]}
       >

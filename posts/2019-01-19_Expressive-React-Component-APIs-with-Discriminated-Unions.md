@@ -6,6 +6,7 @@ slug: "expressive-react-component-apis-with-discriminated-unions"
 
 One of TypeScript’s most underrated features is _discriminated union types_. Borrowed primarily from functional programming (FP) languages, they match an elegant FP concept to a pattern people intuitively write in JavaScript. Discriminated unions also enable a useful pattern for typing complex React component props more safely and expressively. But first, we’ll review what discriminated unions look like independent of React.
 
+
 ## Setting the stage
 A simple union type in TypeScript looks like this:
 
@@ -21,7 +22,7 @@ Riveting, right? Things get more interesting with object types:
 
 ```ts
 interface Polygon {
-	numberOfSides: number;
+  numberOfSides: number;
   sideLengths: number[];
   angles: number[];
   getArea(): number;
@@ -251,7 +252,7 @@ class Select extends React.Component<SelectProps> {
 
 Let’s break down what happened here:
 
-1. For each constituent in the union, we removed its `extends` clause so the interface reflects only a discrete subset of functionality that can be intersected cleanly with anything else. (In this example, that’s not strictly necessary, but I think it’s cleaner, and I have an unverified theory that it’s less work for the compiler.¹) To reflect this change in our naming, we also suffixed each interface with `Fragment` to be clear that it’s not a complete working set of Select props.
+1. For each constituent in the union, we removed its `extends` clause so the interface reflects only a discrete subset of functionality that can be intersected cleanly with anything else. (In this example, that’s not strictly necessary, but I think it’s cleaner, and I have an unverified theory that it’s less work for the compiler.[^1]) To reflect this change in our naming, we also suffixed each interface with `Fragment` to be clear that it’s not a complete working set of Select props.
 2. We broke down grouped and non-grouped selects into two interfaces discriminated on `grouped`, just like we did before with `multiple`.
 3. We combined everything together with an intersection of unions. In plain English, SelectProps is made up of:
 	- `CommonSelectProps`, along with
@@ -260,23 +261,28 @@ Let’s break down what happened here:
 
 The expression is evaluated according to set theory’s distributive law, which in a nutshell says that unions are like adding numbers and intersections are like multiplying numbers. In algebra, the distributive properties of multiplication and addition give us
 
-> Z(A + B)(C + D) = ZAC + ZAD + ZBC + ZBD
+$$
+Z(A + B)(C + D) = ZAC + ZAD + ZBC + ZBD
+$$
 
 and set theory says the exact same thing about unions and intersections:
 
-> Z ∩ (A ∪ B) ∩ (C ∪ D) = (Z ∩ A ∩ B) ∪ (Z ∩ A ∩ D) ∪ (Z ∩ B ∩ C) ∪ (Z ∩ B ∩ D)
+$$
+Z \cap (A \cup B) \cap (C \cup D) = (Z \cap A \cap B) \cup (Z \cap A \cap D) \cup (Z \cap B \cap C) \cup (Z \cap B \cap D)
+$$
 
 If, like me, you haven’t studied computer science in an academic setting, this may look intimidatingly theoretical, but quickly make the following mental substitutions:
 
-- Set theory’s union operator, ∪, is written as `|` in TypeScript
-- Set theory’s intersection operator, ∩, is written as `&` in TypeScript²
-- Let Z = `CommonSelectProps`
-- Let A = `SingleSelectPropsFragment`
-- Let B = `MultipleSelectPropsFragment`
-- Let C = `UngroupedSelectPropsFragment`
-- Let D = `GroupedSelectPropsFragment`
+- Set theory’s union operator, $\cup$, is written as `|` in TypeScript
+- Set theory’s intersection operator, $\cap$, is written as `&` in TypeScript[^2]
+- Let $Z =$ `CommonSelectProps`
+- Let $A =$ `SingleSelectPropsFragment`
+- Let $B =$ `MultipleSelectPropsFragment`
+- Let $C =$ `UngroupedSelectPropsFragment`
+- Let $D =$ `GroupedSelectPropsFragment`
 
-So, the resulting type of `SelectProps` expands to every possible combination that we outlined earlier. And TypeScript will discriminate between each of those four constituents based on the props you pass to `Select`³:
+
+So, the resulting type of `SelectProps` expands to every possible combination that we outlined earlier. And TypeScript will discriminate between each of those four constituents based on the props you pass to `Select`[^3]:
 
 ```tsx
 // `renderGroupTitle` doesn’t exist unless `grouped` is set
@@ -313,8 +319,9 @@ Discriminated unions can be a powerful tool for writing better React component t
 - [Discriminated Unions · TypeScript Deep Dive](https://basarat.gitbooks.io/typescript/docs/types/discriminated-unions.html)
 - [Tagged union - Wikipedia](https://en.wikipedia.org/wiki/Tagged_union)
 
----
-
-¹ My hypothesis is that in calculating the intersection of _N_ types that all include common properties, the compiler must calculate for each of _n_ common properties of type _T_ that _T_ intersected with itself _N_ times is still _T_. This is surely not a computationally expensive code path, but unless there’s a clever short circuit early in the calculation,  it still has to happen _N ⨉ n_ times, all of which are unnecessary. This is purely unscientific speculation, and I would be happy for someone to correct or corroborate this theory.
-² This statement applies only in the type declaration space. `|` and `&` are bitwise operators in the variable declaration space. E.g., `|` is the union operator in `var x: string | number` but the bitwise _or_ operator in `var x = 0xF0 | 0x0F`.
-³ TypeScript does successfully discriminates between these constituents, but type inference [is currently broken](https://github.com/Microsoft/TypeScript/issues/29340) for properties that have different function signatures in different constituents when any of those constituents are an intersection type.
+[^1]:
+  My hypothesis is that in calculating the intersection of _N_ types that all include common properties, the compiler must calculate for each of _n_ common properties of type _T_ that _T_ intersected with itself _N_ times is still _T_. This is surely not a computationally expensive code path, but unless there’s a clever short circuit early in the calculation,  it still has to happen _N ⨉ n_ times, all of which are unnecessary. This is purely unscientific speculation, and I would be happy for someone to correct or corroborate this theory.
+[^2]:
+  This statement applies only in the type declaration space. `|` and `&` are bitwise operators in the variable declaration space. E.g., `|` is the union operator in `var x: string | number` but the bitwise _or_ operator in `var x = 0xF0 | 0x0F`.
+[^3]:
+  TypeScript does successfully discriminate between these constituents, but type inference [is currently broken](https://github.com/Microsoft/TypeScript/issues/29340) for properties that have different function signatures in different constituents when any of those constituents are an intersection type.

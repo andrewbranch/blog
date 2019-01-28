@@ -6,11 +6,11 @@ import RehypeReact from 'rehype-react';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import { Token, CacheableLineTokens } from '../components/InteractiveCodeBlock/tokenizers';
 import { useLazyTokenizer } from '../hooks';
+import 'katex/dist/katex.min.css';
 
 export interface PostProps {
   data: {
     markdownRemark: {
-      html: string;
       htmlAst: any;
       frontmatter: {
         title: string;
@@ -25,7 +25,6 @@ export interface PostProps {
 export const query = graphql`
   query($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
-      html,
       htmlAst,
       frontmatter {
         title
@@ -79,21 +78,22 @@ function createRenderer(
       if (type === 'pre') {
         const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = (children as any)[0];
         const tokensForBlock = tokens[codeChild.props.id!];
-        return (
-          <EditableContext.Consumer>
-            {editable => (
-              <LazyCodeBlock
-                initialTokens={tokensForBlock}
-                initialValue={(codeChild.props.children as any)[0]}
-                editable={editable}
-                onStartEditing={() => setEditable(true)}
-              />
-            )}
-          </EditableContext.Consumer>
-        );
-      } else {
-        return React.createElement(type, props, children);
+        if (tokensForBlock) {
+          return (
+            <EditableContext.Consumer key={codeChild.props.id}>
+              {editable => (
+                <LazyCodeBlock
+                  initialTokens={tokensForBlock}
+                  initialValue={(codeChild.props.children as any)[0].trimEnd()}
+                  editable={editable}
+                  onStartEditing={() => editable || setEditable(true)}
+                />
+              )}
+            </EditableContext.Consumer>
+          );
+        }
       }
+      return React.createElement(type, props, children);
     },
   }).Compiler;
 
@@ -104,6 +104,7 @@ function Post({ data, pageContext }: PostProps) {
   const post = data.markdownRemark;
   const [editable, setEditable] = React.useState(false);
   const renderAst = React.useMemo(() => createRenderer(pageContext.tokens, setEditable), [pageContext.tokens]);
+  (window as any).pageContext = pageContext;
   return (
     <Layout>
       <div>
