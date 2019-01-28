@@ -1,7 +1,9 @@
 import ts from 'typescript';
+import { css } from '@emotion/core';
 import { TokenStyles } from './InteractiveCodeBlock';
 import { PrismTokenType } from './tokenizers/prism';
 import './themes.css';
+import { rhythm } from '../../utils/typography';
 
 export interface InteractiveCodeBlockTheme<ScopeNameT extends string> {
   tokens: TokenStyles<ScopeNameT>;
@@ -23,14 +25,19 @@ export enum SyntacticColors {
   Operator = '#000000',
 }
 
-export const commonBlockStyles: React.CSSProperties & { [key: string]: string | number } = {
+export const commonBlockStyles = css({
   fontFamily: 'monospace',
+  fontVariantLigatures: 'none',
+  fontFeatureSettings: 'normal',
   fontSize: '90%',
   border: '1px solid rgba(0, 0, 0, 0.1)',
   borderRadius: 3,
   overflow: 'auto',
   whiteSpace: 'nowrap',
-};
+  ':not(:last-child)': {
+    marginBottom: rhythm(1),
+  },
+});
 
 export const typeScriptVSCode: InteractiveCodeBlockTheme<ts.ClassificationTypeNames> = {
   tokens: {

@@ -5,6 +5,7 @@ import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import { Token, CacheableLineTokens } from '../components/InteractiveCodeBlock/tokenizers';
+import { useLazyTokenizer } from '../hooks';
 
 export interface PostProps {
   data: {
@@ -33,28 +34,62 @@ export const query = graphql`
   }
 `;
 
-function createRenderer(tokens: { [key: string]: CacheableLineTokens<Token<string, string>>[] }) {
+interface LazyCodeBlockProps {
+  initialValue: string;
+  initialTokens: CacheableLineTokens<Token<string, string>>[];
+  editable: boolean;
+  onStartEditing: () => void;
+}
+
+function LazyCodeBlock({
+  initialValue,
+  initialTokens,
+  editable,
+  onStartEditing,
+}: LazyCodeBlockProps) {
+  const tokenizer = useLazyTokenizer({ initialTokens, editable });
+  return (
+    <InteractiveCodeBlock
+      className="tm-theme"
+      initialValue={initialValue}
+      tokenizer={tokenizer}
+      readOnly={!editable}
+      onClick={onStartEditing}
+      renderToken={(token, tokenProps) => {
+        return (
+          <span
+            className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
+            data-token-hash={token.hash}
+            {...tokenProps}
+          />
+        );
+      }}
+    />
+  );
+}
+
+const EditableContext = React.createContext(false);
+
+function createRenderer(
+  tokens: { [key: string]: CacheableLineTokens<Token<string, string>>[] },
+  setEditable: (editable: boolean) => void,
+) {
   const renderAst = new RehypeReact({
     createElement: (type: string, props: React.HTMLAttributes<HTMLElement>, children: React.ReactChildren) => {
       if (type === 'pre') {
         const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = (children as any)[0];
-        const tokensForLine = tokens[codeChild.props.id!];
+        const tokensForBlock = tokens[codeChild.props.id!];
         return (
-          <InteractiveCodeBlock
-            data-id={props.id}
-            className="tm-theme"
-            initialValue={(codeChild.props.children as any)[0]}
-            tokenizer={{ tokenizeDocument: () =>  tokensForLine}}
-            renderToken={(token, tokenProps) => {
-              return (
-                <span
-                  className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
-                  data-token-hash={token.hash}
-                  {...tokenProps}
-                />
-              );
-            }}
-          />
+          <EditableContext.Consumer>
+            {editable => (
+              <LazyCodeBlock
+                initialTokens={tokensForBlock}
+                initialValue={(codeChild.props.children as any)[0]}
+                editable={editable}
+                onStartEditing={() => setEditable(true)}
+              />
+            )}
+          </EditableContext.Consumer>
         );
       } else {
         return React.createElement(type, props, children);
@@ -65,19 +100,21 @@ function createRenderer(tokens: { [key: string]: CacheableLineTokens<Token<strin
   return renderAst;
 }
 
-const Post = ({ data, pageContext }: PostProps) => {
+function Post({ data, pageContext }: PostProps) {
   const post = data.markdownRemark;
-  const renderAst = React.useMemo(() => createRenderer(pageContext.tokens), [pageContext.tokens]);
-  (window as any).pageContext = pageContext;
+  const [editable, setEditable] = React.useState(false);
+  const renderAst = React.useMemo(() => createRenderer(pageContext.tokens, setEditable), [pageContext.tokens]);
   return (
     <Layout>
       <div>
         <h1>{post.frontmatter.title}</h1>
-        <div>{renderAst(data.markdownRemark.htmlAst)}</div>
+        <EditableContext.Provider value={editable}>
+          <div>{renderAst(data.markdownRemark.htmlAst)}</div>
+        </EditableContext.Provider>
       </div>
     </Layout>
   );
-};
+}
 
 Post.displayName = 'Post';
 export default Post;

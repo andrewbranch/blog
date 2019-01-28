@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Editor, EditorProps } from 'slate-react';
+import { Editor, EditorProps, EventHook } from 'slate-react';
 import { List } from 'immutable';
 import { Value, NodeJSON, Operation, Decoration, Point, Mark, Node, Text, Document } from 'slate';
 import { Global, css } from '@emotion/core';
@@ -110,8 +110,10 @@ export interface InteractiveCodeBlockProps<
   renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
   onChange?: (value: string, operations: List<Operation>) => void;
+  onClick?: EventHook;
   className?: string;
   padding: number | string;
+  readOnly?: boolean;
   css?: React.DOMAttributes<any>['css'];
 }
 
@@ -167,8 +169,11 @@ export function InteractiveCodeBlock<
         renderMark={renderMark}
         decorateNode={decorateLineSync}
         className={props.className}
+        onClick={props.onClick}
         css={commonBlockStyles}
         spellCheck={false}
+        autoCorrect={false}
+        readOnly={props.readOnly}
         style={{ wordWrap: 'normal', whiteSpace: 'pre', padding: props.padding }}
       />
     </>
