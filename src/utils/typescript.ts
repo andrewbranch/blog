@@ -204,7 +204,7 @@ export function createVirtualLanguageServiceHost(
 
 export function createVirtualTypeScriptEnvironment(
   sourceFiles: ts.SourceFile[],
-  libraries: ThirdPartyLibraryFile[] = []
+  libraries: ThirdPartyLibraryFile[] = [],
 ): {
   watchProgram: ts.WatchOfFilesAndCompilerOptions<ts.BuilderProgram>,
   languageService: ts.LanguageService,

@@ -1,8 +1,12 @@
 import ts from 'typescript';
+import { css } from '@emotion/core';
 import { TokenStyles } from './InteractiveCodeBlock';
+import { PrismTokenType } from './tokenizers/prism';
+import './themes.css';
+import { rhythm, monoFamily } from '../../utils/typography';
 
-export interface InteractiveCodeBlockTheme<TokenTypeT extends string> {
-  tokens: TokenStyles<TokenTypeT>;
+export interface InteractiveCodeBlockTheme<ScopeNameT extends string> {
+  tokens: TokenStyles<ScopeNameT>;
   block: React.CSSProperties & { [key: string]: string | number };
 }
 
@@ -18,16 +22,21 @@ export enum SyntacticColors {
   String = '#a31515',
   Property = '#0451a5',
   Punctuation = '#000000',
+  Operator = '#000000',
 }
 
-export const commonBlockStyles: React.CSSProperties & { [key: string]: string | number } = {
-  fontFamily: 'monospace',
-  fontSize: '90%',
-  border: '1px solid rgba(0, 0, 0, 0.1)',
+export const commonBlockStyles = css({
+  fontFamily: monoFamily.join(', '),
+  fontVariantLigatures: 'none',
+  fontFeatureSettings: 'normal',
+  fontSize: '80%',
   borderRadius: 3,
   overflow: 'auto',
   whiteSpace: 'nowrap',
-};
+  ':not(:last-child)': {
+    marginBottom: rhythm(1),
+  },
+});
 
 export const typeScriptVSCode: InteractiveCodeBlockTheme<ts.ClassificationTypeNames> = {
   tokens: {
@@ -55,6 +64,26 @@ export const typeScriptVSCode: InteractiveCodeBlockTheme<ts.ClassificationTypeNa
     [ts.ClassificationTypeNames.typeAliasName]: { color: SyntacticColors.Types },
     [ts.ClassificationTypeNames.typeParameterName]: { color: SyntacticColors.Types },
     [ts.ClassificationTypeNames.whiteSpace]: {},
+  },
+  block: {},
+};
+
+export const prismVSCode: InteractiveCodeBlockTheme<PrismTokenType> = {
+  tokens: {
+    [PrismTokenType.Boolean]: { color: SyntacticColors.Keyword },
+    [PrismTokenType.Builtin]: { color: SyntacticColors.VariableName },
+    [PrismTokenType.ClassName]: { color: SyntacticColors.Types },
+    [PrismTokenType.Comment]: { color: SyntacticColors.Comment },
+    [PrismTokenType.Constant]: { color: SyntacticColors.VariableName },
+    [PrismTokenType.Function]: { color: SyntacticColors.Function },
+    [PrismTokenType.FunctionVariable]: { color: SyntacticColors.Function },
+    [PrismTokenType.Keyword]: { color: SyntacticColors.Keyword },
+    [PrismTokenType.Number]: { color: SyntacticColors.Numeric },
+    [PrismTokenType.Operator]: { color: SyntacticColors.Operator },
+    [PrismTokenType.Punctuation]: { color: SyntacticColors.Punctuation },
+    [PrismTokenType.RegExp]: { color: SyntacticColors.RegExp },
+    [PrismTokenType.String]: { color: SyntacticColors.String },
+    [PrismTokenType.Type]: { color: SyntacticColors.Keyword },
   },
   block: {},
 };

@@ -1,19 +1,19 @@
-export interface TokenProperties<TokenTypeT extends string> {
-  type: TokenTypeT;
-  typeHash?: string;
-  start: number;
-  end: number;
+export interface TokenProperties<TypeT extends string, ScopeNameT extends string> {
+  readonly type: TypeT;
+  readonly scopes: ScopeNameT[];
+  readonly start: number;
+  readonly end: number;
 }
 
-export interface Token<TokenTypeT extends string> extends TokenProperties<TokenTypeT> {
-  is<T extends TokenTypeT>(type: T): this is Token<T>;
-  getHash(): string;
+export interface Token<TypeT extends string, ScopeNameT extends string> extends TokenProperties<TypeT, ScopeNameT> {
+  readonly hash: string;
 }
 
-export function Token<TokenTypeT extends string>(properties: TokenProperties<TokenTypeT>): Token<TokenTypeT> {
+export function Token<TypeT extends string, ScopeNameT extends string>(
+  properties: TokenProperties<TypeT, ScopeNameT>,
+): Token<TypeT, ScopeNameT> {
   return {
     ...properties,
-    is: type => type === properties.type,
-    getHash: () => `${properties.typeHash || properties.type}.${properties.start}.${properties.end}`,
+    hash: `${properties.scopes.join('!')}.${properties.start}.${properties.end}`,
   };
 }
