@@ -4,8 +4,11 @@ import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import { Token, CacheableLineTokens } from '../components/InteractiveCodeBlock/tokenizers';
-import { useLazyTokenizer } from '../hooks';
+import { useProgressiveTokenizer } from '../hooks';
 import 'katex/dist/katex.min.css';
+import { useDeferredRender } from '../hooks/useDeferredRender';
+import { CheapCodeBlock } from '../components/CheapCodeBlock';
+import { isSSR } from '../utils/ssr';
 
 export interface PostProps {
   data: {
@@ -39,14 +42,14 @@ interface LazyCodeBlockProps {
   onStartEditing: () => void;
 }
 
-function LazyCodeBlock({
+function ProgressiveCodeBlock({
   initialValue,
   initialTokens,
   editable,
   onStartEditing,
 }: LazyCodeBlockProps) {
-  const tokenizer = useLazyTokenizer({ initialTokens, editable });
-  return (
+  const tokenizer = useProgressiveTokenizer({ initialTokens, editable });
+  const deferredCodeBlock = useDeferredRender(() => (
     <InteractiveCodeBlock
       className="tm-theme"
       initialValue={initialValue}
@@ -63,7 +66,9 @@ function LazyCodeBlock({
         );
       }}
     />
-  );
+  ), { timeout: 1000 });
+
+  return deferredCodeBlock || <CheapCodeBlock>{initialValue}</CheapCodeBlock>;
 }
 
 const EditableContext = React.createContext(false);
@@ -81,7 +86,7 @@ function createRenderer(
           return (
             <EditableContext.Consumer key={codeChild.props.id}>
               {editable => (
-                <LazyCodeBlock
+                <ProgressiveCodeBlock
                   initialTokens={tokensForBlock}
                   initialValue={(codeChild.props.children as any)[0].trimEnd()}
                   editable={editable}

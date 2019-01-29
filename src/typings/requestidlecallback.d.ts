@@ -18,7 +18,7 @@ declare module 'requestidlecallback' {
     }
 
     interface IdleRequestOptions {
-      timeout: number;
+      timeout?: number;
     }
   }
 }

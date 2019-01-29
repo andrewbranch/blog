@@ -22,12 +22,12 @@ const getTmTokenizer = async () => {
   };
 };
 
-export function useLazyTokenizer({ initialTokens, editable }: UseLazyTokenizerOptions) {
-  const staticTokenizer = createStaticTokenizer(initialTokens);
+export function useProgressiveTokenizer({ initialTokens, editable }: UseLazyTokenizerOptions) {
+  const emptyTokenizer = createStaticTokenizer(initialTokens);
   const [tokenizer, setTokenizer] = React.useState({
     initialized: false,
     loading: false,
-    tokenizer: staticTokenizer,
+    tokenizer: emptyTokenizer,
   });
 
   if (editable && !tokenizer.initialized && !tokenizer.loading) {

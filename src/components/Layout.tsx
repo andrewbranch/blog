@@ -37,6 +37,9 @@ const Layout: React.FunctionComponent = ({ children }) => (
               padding: 0,
             },
           },
+          pre: {
+            lineHeight: 1.6,
+          },
           code: [type.mono, {
             fontSize: '0.8rem',
             background: gray(0.05),

@@ -1,2 +1,2 @@
 export * from './useHover';
-export * from './useLazyTokenizer';
+export * from './useProgressiveTokenizer';
