@@ -1,7 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import Layout from '../components/layout';
 import { graphql } from 'gatsby';
-// @ts-ignore
 import RehypeReact from 'rehype-react';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import { Token, CacheableLineTokens } from '../components/InteractiveCodeBlock/tokenizers';
@@ -74,7 +73,7 @@ function createRenderer(
   setEditable: (editable: boolean) => void,
 ) {
   const renderAst = new RehypeReact({
-    createElement: (type: string, props: React.HTMLAttributes<HTMLElement>, children: React.ReactChildren) => {
+    createElement: (type, props, children) => {
       if (type === 'pre') {
         const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = (children as any)[0];
         const tokensForBlock = tokens[codeChild.props.id!];

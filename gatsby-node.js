@@ -11,7 +11,8 @@ const path = require('path');
 const deburr = require('lodash.deburr');
 const kebabCase = require('lodash.kebabcase');
 const mergeWebpack = require('webpack-merge');
-const { tmRegistry } = require('./src/utils/tmRegistry');
+const { getTmRegistry } = require('./src/utils/textmate/getTmRegistry');
+const { ssrFileProvider } = require('./src/utils/textmate/ssrFileProvider');
 const { createTmGrammarTokenizer } = require('./src/components/InteractiveCodeBlock/tokenizers/tmGrammar');
 const visit = require('unist-util-visit');
 
@@ -41,7 +42,7 @@ exports.createPages = async ({ graphql, actions }) => {
       }
     }
   `);
-  const grammar = await tmRegistry.loadGrammar('source.tsx');
+  const grammar = await getTmRegistry(ssrFileProvider).loadGrammar('source.tsx');
   const tokenizer = createTmGrammarTokenizer({ grammar });
   const tokens = {};
   result.data.allMarkdownRemark.edges.forEach(({ node }) => {

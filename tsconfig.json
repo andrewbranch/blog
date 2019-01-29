@@ -8,7 +8,8 @@
     "esModuleInterop": true,
     "jsx": "react",
     "types": [
-      "@emotion/core"
+      "@emotion/core",
+      "@types/node"
     ]
   }
 }

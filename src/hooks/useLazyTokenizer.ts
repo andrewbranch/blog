@@ -5,15 +5,16 @@ import {
   createTmGrammarTokenizer,
   createStaticTokenizer,
 } from '../components/InteractiveCodeBlock/tokenizers';
-import { tmRegistry } from '../utils/tmRegistry';
+import { getTmRegistry } from '../utils/textmate/getTmRegistry';
+import { webpackFileProvider } from '../utils/textmate/webpackFileProvider';
 
 export interface UseLazyTokenizerOptions {
-  initialTokens: CacheableLineTokens<Token<string, string>>[],
+  initialTokens: CacheableLineTokens<Token<string, string>>[];
   editable: boolean;
 }
 
 const getTmTokenizer = async () => {
-  const grammar = await tmRegistry.loadGrammar('source.tsx');
+  const grammar = await getTmRegistry(webpackFileProvider).loadGrammar('source.tsx');
   return {
     initialized: true,
     loading: false,
