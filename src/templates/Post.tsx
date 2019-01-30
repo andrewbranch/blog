@@ -8,7 +8,6 @@ import { useProgressiveTokenizer } from '../hooks';
 import 'katex/dist/katex.min.css';
 import { useDeferredRender } from '../hooks/useDeferredRender';
 import { CheapCodeBlock } from '../components/CheapCodeBlock';
-import { isSSR } from '../utils/ssr';
 
 export interface PostProps {
   data: {
