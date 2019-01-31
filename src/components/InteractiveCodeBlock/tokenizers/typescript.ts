@@ -1,27 +1,42 @@
 import ts from 'typescript';
-import { Tokenizer, CacheableLineTokens } from './types';
-import { Token, TokenProperties } from './token';
+import {
+  Tokenizer,
+  CacheableLineTokens,
+  TypeScriptTokenProperties,
+  TypeScriptTokenType,
+  TypeScriptDiagnosticTokenType,
+  TypeScriptTokenizerOptions,
+} from './types';
+import { Token } from './token';
 import { Omit } from '../../../utils/types';
 
-export interface TypeScriptTokenizerOptions {
-  fileName: string;
-  preambleCode?: string;
-  languageService: ts.LanguageService;
-}
+export type TypeScriptIdentifierToken = Token<
+  TypeScriptTokenType.Identifier,
+  import('typescript').ClassificationTypeNames
+> & TypeScriptTokenProperties<import('typescript').ClassificationTypeNames>;
+export type TypeScriptDiagnosticToken = Token<
+  TypeScriptTokenType.Diagnostic,
+  TypeScriptDiagnosticTokenType
+> & TypeScriptTokenProperties<TypeScriptDiagnosticTokenType>;
 
-export interface TypeScriptTokenProperties extends TokenProperties<'ts', ts.ClassificationTypeNames> {
-  sourcePosition: number;
-}
+export type TypeScriptToken = TypeScriptIdentifierToken | TypeScriptDiagnosticToken;
 
-export type TypeScriptTokenType = ts.ClassificationTypeNames;
-export type TypeScriptToken = Token<'ts', ts.ClassificationTypeNames> & TypeScriptTokenProperties;
-
-export function TypeScriptToken({
+export function TypeScriptIdentifierToken({
   sourcePosition,
   ...tokenProperties
-}: Omit<TypeScriptTokenProperties, 'type'>): TypeScriptToken {
+}: Omit<TypeScriptTokenProperties<ts.ClassificationTypeNames>, 'type'>): TypeScriptIdentifierToken {
   return {
-    ...Token({ ...tokenProperties, type: 'ts' }),
+    ...Token({ ...tokenProperties, type: TypeScriptTokenType.Identifier }),
+    sourcePosition,
+  };
+}
+
+export function TypeScriptDiagnosticToken({
+  sourcePosition,
+  ...tokenProperties
+}: Omit<TypeScriptTokenProperties<TypeScriptDiagnosticTokenType>, 'type'>): TypeScriptDiagnosticToken {
+  return {
+    ...Token({ ...tokenProperties, type: TypeScriptTokenType.Diagnostic }),
     sourcePosition,
   };
 }
@@ -35,6 +50,8 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
 
       const visibleSpan = { start: preambleCode.length, length: fullText.length };
       const syntacticClassifications = languageService.getSyntacticClassifications(fileName, visibleSpan);
+      const syntacticDiagnostics = languageService.getSyntacticDiagnostics(fileName);
+      const semanticDiagnostics = languageService.getSemanticDiagnostics(fileName);
       return lines.reduce(({ consumedLength, tokens }, line, index) => {
         const newConsumedLength = consumedLength + line.length + 1; // Add one for '\n' removed in split
         tokens[index] = { hash: '', tokens: [] };
@@ -47,14 +64,47 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
             continue;
           }
 
-          const token = TypeScriptToken({
+          const token = TypeScriptIdentifierToken({
             scopes: [classificationType],
             start: textSpan.start - consumedLength,
             end: textSpan.start + textSpan.length - consumedLength,
             sourcePosition: textSpan.start,
           });
           tokens[index].tokens.push(token);
-          tokens[index].hash += token.hash;
+          tokens[index].hash += `!${token.hash}`;
+        }
+
+        while (
+          syntacticDiagnostics.length
+          && syntacticDiagnostics[0].start < newConsumedLength
+        ) {
+          const { start, length } = syntacticDiagnostics.shift()!;
+          const end = Math.min(start + length - consumedLength, line.length);
+          const token = TypeScriptDiagnosticToken({
+            scopes: [TypeScriptDiagnosticTokenType.Syntactic],
+            sourcePosition: start,
+            start: start - consumedLength,
+            end,
+          });
+          tokens[index].tokens.push(token);
+          tokens[index].hash += `!${token.hash}`;
+        }
+
+        while (
+          semanticDiagnostics.length
+          && semanticDiagnostics[0].start
+          && semanticDiagnostics[0].start < newConsumedLength
+        ) {
+          const { start, length } = semanticDiagnostics.shift()!;
+          const end = Math.min(start! + length! - consumedLength, line.length);
+          const token = TypeScriptDiagnosticToken({
+            scopes: [TypeScriptDiagnosticTokenType.Semantic],
+            sourcePosition: start!,
+            start: start! - consumedLength,
+            end,
+          });
+          tokens[index].tokens.push(token);
+          tokens[index].hash += `!${token.hash}`;
         }
 
         return { consumedLength: newConsumedLength, tokens };

@@ -3,12 +3,13 @@ import Layout from '../components/layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
-import { CacheableLineTokens } from '../components/InteractiveCodeBlock/tokenizers';
+import { CacheableLineTokens, TypeScriptTokenType } from '../components/InteractiveCodeBlock/tokenizers/types';
 import { useProgressiveTokenizer, ComposedTokenT } from '../hooks';
 import { useDeferredRender } from '../hooks/useDeferredRender';
 import { CheapCodeBlock } from '../components/CheapCodeBlock';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 import 'katex/dist/katex.min.css';
+import { TypeScriptDiagnosticToken } from '../components/InteractiveCodeBlock/TypeScriptDiagnosticToken';
 
 export interface TokenContext {
   text: string;
@@ -84,7 +85,7 @@ function ProgressiveCodeBlock({
                     {...tokenProps}
                   />
                 );
-              case 'ts':
+              case TypeScriptTokenType.Identifier:
                 return (
                   <TypeScriptIdentifierToken
                     staticQuickInfo={staticQuickInfo}
@@ -93,6 +94,10 @@ function ProgressiveCodeBlock({
                     position={token.sourcePosition}
                     {...tokenProps}
                   />
+                );
+              case TypeScriptTokenType.Diagnostic:
+                return (
+                  <TypeScriptDiagnosticToken {...tokenProps} />
                 );
               default:
                 return <span {...tokenProps} />;

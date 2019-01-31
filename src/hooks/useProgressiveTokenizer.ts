@@ -26,7 +26,7 @@ async function getTmTokenizer() {
 }
 
 // tslint:disable-next-line:max-line-length
-type TypeScriptTokenizerOptions = import('../components/InteractiveCodeBlock/tokenizers/typescript').TypeScriptTokenizerOptions;
+type TypeScriptTokenizerOptions = import('../components/InteractiveCodeBlock/tokenizers/types').TypeScriptTokenizerOptions;
 async function getTypeScriptTokenizer(options: TypeScriptTokenizerOptions) {
   const { createTypeScriptTokenizer } = await import('../components/InteractiveCodeBlock/tokenizers/typescript');
   return createTypeScriptTokenizer(options);
