@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useHover, HoverProps, UseHoverOptions } from '../../hooks';
 import { ClassNames, ObjectInterpolation } from '@emotion/core';
@@ -9,7 +9,7 @@ export interface InjectedTriggerProps extends HoverProps, React.RefAttributes<HT
 
 }
 
-export interface InjectedTooltipProps extends HoverProps {
+export interface InjectedTooltipProps extends HoverProps, React.RefAttributes<HTMLElement> {
   className: string;
   style: React.CSSProperties;
 }
@@ -44,7 +44,20 @@ const overlayStyles: ObjectInterpolation<any> = {
   boxShadow: `0 0 0 1px ${gray(0.1)}`,
 };
 
-export function Tooltip({
+interface TooltipContext {
+  isInTooltip: boolean;
+  renderInParent: (
+    node: React.ReactNode,
+    tooltipRef: React.RefObject<HTMLElement>,
+    portalNode: Element,
+  ) => React.ReactPortal | null;
+}
+const TooltipContext = React.createContext<TooltipContext>({
+  isInTooltip: false,
+  renderInParent: (node, _, portalNode) => createPortal(node, portalNode),
+});
+
+function Tooltip({
   renderTooltip,
   renderTrigger,
   portalNode,
@@ -53,25 +66,50 @@ export function Tooltip({
 }: TooltipProps) {
   const [isHovering, hoverProps] = useHover(useHoverOptions);
   const triggerRef = useRef<HTMLElement>(null);
+  const tooltipRef = useRef<HTMLElement>(null);
+  const [childTooltip, setChildTooltip] = useState<React.ReactNode>(null);
+  const [offset, setOffset] = useState(0)
   return (
-    <React.Fragment>
-      {renderTrigger({
-        ...hoverProps,
-        ref: triggerRef,
-      }, isHovering)}
-      {isSSR ? null : createPortal(
-        isHovering ? (
-          <ClassNames>
-            {({ css }) => renderTooltip({
-              ...hoverProps,
-              style: createPositionStyle(triggerRef.current, triggerMargin),
-              className: css(overlayStyles),
-            })}
-          </ClassNames>
-        ) : null,
-        portalNode,
+    <TooltipContext.Consumer>
+      {({ renderInParent }) => (
+        <TooltipContext.Provider
+          value={{
+            isInTooltip: true,
+            renderInParent: (node, childRef) => {
+              setTimeout(() => {
+                if ((!childTooltip || !node) && node !== childTooltip) {
+                  setChildTooltip(node);
+                  setOffset(childRef.current ? childRef.current.clientHeight : 0);
+                }
+              });
+              return null;
+            },
+          }}
+        >
+          {renderTrigger({
+            ...hoverProps,
+            ref: triggerRef,
+          }, isHovering)}
+          {isSSR ? null : renderInParent(
+            isHovering ? (
+              <>
+                <ClassNames>
+                  {({ css }) => renderTooltip({
+                    ...hoverProps,
+                    ref: tooltipRef,
+                    style: createPositionStyle(triggerRef.current, triggerMargin + offset),
+                    className: css(overlayStyles),
+                  })}
+                </ClassNames>
+                {childTooltip}
+              </>
+            ) : null,
+            tooltipRef,
+            portalNode,
+          )}
+        </TooltipContext.Provider>
       )}
-    </React.Fragment>
+    </TooltipContext.Consumer>
   );
 }
 
@@ -79,3 +117,6 @@ Tooltip.defaultProps = {
   portalNode: isSSR ? undefined : document.body,
   triggerMargin: 2,
 };
+
+const MemoizedTooltip = React.memo(Tooltip);
+export { MemoizedTooltip as Tooltip };
