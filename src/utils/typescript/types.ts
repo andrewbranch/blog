@@ -7,7 +7,7 @@ export enum ThirdPartyLib {
 export interface ThirdPartyLibraryFile {
   moduleName: ThirdPartyLib;
   modulePath: string;
-  typingsSourceFile: ts.SourceFile;
+  getTypingsSourceFile: () => Promise<ts.SourceFile>;
 }
 
 export interface Libraries {

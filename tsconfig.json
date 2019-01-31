@@ -12,6 +12,6 @@
     ]
   },
   "exclude": [
-    "./src/utils/textmate/ssrFileProvider.ts"
+    "**/*.ssr.ts"
   ]
 }

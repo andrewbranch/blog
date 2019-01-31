@@ -7,7 +7,7 @@ import {
   TextMateToken,
 } from '../components/InteractiveCodeBlock/tokenizers';
 import { getTmRegistry } from '../utils/textmate/getTmRegistry';
-import { webpackFileProvider } from '../utils/textmate/webpackFileProvider';
+import { webpackFileProvider } from '../utils/textmate/fileProvider.webpack';
 import { composeTokenizers } from '../components/InteractiveCodeBlock/tokenizers/composeTokenizers';
 
 export type ComposedTokenT = TextMateToken

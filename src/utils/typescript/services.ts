@@ -3,7 +3,7 @@ import ts from 'typescript';
 export function createVirtualCompilerHost(
   sourceFiles: Map<string, ts.SourceFile>,
   tsLibFiles: Map<string, ts.SourceFile>,
-  thirdPartyLibraries: Map<string, ts.SourceFile>,
+  thirdPartyLibraries: Map<string, ts.SourceFile> = new Map(),
 ): {
   compilerHost: ts.CompilerHost,
   updateFile: (sourceFile: ts.SourceFile) => boolean,
@@ -44,7 +44,7 @@ export function createVirtualCompilerHost(
 export function createVirtualWatchHost(
   sourceFiles: Map<string, ts.SourceFile>,
   tsLibFiles: Map<string, ts.SourceFile>,
-  thirdPartyLibraries: Map<string, ts.SourceFile>,
+  thirdPartyLibraries: Map<string, ts.SourceFile> = new Map(),
 ): {
   watchHost: ts.CompilerHost & ts.WatchCompilerHost<ts.BuilderProgram>,
   updateFile: (sourceFile: ts.SourceFile) => void,
@@ -141,7 +141,7 @@ export interface VirtualTypeScriptEnvironment {
 export function createVirtualTypeScriptEnvironment(
   sourceFiles: Map<string, ts.SourceFile>,
   tsLibFiles: Map<string, ts.SourceFile>,
-  thirdPartyLibraries: Map<string, ts.SourceFile>,
+  thirdPartyLibraries: Map<string, ts.SourceFile> = new Map(),
 ): VirtualTypeScriptEnvironment {
   const watchHostController = createVirtualWatchHost(sourceFiles, tsLibFiles, thirdPartyLibraries);
   const languageServiceHostController = createVirtualLanguageServiceHost(sourceFiles, watchHostController.watchHost);
@@ -165,24 +165,4 @@ export function createVirtualTypeScriptEnvironment(
       updateFile(ts.createSourceFile(fileName, content, ts.ScriptTarget.ES2015));
     },
   };
-}
-
-/**
- * Like ts.forEachChild, but in generator form.
- * @param node The root node to walk.
- * @param predicate Specifies what nodes to yield.
- */
-export function* createNodeWalker<T extends ts.Node = ts.Node>(
-  node: ts.Node,
-  predicate: (node: ts.Node) => node is T,
-): IterableIterator<T> {
-  if (predicate(node)) {
-    yield node;
-  }
-  const children = node.getChildren();
-  if (children && children.length) {
-    for (const child of children) {
-      yield* createNodeWalker(child, predicate);
-    }
-  }
 }

@@ -13,6 +13,7 @@ import 'katex/dist/katex.min.css';
 export interface TokenContext {
   text: string;
   tokens: CacheableLineTokens<ComposedTokenT>[];
+  quickInfo: { [key: number]: import('typescript').QuickInfo };
 }
 
 export interface PostProps {
@@ -45,14 +46,16 @@ export const query = graphql`
 interface ProgressiveCodeBlockProps {
   fileName: string;
   initialValue: string;
-  initialTokens: CacheableLineTokens<ComposedTokenT>[];
+  staticQuickInfo: { [key: number]: import('typescript').QuickInfo };
+  staticTokens: CacheableLineTokens<ComposedTokenT>[];
   onStartEditing: () => void;
 }
 
 function ProgressiveCodeBlock({
   fileName,
   initialValue,
-  initialTokens,
+  staticQuickInfo,
+  staticTokens: initialTokens,
   onStartEditing,
 }: ProgressiveCodeBlockProps) {
   const { editable, tsEnv } = React.useContext(EditableContext);
@@ -82,16 +85,15 @@ function ProgressiveCodeBlock({
                   />
                 );
               case 'ts':
-                if (innerTsEnv) {
-                  return (
-                    <TypeScriptIdentifierToken
-                      languageService={innerTsEnv.languageService}
-                      sourceFileName={fileName}
-                      position={token.sourcePosition}
-                      {...tokenProps}
-                    />
-                  );
-                }
+                return (
+                  <TypeScriptIdentifierToken
+                    staticQuickInfo={staticQuickInfo}
+                    languageService={innerTsEnv && innerTsEnv.languageService}
+                    sourceFileName={fileName}
+                    position={token.sourcePosition}
+                    {...tokenProps}
+                  />
+                );
               default:
                 return <span {...tokenProps} />;
             }
@@ -104,7 +106,7 @@ function ProgressiveCodeBlock({
   return deferredCodeBlock || <CheapCodeBlock>{initialValue}</CheapCodeBlock>;
 }
 
-type VirtualTypeScriptEnvironment = import('../utils/typescript').VirtualTypeScriptEnvironment;
+type VirtualTypeScriptEnvironment = import('../utils/typescript/services').VirtualTypeScriptEnvironment;
 interface EditableContext {
   editable: boolean;
   tsEnv: VirtualTypeScriptEnvironment | undefined;
@@ -124,7 +126,8 @@ function createRenderer(tokens: { [key: string]: TokenContext }, setEditable: (e
             <ProgressiveCodeBlock
               key={id}
               fileName={`/${id}.tsx`}
-              initialTokens={codeBlock.tokens}
+              staticQuickInfo={codeBlock.quickInfo}
+              staticTokens={codeBlock.tokens}
               initialValue={codeBlock.text}
               onStartEditing={() => setEditable(true)}
             />
@@ -147,16 +150,23 @@ function Post({ data, pageContext }: PostProps) {
   useEffect(() => {
     if (editable) {
       (async () => {
-        const [ts, { createVirtualTypeScriptEnvironment }] = await Promise.all([
+        const [ts, { createVirtualTypeScriptEnvironment }, { lib }] = await Promise.all([
           await import('typescript'),
-          await import('../utils/typescript'),
+          await import('../utils/typescript/services'),
+          await import('../utils/typescript/lib.webpack'),
         ]);
-        const sourceFiles = Object.keys(pageContext.codeBlocks).map(id => (
-          ts.createSourceFile(`/${id}.tsx`, pageContext.codeBlocks[id].text, ts.ScriptTarget.ES2015, false)
-        ));
-        setTsEnv(createVirtualTypeScriptEnvironment(sourceFiles));
+        const sourceFiles = new Map(Object.keys(pageContext.codeBlocks).map(id => {
+          const fileName = `/${id}.tsx`;
+          const entries: [string, import('typescript').SourceFile] = [
+            fileName,
+            ts.createSourceFile(fileName, pageContext.codeBlocks[id].text, ts.ScriptTarget.ES2015, false),
+          ];
+          return entries;
+        }));
+        setTsEnv(createVirtualTypeScriptEnvironment(sourceFiles, lib.ts));
       })();
     }
+
     return () => {
       if (tsEnv) {
         tsEnv.languageService.dispose();

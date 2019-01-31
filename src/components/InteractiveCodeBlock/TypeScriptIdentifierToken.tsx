@@ -15,14 +15,30 @@ const hoveringStyles = css({
   boxShadow: `0 0 0 2px ${gray(0.05)}`,
 });
 
+function getQuickInfo({
+  position,
+  sourceFileName,
+  staticQuickInfo,
+  languageService,
+}: TypeScriptIdentifierTokenProps): import('typescript').QuickInfo | undefined {
+  if (languageService) {
+    return languageService.getQuickInfoAtPosition(sourceFileName, position);
+  }
+  if (staticQuickInfo) {
+    return staticQuickInfo[position];
+  }
+}
+
 interface TypeScriptIdentifierTokenProps extends React.HTMLAttributes<HTMLSpanElement> {
-  languageService: import('typescript').LanguageService;
+  languageService?: import('typescript').LanguageService;
+  staticQuickInfo?: { [key: number]: import('typescript').QuickInfo };
   sourceFileName: string;
   position: number;
 }
 export const TypeScriptIdentifierToken = React.memo(({
   sourceFileName,
   position,
+  staticQuickInfo,
   languageService,
   ...props
 }: TypeScriptIdentifierTokenProps) => {
@@ -39,7 +55,7 @@ export const TypeScriptIdentifierToken = React.memo(({
       )}
       renderTooltip={tooltipProps => (
         <TypeScriptQuickInfo
-          info={languageService.getQuickInfoAtPosition(sourceFileName, position)}
+          info={getQuickInfo({ position, sourceFileName, staticQuickInfo, languageService })}
           {...tooltipProps}
         />
       )}
