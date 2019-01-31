@@ -1,28 +1,45 @@
 import React from 'react';
 import {
   CacheableLineTokens,
-  Token,
   createTmGrammarTokenizer,
   createStaticTokenizer,
+  Tokenizer,
+  TextMateToken,
 } from '../components/InteractiveCodeBlock/tokenizers';
 import { getTmRegistry } from '../utils/textmate/getTmRegistry';
 import { webpackFileProvider } from '../utils/textmate/webpackFileProvider';
+import { composeTokenizers } from '../components/InteractiveCodeBlock/tokenizers/composeTokenizers';
 
+export type ComposedTokenT = TextMateToken
+  | import('../components/InteractiveCodeBlock/tokenizers/typescript').TypeScriptToken;
 export interface UseLazyTokenizerOptions {
-  initialTokens: CacheableLineTokens<Token<string, string>>[];
+  initialTokens: CacheableLineTokens<ComposedTokenT>[];
   editable: boolean;
+  fileName: string;
+  preambleCode?: string;
+  languageService?: import('typescript').LanguageService;
 }
 
-const getTmTokenizer = async () => {
+async function getTmTokenizer() {
   const grammar = await getTmRegistry(webpackFileProvider).loadGrammar('source.tsx');
-  return {
-    initialized: true,
-    loading: false,
-    tokenizer: createTmGrammarTokenizer({ grammar }),
-  };
-};
+  return createTmGrammarTokenizer({ grammar });
+}
 
-export function useProgressiveTokenizer({ initialTokens, editable }: UseLazyTokenizerOptions) {
+// tslint:disable-next-line:max-line-length
+type TypeScriptTokenizerOptions = import('../components/InteractiveCodeBlock/tokenizers/typescript').TypeScriptTokenizerOptions;
+async function getTypeScriptTokenizer(options: TypeScriptTokenizerOptions) {
+  const { createTypeScriptTokenizer } = await import('../components/InteractiveCodeBlock/tokenizers/typescript');
+  return createTypeScriptTokenizer(options);
+}
+
+type ComposedTokenizer = Tokenizer<ComposedTokenT>;
+
+export function useProgressiveTokenizer({
+  initialTokens,
+  editable,
+  languageService,
+  ...options
+}: UseLazyTokenizerOptions): ComposedTokenizer {
   const emptyTokenizer = createStaticTokenizer(initialTokens);
   const [tokenizer, setTokenizer] = React.useState({
     initialized: false,
@@ -30,9 +47,18 @@ export function useProgressiveTokenizer({ initialTokens, editable }: UseLazyToke
     tokenizer: emptyTokenizer,
   });
 
-  if (editable && !tokenizer.initialized && !tokenizer.loading) {
+  if (editable && !tokenizer.initialized && !tokenizer.loading && languageService) {
     setTokenizer({ ...tokenizer, loading: true });
-    getTmTokenizer().then(setTokenizer);
+    Promise.all([
+      getTmTokenizer(),
+      getTypeScriptTokenizer({ languageService, ...options }),
+    ]).then(([tmTokenizer, typeScriptTokenizer]) => {
+      setTokenizer({
+        initialized: true,
+        loading: false,
+        tokenizer: composeTokenizers(tmTokenizer, typeScriptTokenizer),
+      });
+    });
   }
 
   return tokenizer.tokenizer;

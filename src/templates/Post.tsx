@@ -1,13 +1,19 @@
-import React, { HTMLAttributes } from 'react';
+import React, { HTMLAttributes, useEffect } from 'react';
 import Layout from '../components/layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
-import { Token, CacheableLineTokens } from '../components/InteractiveCodeBlock/tokenizers';
-import { useProgressiveTokenizer } from '../hooks';
-import 'katex/dist/katex.min.css';
+import { CacheableLineTokens } from '../components/InteractiveCodeBlock/tokenizers';
+import { useProgressiveTokenizer, ComposedTokenT } from '../hooks';
 import { useDeferredRender } from '../hooks/useDeferredRender';
 import { CheapCodeBlock } from '../components/CheapCodeBlock';
+import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
+import 'katex/dist/katex.min.css';
+
+export interface TokenContext {
+  text: string;
+  tokens: CacheableLineTokens<ComposedTokenT>[];
+}
 
 export interface PostProps {
   data: {
@@ -19,7 +25,9 @@ export interface PostProps {
     };
   };
   pageContext: {
-    tokens: { [key: string]: CacheableLineTokens<Token<string, string>>[] };
+    codeBlocks: {
+      [key: string]: TokenContext;
+    };
   };
 }
 
@@ -34,65 +42,92 @@ export const query = graphql`
   }
 `;
 
-interface LazyCodeBlockProps {
+interface ProgressiveCodeBlockProps {
+  fileName: string;
   initialValue: string;
-  initialTokens: CacheableLineTokens<Token<string, string>>[];
-  editable: boolean;
+  initialTokens: CacheableLineTokens<ComposedTokenT>[];
   onStartEditing: () => void;
 }
 
 function ProgressiveCodeBlock({
+  fileName,
   initialValue,
   initialTokens,
-  editable,
   onStartEditing,
-}: LazyCodeBlockProps) {
-  const tokenizer = useProgressiveTokenizer({ initialTokens, editable });
+}: ProgressiveCodeBlockProps) {
+  const { editable, tsEnv } = React.useContext(EditableContext);
+  const tokenizer = useProgressiveTokenizer({
+    initialTokens,
+    editable,
+    languageService: tsEnv && tsEnv.languageService,
+    fileName,
+  });
   const deferredCodeBlock = useDeferredRender(() => (
     <InteractiveCodeBlock
       className="tm-theme"
       initialValue={initialValue}
       tokenizer={tokenizer}
       readOnly={!editable}
-      onClick={onStartEditing}
-      renderToken={(token, tokenProps) => {
-        return (
-          <span
-            className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
-            data-token-hash={token.hash}
-            {...tokenProps}
-          />
-        );
-      }}
+      onClick={() => editable || onStartEditing()}
+      onChange={value => tsEnv && tsEnv.updateFileFromText(fileName, value)}
+      renderToken={(token, tokenProps) => (
+        <EditableContext.Consumer>
+          {({ tsEnv: innerTsEnv }) => {
+            switch (token.type) {
+              case 'tm':
+                return (
+                  <span
+                    className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
+                    {...tokenProps}
+                  />
+                );
+              case 'ts':
+                if (innerTsEnv) {
+                  return (
+                    <TypeScriptIdentifierToken
+                      languageService={innerTsEnv.languageService}
+                      sourceFileName={fileName}
+                      position={token.sourcePosition}
+                      {...tokenProps}
+                    />
+                  );
+                }
+              default:
+                return <span {...tokenProps} />;
+            }
+          }}
+        </EditableContext.Consumer>
+      )}
     />
   ), { timeout: 1000 });
 
   return deferredCodeBlock || <CheapCodeBlock>{initialValue}</CheapCodeBlock>;
 }
 
-const EditableContext = React.createContext(false);
+type VirtualTypeScriptEnvironment = import('../utils/typescript').VirtualTypeScriptEnvironment;
+interface EditableContext {
+  editable: boolean;
+  tsEnv: VirtualTypeScriptEnvironment | undefined;
+}
 
-function createRenderer(
-  tokens: { [key: string]: CacheableLineTokens<Token<string, string>>[] },
-  setEditable: (editable: boolean) => void,
-) {
+const EditableContext = React.createContext<EditableContext>({ editable: false, tsEnv: undefined });
+
+function createRenderer(tokens: { [key: string]: TokenContext }, setEditable: (editable: boolean) => void) {
   const renderAst = new RehypeReact({
     createElement: (type, props, children) => {
       if (type === 'pre') {
         const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = (children as any)[0];
-        const tokensForBlock = tokens[codeChild.props.id!];
-        if (tokensForBlock) {
+        const id = codeChild.props.id!;
+        const codeBlock = tokens[id];
+        if (codeBlock) {
           return (
-            <EditableContext.Consumer key={codeChild.props.id}>
-              {editable => (
-                <ProgressiveCodeBlock
-                  initialTokens={tokensForBlock}
-                  initialValue={(codeChild.props.children as any)[0].trimEnd()}
-                  editable={editable}
-                  onStartEditing={() => editable || setEditable(true)}
-                />
-              )}
-            </EditableContext.Consumer>
+            <ProgressiveCodeBlock
+              key={id}
+              fileName={`/${id}.tsx`}
+              initialTokens={codeBlock.tokens}
+              initialValue={codeBlock.text}
+              onStartEditing={() => setEditable(true)}
+            />
           );
         }
       }
@@ -106,13 +141,34 @@ function createRenderer(
 function Post({ data, pageContext }: PostProps) {
   const post = data.markdownRemark;
   const [editable, setEditable] = React.useState(false);
-  const renderAst = React.useMemo(() => createRenderer(pageContext.tokens, setEditable), [pageContext.tokens]);
-  (window as any).pageContext = pageContext;
+  const [tsEnv, setTsEnv] = React.useState<VirtualTypeScriptEnvironment | undefined>(undefined);
+  const renderAst = React.useMemo(() => createRenderer(pageContext.codeBlocks, setEditable), [pageContext.codeBlocks]);
+
+  useEffect(() => {
+    if (editable) {
+      (async () => {
+        const [ts, { createVirtualTypeScriptEnvironment }] = await Promise.all([
+          await import('typescript'),
+          await import('../utils/typescript'),
+        ]);
+        const sourceFiles = Object.keys(pageContext.codeBlocks).map(id => (
+          ts.createSourceFile(`/${id}.tsx`, pageContext.codeBlocks[id].text, ts.ScriptTarget.ES2015, false)
+        ));
+        setTsEnv(createVirtualTypeScriptEnvironment(sourceFiles));
+      })();
+    }
+    return () => {
+      if (tsEnv) {
+        tsEnv.languageService.dispose();
+      }
+    };
+  }, [editable]);
+
   return (
     <Layout>
       <div>
         <h1>{post.frontmatter.title}</h1>
-        <EditableContext.Provider value={editable}>
+        <EditableContext.Provider value={{ editable, tsEnv }}>
           <div>{renderAst(data.markdownRemark.htmlAst)}</div>
         </EditableContext.Provider>
       </div>

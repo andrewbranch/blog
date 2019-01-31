@@ -1,5 +1,4 @@
 import React from 'react';
-import ts from 'typescript';
 import shallowEqual from 'shallowequal';
 import { Tooltip } from './Tooltip';
 import { TypeScriptQuickInfo } from './TypeScriptQuickInfo';
@@ -17,7 +16,7 @@ const hoveringStyles = css({
 });
 
 interface TypeScriptIdentifierTokenProps extends React.HTMLAttributes<HTMLSpanElement> {
-  languageService: ts.LanguageService;
+  languageService: import('typescript').LanguageService;
   sourceFileName: string;
   position: number;
 }

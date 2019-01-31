@@ -8,8 +8,10 @@
     "esModuleInterop": true,
     "jsx": "react",
     "types": [
-      "@emotion/core",
-      "@types/node"
+      "@emotion/core"
     ]
-  }
+  },
+  "exclude": [
+    "./src/utils/textmate/ssrFileProvider.ts"
+  ]
 }

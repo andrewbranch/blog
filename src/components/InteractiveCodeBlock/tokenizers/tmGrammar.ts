@@ -6,7 +6,9 @@ export interface TmGrammarTokenizerOptions {
   grammar: IGrammar;
 }
 
-export function createTmGrammarTokenizer(options: TmGrammarTokenizerOptions): Tokenizer<Token<'tm', string>> {
+export type TextMateToken = Token<'tm', string>;
+
+export function createTmGrammarTokenizer(options: TmGrammarTokenizerOptions): Tokenizer<TextMateToken> {
   return {
     tokenizeDocument: text => {
       const { grammar } = options;

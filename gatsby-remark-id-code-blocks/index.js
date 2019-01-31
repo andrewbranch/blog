@@ -1,7 +1,7 @@
 const visit = require('unist-util-visit');
-let id = 0;
 
 module.exports = ({ markdownAST }) => {
+  let id = 0;
   visit(markdownAST, 'code', node => {
     node.data = {
       ...node.data,

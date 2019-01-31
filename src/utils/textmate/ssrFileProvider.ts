@@ -1,3 +1,4 @@
+/// <reference types="@types/node" />
 import fs from 'fs';
 import path from 'path';
 import { FileProvider, LanguageFile } from './getTmRegistry';

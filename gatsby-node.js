@@ -44,11 +44,14 @@ exports.createPages = async ({ graphql, actions }) => {
   `);
   const grammar = await getTmRegistry(ssrFileProvider).loadGrammar('source.tsx');
   const tokenizer = createTmGrammarTokenizer({ grammar });
-  const tokens = {};
+  const codeBlocks = {};
   result.data.allMarkdownRemark.edges.forEach(({ node }) => {
     visit(node.htmlAst, node => node.tagName === 'code', code => {
       const text = code.children[0].value.trimEnd();
-      tokens[code.properties.id] = tokenizer.tokenizeDocument(text);
+      codeBlocks[code.properties.id] = {
+        text,
+        tokens: tokenizer.tokenizeDocument(text),
+      };
     });
     actions.createPage({
       path: node.fields.slug,
@@ -57,7 +60,7 @@ exports.createPages = async ({ graphql, actions }) => {
         // Data passed to context is available
         // in page queries as GraphQL variables.
         slug: node.fields.slug,
-        tokens
+        codeBlocks,
       },
     });
   });
