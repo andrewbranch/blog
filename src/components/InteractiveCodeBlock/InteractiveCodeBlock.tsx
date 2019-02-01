@@ -4,7 +4,8 @@ import { List } from 'immutable';
 import { Value, NodeJSON, Operation, Decoration, Point, Mark, Node, Text, Document } from 'slate';
 import { Global, css } from '@emotion/core';
 import { commonBlockStyles } from './themes';
-import { Token, Tokenizer, CacheableLineTokens } from './tokenizers';
+import { Tokenizer, CacheableLineTokens } from './tokenizers/types';
+import { Token } from './tokenizers/token';
 import 'requestidlecallback';
 
 function createValueFromString(text: string): Value {

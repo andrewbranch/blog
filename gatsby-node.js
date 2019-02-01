@@ -15,6 +15,7 @@ const mergeWebpack = require('webpack-merge');
 const { getTmRegistry } = require('./src/utils/textmate/getTmRegistry');
 const { ssrFileProvider } = require('./src/utils/textmate/fileProvider.ssr');
 const { createTmGrammarTokenizer } = require('./src/components/InteractiveCodeBlock/tokenizers/tmGrammar');
+const { TypeScriptTokenType, TypeScriptDiagnosticTokenType } = require('./src/components/InteractiveCodeBlock/tokenizers/types');
 const { createTypeScriptTokenizer } = require('./src/components/InteractiveCodeBlock/tokenizers/typescript');
 const { composeTokenizers } = require('./src/components/InteractiveCodeBlock/tokenizers/composeTokenizers');
 const { createVirtualTypeScriptEnvironment } = require('./src/utils/typescript/services');
@@ -73,11 +74,12 @@ exports.createPages = async ({ graphql, actions }) => {
       codeBlock.quickInfo = {};
       codeBlock.tokens.forEach(line => {
         line.tokens.forEach(token => {
-          if (token.type === 'ts') {
-            codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
-              fileName,
-              token.sourcePosition
-            );
+          switch (token.type) {
+            case TypeScriptTokenType.Identifier:
+              codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
+                fileName,
+                token.sourcePosition
+              );
           }
         });
       });

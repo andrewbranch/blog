@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useHover, HoverProps, UseHoverOptions } from '../../hooks';
-import { ClassNames, ObjectInterpolation } from '@emotion/core';
+import { ClassNames, css } from '@emotion/core';
 import { gray } from '../../utils/typography';
 import { isSSR } from '../../utils/ssr';
 
@@ -35,14 +35,15 @@ function createPositionStyle(triggerElement: HTMLElement | null, margin: number)
   };
 }
 
-const overlayStyles: ObjectInterpolation<any> = {
+const overlayStyles = css({
   backgroundColor: 'white',
   zIndex: 1,
   padding: '2px 4px',
   borderRadius: 2,
   fontSize: '85%',
   boxShadow: `0 0 0 1px ${gray(0.1)}`,
-};
+  maxWidth: 300,
+});
 
 interface TooltipContext {
   isInTooltip: boolean;
@@ -68,7 +69,7 @@ function Tooltip({
   const triggerRef = useRef<HTMLElement>(null);
   const tooltipRef = useRef<HTMLElement>(null);
   const [childTooltip, setChildTooltip] = useState<React.ReactNode>(null);
-  const [offset, setOffset] = useState(0)
+  const [offset, setOffset] = useState(0);
   return (
     <TooltipContext.Consumer>
       {({ renderInParent }) => (
@@ -94,11 +95,11 @@ function Tooltip({
             isHovering ? (
               <>
                 <ClassNames>
-                  {({ css }) => renderTooltip({
+                  {({ css: createClassName }) => renderTooltip({
                     ...hoverProps,
                     ref: tooltipRef,
                     style: createPositionStyle(triggerRef.current, triggerMargin + offset),
-                    className: css(overlayStyles),
+                    className: createClassName(overlayStyles),
                   })}
                 </ClassNames>
                 {childTooltip}

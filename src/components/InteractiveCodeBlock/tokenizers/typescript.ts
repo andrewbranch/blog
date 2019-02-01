@@ -17,7 +17,11 @@ export type TypeScriptIdentifierToken = Token<
 export type TypeScriptDiagnosticToken = Token<
   TypeScriptTokenType.Diagnostic,
   TypeScriptDiagnosticTokenType
-> & TypeScriptTokenProperties<TypeScriptDiagnosticTokenType>;
+> & TypeScriptDiagnosticTokenProperties;
+
+export interface TypeScriptDiagnosticTokenProperties extends TypeScriptTokenProperties<TypeScriptDiagnosticTokenType> {
+  diagnosticMessage: string;
+}
 
 export type TypeScriptToken = TypeScriptIdentifierToken | TypeScriptDiagnosticToken;
 
@@ -33,11 +37,13 @@ export function TypeScriptIdentifierToken({
 
 export function TypeScriptDiagnosticToken({
   sourcePosition,
+  diagnosticMessage,
   ...tokenProperties
-}: Omit<TypeScriptTokenProperties<TypeScriptDiagnosticTokenType>, 'type'>): TypeScriptDiagnosticToken {
+}: Omit<TypeScriptDiagnosticTokenProperties, 'type'>): TypeScriptDiagnosticToken {
   return {
     ...Token({ ...tokenProperties, type: TypeScriptTokenType.Diagnostic }),
     sourcePosition,
+    diagnosticMessage,
   };
 }
 
@@ -78,10 +84,11 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
           syntacticDiagnostics.length
           && syntacticDiagnostics[0].start < newConsumedLength
         ) {
-          const { start, length } = syntacticDiagnostics.shift()!;
+          const { start, length, messageText } = syntacticDiagnostics.shift()!;
           const end = Math.min(start + length - consumedLength, line.length);
           const token = TypeScriptDiagnosticToken({
             scopes: [TypeScriptDiagnosticTokenType.Syntactic],
+            diagnosticMessage: ts.flattenDiagnosticMessageText(messageText, '\n'),
             sourcePosition: start,
             start: start - consumedLength,
             end,
@@ -95,10 +102,11 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
           && semanticDiagnostics[0].start
           && semanticDiagnostics[0].start < newConsumedLength
         ) {
-          const { start, length } = semanticDiagnostics.shift()!;
+          const { start, length, messageText } = semanticDiagnostics.shift()!;
           const end = Math.min(start! + length! - consumedLength, line.length);
           const token = TypeScriptDiagnosticToken({
             scopes: [TypeScriptDiagnosticTokenType.Semantic],
+            diagnosticMessage: ts.flattenDiagnosticMessageText(messageText, '\n'),
             sourcePosition: start!,
             start: start! - consumedLength,
             end,

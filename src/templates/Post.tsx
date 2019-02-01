@@ -8,8 +8,8 @@ import { useProgressiveTokenizer, ComposedTokenT } from '../hooks';
 import { useDeferredRender } from '../hooks/useDeferredRender';
 import { CheapCodeBlock } from '../components/CheapCodeBlock';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
-import 'katex/dist/katex.min.css';
 import { TypeScriptDiagnosticToken } from '../components/InteractiveCodeBlock/TypeScriptDiagnosticToken';
+import 'katex/dist/katex.min.css';
 
 export interface TokenContext {
   text: string;
@@ -97,7 +97,7 @@ function ProgressiveCodeBlock({
                 );
               case TypeScriptTokenType.Diagnostic:
                 return (
-                  <TypeScriptDiagnosticToken {...tokenProps} />
+                  <TypeScriptDiagnosticToken message={token.diagnosticMessage} {...tokenProps} />
                 );
               default:
                 return <span {...tokenProps} />;

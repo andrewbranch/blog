@@ -1,11 +1,36 @@
 import React from 'react';
-import ts, { SymbolDisplayPartKind } from 'typescript';
 import { css, SerializedStyles } from '@emotion/core';
 import { type, variables } from '../../styles/utils';
 import { SyntacticColors } from './themes';
 
 export interface TypeScriptQuickInfoProps extends React.HTMLAttributes<HTMLSpanElement> {
-  info?: ts.QuickInfo;
+  info?: import('typescript').QuickInfo;
+}
+
+// Copied to avoid async import
+enum SymbolDisplayPartKind {
+  aliasName = 0,
+  className = 1,
+  enumName = 2,
+  fieldName = 3,
+  interfaceName = 4,
+  keyword = 5,
+  lineBreak = 6,
+  numericLiteral = 7,
+  stringLiteral = 8,
+  localName = 9,
+  methodName = 10,
+  moduleName = 11,
+  operator = 12,
+  parameterName = 13,
+  propertyName = 14,
+  punctuation = 15,
+  space = 16,
+  text = 17,
+  typeParameterName = 18,
+  enumMemberName = 19,
+  functionName = 20,
+  regularExpressionLiteral = 21,
 }
 
 export const TypeScriptQuickInfo = React.forwardRef<HTMLElement, TypeScriptQuickInfoProps>(
@@ -15,7 +40,7 @@ export const TypeScriptQuickInfo = React.forwardRef<HTMLElement, TypeScriptQuick
         {info.displayParts && info.displayParts.map((part, index) => (
           <span
             key={index}
-            css={defaultStyles[ts.SymbolDisplayPartKind[part.kind as any] as unknown as ts.SymbolDisplayPartKind]}
+            css={defaultStyles[SymbolDisplayPartKind[part.kind as any] as unknown as SymbolDisplayPartKind]}
           >
             {part.text}
           </span>
@@ -25,7 +50,7 @@ export const TypeScriptQuickInfo = React.forwardRef<HTMLElement, TypeScriptQuick
   },
 );
 
-const defaultStyles: Record<SymbolDisplayPartKind, SerializedStyles | {}> = {
+const defaultStyles: Record<import('typescript').SymbolDisplayPartKind, SerializedStyles | {}> = {
   [SymbolDisplayPartKind.interfaceName]: css({ color: SyntacticColors.Types }),
   [SymbolDisplayPartKind.enumName]: css({ color: SyntacticColors.Types }),
   [SymbolDisplayPartKind.className]: css({ color: SyntacticColors.Types }),

@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  CacheableLineTokens,
-  createTmGrammarTokenizer,
-  createStaticTokenizer,
-  Tokenizer,
-  TextMateToken,
-} from '../components/InteractiveCodeBlock/tokenizers';
+import { CacheableLineTokens, Tokenizer } from '../components/InteractiveCodeBlock/tokenizers/types';
+import { createStaticTokenizer } from '../components/InteractiveCodeBlock/tokenizers/static';
+import { TextMateToken, createTmGrammarTokenizer } from '../components/InteractiveCodeBlock/tokenizers/tmGrammar';
 import { getTmRegistry } from '../utils/textmate/getTmRegistry';
 import { webpackFileProvider } from '../utils/textmate/fileProvider.webpack';
 import { composeTokenizers } from '../components/InteractiveCodeBlock/tokenizers/composeTokenizers';
