@@ -9,9 +9,9 @@ export interface InjectedTriggerProps extends HoverProps, React.RefAttributes<HT
 
 }
 
-export interface InjectedTooltipProps extends HoverProps, React.RefAttributes<HTMLElement> {
-  className: string;
-  style: React.CSSProperties;
+export interface InjectedTooltipProps extends React.RefAttributes<HTMLDivElement> {
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export interface TooltipProps extends UseHoverOptions {
@@ -19,6 +19,7 @@ export interface TooltipProps extends UseHoverOptions {
   renderTooltip: (props: InjectedTooltipProps) => JSX.Element;
   portalNode: HTMLElement;
   triggerMargin: number;
+  priority: number;
 }
 
 function createPositionStyle(triggerElement: HTMLElement | null, margin: number): React.CSSProperties {
@@ -38,24 +39,37 @@ function createPositionStyle(triggerElement: HTMLElement | null, margin: number)
 const overlayStyles = css({
   backgroundColor: 'white',
   zIndex: 1,
-  padding: '2px 4px',
   borderRadius: 2,
   fontSize: '85%',
   boxShadow: `0 0 0 1px ${gray(0.1)}`,
   maxWidth: 300,
 });
 
+const tooltipSectionStyles = css({
+  display: 'block',
+  padding: '2px 4px',
+  ':not(:last-child)': {
+    borderBottom: `1px solid ${gray(0.1)}`,
+  },
+});
+
 interface TooltipContext {
   isInTooltip: boolean;
+  priority: number;
   renderInParent: (
     node: React.ReactNode,
     tooltipRef: React.RefObject<HTMLElement>,
+    props: InjectedTooltipProps & HoverProps,
     portalNode: Element,
   ) => React.ReactPortal | null;
 }
 const TooltipContext = React.createContext<TooltipContext>({
   isInTooltip: false,
-  renderInParent: (node, _, portalNode) => createPortal(node, portalNode),
+  priority: 0,
+  renderInParent: (node, _, props, portalNode) => createPortal(
+    <div css={overlayStyles} {...props}>{node}</div>,
+    portalNode,
+  ),
 });
 
 function Tooltip({
@@ -63,6 +77,7 @@ function Tooltip({
   renderTrigger,
   portalNode,
   triggerMargin,
+  priority,
   ...useHoverOptions
 }: TooltipProps) {
   const [isHovering, hoverProps] = useHover(useHoverOptions);
@@ -72,9 +87,10 @@ function Tooltip({
   const [offset, setOffset] = useState(0);
   return (
     <TooltipContext.Consumer>
-      {({ renderInParent }) => (
+      {({ renderInParent, priority: parentPriority }) => (
         <TooltipContext.Provider
           value={{
+            priority,
             isInTooltip: true,
             renderInParent: (node, childRef) => {
               setTimeout(() => {
@@ -91,21 +107,22 @@ function Tooltip({
             ...hoverProps,
             ref: triggerRef,
           }, isHovering)}
-          {isSSR ? null : renderInParent(
-            isHovering ? (
-              <>
-                <ClassNames>
-                  {({ css: createClassName }) => renderTooltip({
-                    ...hoverProps,
-                    ref: tooltipRef,
-                    style: createPositionStyle(triggerRef.current, triggerMargin + offset),
-                    className: createClassName(overlayStyles),
-                  })}
-                </ClassNames>
-                {childTooltip}
-              </>
-            ) : null,
+
+          {isSSR || !isHovering ? null : renderInParent(
+            <>
+              {parentPriority < priority ? childTooltip : null}
+              <ClassNames>
+                {({ css: createClassName }) => renderTooltip({
+                  className: createClassName(tooltipSectionStyles),
+                })}
+              </ClassNames>
+              {parentPriority < priority ? null : childTooltip}
+            </>,
             tooltipRef,
+            {
+              ...hoverProps,
+              style: createPositionStyle(triggerRef.current, triggerMargin + offset),
+            },
             portalNode,
           )}
         </TooltipContext.Provider>
@@ -115,6 +132,7 @@ function Tooltip({
 }
 
 Tooltip.defaultProps = {
+  priority: 0,
   portalNode: isSSR ? undefined : document.body,
   triggerMargin: 2,
 };
