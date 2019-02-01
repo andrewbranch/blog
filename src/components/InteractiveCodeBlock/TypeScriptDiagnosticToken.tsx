@@ -21,6 +21,7 @@ const styles = css({
     // go edge to edge for some reason
     width: 'calc(100% + 0.5px)',
     height: 8,
+    pointerEvents: 'none',
   },
 });
 

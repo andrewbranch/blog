@@ -68,6 +68,12 @@ const tsLibFiles = new Map<string, ts.SourceFile>([
     require('!raw-loader!typescript/lib/lib.es2015.symbol.wellknown.d.ts'),
     ts.ScriptTarget.ES2015,
   )],
+  ['/lib.dom.d.ts', ts.createSourceFile(
+    '/lib.dom.d.ts',
+    // tslint:disable-next-line:no-var-requires no-implicit-dependencies
+    require('!raw-loader!typescript/lib/lib.dom.d.ts'),
+    ts.ScriptTarget.ES2015,
+  )],
 ]);
 
 const reactLibraryFile: ThirdPartyLibraryFile = {

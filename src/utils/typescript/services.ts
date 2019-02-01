@@ -1,5 +1,20 @@
 import ts from 'typescript';
 
+const compilerOptions: ts.CompilerOptions = {
+  ...ts.getDefaultCompilerOptions(),
+  jsx: ts.JsxEmit.React,
+  strict: true,
+  target: ts.ScriptTarget.ES2015,
+  lib: ['lib.dom.d.ts'],
+  isolatedModules: true,
+  module: ts.ModuleKind.ES2015,
+  allowNonTsExtensions: true,
+  noResolve: true,
+  suppressOutputPathCheck: true,
+  skipLibCheck: true,
+  skipDefaultLibCheck: true,
+};
+
 export function createVirtualCompilerHost(
   sourceFiles: Map<string, ts.SourceFile>,
   tsLibFiles: Map<string, ts.SourceFile>,
@@ -8,6 +23,11 @@ export function createVirtualCompilerHost(
   compilerHost: ts.CompilerHost,
   updateFile: (sourceFile: ts.SourceFile) => boolean,
 } {
+  const fileNames = [
+    ...Array.from(sourceFiles.keys()),
+    ...Array.from(tsLibFiles.keys()),
+    ...Array.from(thirdPartyLibraries.keys()),
+  ];
   return {
     compilerHost: {
       fileExists: fileName => {
@@ -19,6 +39,7 @@ export function createVirtualCompilerHost(
       getCurrentDirectory: () => '/',
       getDefaultLibFileName: () => '/lib.es2015.d.ts',
       getDirectories: () => [],
+      readDirectory: directory => directory === '/' ? fileNames : [],
       getNewLine: () => '\n',
       getSourceFile: fileName => {
         return sourceFiles.get(fileName)
@@ -55,11 +76,11 @@ export function createVirtualWatchHost(
   return {
     watchHost: {
       ...compilerHost,
-      createProgram: (rootNames, options, host, oldProgram, configFileParsingDiagnostics, projectReferences) => {
+      createProgram: (rootNames, _, host, oldProgram, configFileParsingDiagnostics, projectReferences) => {
         return ts.createAbstractBuilder(
           ts.createProgram({
             rootNames: rootNames || fileNames,
-            options: options || {},
+            options: compilerOptions,
             host,
             oldProgram: oldProgram && oldProgram.getProgram(),
             configFileParsingDiagnostics,
@@ -97,22 +118,27 @@ export function createVirtualWatchHost(
 
 export function createVirtualLanguageServiceHost(
   sourceFiles: Map<string, ts.SourceFile>,
+  tsLibFiles: Map<string, ts.SourceFile>,
+  thirdPartyLibraries: Map<string, ts.SourceFile> = new Map(),
   compilerHost: ts.CompilerHost,
 ): {
   languageServiceHost: ts.LanguageServiceHost,
   updateFile: (sourceFile: ts.SourceFile) => void,
 } {
-  const fileNames = Array.from(sourceFiles.keys());
+  const fileNames = [
+    ...Array.from(sourceFiles.keys()),
+    ...Array.from(tsLibFiles.keys()),
+    ...Array.from(thirdPartyLibraries.keys()),
+  ];
   const fileVersions = new Map<string, string>();
   let projectVersion = 0;
   return {
     languageServiceHost: {
       ...compilerHost,
       getProjectVersion: () => projectVersion.toString(),
-      getCompilationSettings: () => ({ sourceFiles: fileNames }),
+      getCompilationSettings: () => ({ sourceFiles: fileNames, ...compilerOptions }),
       getScriptFileNames: () => fileNames,
       getScriptSnapshot: fileName => {
-
         const sourceFile = compilerHost.getSourceFile(fileName, ts.ScriptTarget.ES2015);
         if (sourceFile) {
           return ts.ScriptSnapshot.fromString(sourceFile.text);
@@ -143,18 +169,29 @@ export function createVirtualTypeScriptEnvironment(
   tsLibFiles: Map<string, ts.SourceFile>,
   thirdPartyLibraries: Map<string, ts.SourceFile> = new Map(),
 ): VirtualTypeScriptEnvironment {
+  const rootFiles = Array.from(sourceFiles.keys());
   const watchHostController = createVirtualWatchHost(sourceFiles, tsLibFiles, thirdPartyLibraries);
-  const languageServiceHostController = createVirtualLanguageServiceHost(sourceFiles, watchHostController.watchHost);
+  const languageServiceHostController = createVirtualLanguageServiceHost(
+    sourceFiles,
+    tsLibFiles,
+    thirdPartyLibraries,
+    watchHostController.watchHost,
+  );
   const languageService = ts.createLanguageService(languageServiceHostController.languageServiceHost);
   const watchProgram = ts.createWatchProgram({
     ...watchHostController.watchHost,
-    rootFiles: languageServiceHostController.languageServiceHost.getScriptFileNames(),
-    options: {},
+    rootFiles,
+    options: compilerOptions,
   });
   const updateFile = (sourceFile: ts.SourceFile) => {
     languageServiceHostController.updateFile(sourceFile);
     watchHostController.updateFile(sourceFile);
   };
+
+  const diagnostics = languageService.getCompilerOptionsDiagnostics();
+  if (diagnostics.length) {
+    throw new Error(ts.formatDiagnostics(diagnostics, watchHostController.watchHost));
+  }
 
   return {
     watchProgram,

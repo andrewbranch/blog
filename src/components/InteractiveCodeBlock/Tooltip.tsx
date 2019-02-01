@@ -42,7 +42,7 @@ const overlayStyles = css({
   borderRadius: 2,
   fontSize: '85%',
   boxShadow: `0 0 0 1px ${gray(0.1)}`,
-  maxWidth: 300,
+  maxWidth: 700,
 });
 
 const tooltipSectionStyles = css({

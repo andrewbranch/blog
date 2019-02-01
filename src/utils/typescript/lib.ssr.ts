@@ -61,6 +61,12 @@ export const tsLibFiles = new Map<string, ts.SourceFile>([
     fs.readFileSync(path.resolve(__dirname, '../../../node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts'), 'utf8'),
     ts.ScriptTarget.ES2015,
   )],
+  ['/lib.dom.d.ts', ts.createSourceFile(
+    '/lib.dom.d.ts',
+    // tslint:disable-next-line:max-line-length
+    fs.readFileSync(path.resolve(__dirname, '../../../node_modules/typescript/lib/lib.dom.d.ts'), 'utf8'),
+    ts.ScriptTarget.ES2015,
+  )],
 ]);
 
 const reactLibraryFile: ThirdPartyLibraryFile = {

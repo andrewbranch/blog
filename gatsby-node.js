@@ -52,10 +52,14 @@ exports.createPages = async ({ graphql, actions }) => {
   const tmTokenizer = createTmGrammarTokenizer({ grammar });
   result.data.allMarkdownRemark.edges.forEach(({ node }) => {
     const codeBlocks = {};
-    visit(node.htmlAst, node => node.tagName === 'code', code => {
-      const text = code.children[0].value.trimEnd();
-      codeBlocks[code.properties.id] = { text };
-    });
+    visit(
+      node.htmlAst,
+      node => node.tagName === 'code' && node.properties.className && node.properties.className.includes('language-ts'),
+      code => {
+        const text = code.children[0].value.trimEnd();
+        codeBlocks[code.properties.id] = { text };
+      }
+    );
 
     const sourceFiles = new Map(Object.keys(codeBlocks).map(codeBlockId => {
       const fileName = `/${codeBlockId}.tsx`;

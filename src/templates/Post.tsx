@@ -151,6 +151,7 @@ function Post({ data, pageContext }: PostProps) {
   const [editable, setEditable] = React.useState(false);
   const [tsEnv, setTsEnv] = React.useState<VirtualTypeScriptEnvironment | undefined>(undefined);
   const renderAst = React.useMemo(() => createRenderer(pageContext.codeBlocks, setEditable), [pageContext.codeBlocks]);
+  Object.assign(window, { tsEnv });
 
   useEffect(() => {
     if (editable) {

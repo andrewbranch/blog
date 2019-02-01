@@ -92,7 +92,7 @@ class Select extends React.Component<SelectProps> {
 
 The idea is that when `multiple` is `true`, the consumer should set `value` to an array and expect an array back as `newValue` in `onChange`. You’ll quickly realize that this looseness of your API allows for some invalid configurations and headaches for your consumers:
 
-```tsx
+```ts
 // Missing `multiple` prop, but no compiler error
 <Select
   options={['Red', 'Green', 'Blue']}
@@ -151,7 +151,7 @@ class Select extends React.Component<SelectProps> {
 
 As triangles and quadrilaterals can be distinguished by their number of sides, the union type `SelectProps` can be discriminated by its `multiple` property. And as luck would have it, TypeScript will do exactly that when you pass (or don’t pass) the `multiple` prop to your new and improved component:
 
-```tsx
+```ts
 // Compiler knows that `value` shouldn’t be an array
 <Select
   options={['Red', 'Green', 'Blue']}
@@ -284,7 +284,7 @@ If, like me, you haven’t studied computer science in an academic setting, this
 
 So, the resulting type of `SelectProps` expands to every possible combination that we outlined earlier. And TypeScript will discriminate between each of those four constituents based on the props you pass to `Select`[^3]:
 
-```tsx
+```ts
 // `renderGroupTitle` doesn’t exist unless `grouped` is set
 <Select
   options={['Red', 'Green', 'Blue']}
