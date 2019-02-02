@@ -2,6 +2,7 @@
 title: "Expressive React Component APIs with Discriminated Unions"
 date: "2019-01-19"
 slug: "expressive-react-component-apis-with-discriminated-unions"
+globalPreamble: "const onChange = () => {};\n"
 ---
 
 One of TypeScript’s most underrated features is _discriminated union types_. Borrowed primarily from functional programming (FP) languages, they match an elegant FP concept to a pattern people intuitively write in JavaScript. Discriminated unions also enable a useful pattern for typing complex React component props more safely and expressively. But first, we’ll review what discriminated unions look like independent of React.
@@ -20,6 +21,9 @@ x = true; // not fine
 
 Riveting, right? Things get more interesting with object types:
 
+<!--@
+name: shapes.ts
+-->
 ```ts
 interface Polygon {
   numberOfSides: number;
@@ -58,6 +62,9 @@ interface Quadrilateral extends Polygon {
 
 We have a base type `Polygon`, and two specializations that specify a number literal type for `numberOfSides`, along with some extra properties that are specific to polygons of their kind. This allows us to write a function that accepts either a `Triangle` or `Quadrilateral` and _discriminate_ between them based on the shape’s `numberOfSides`:
 
+<!--@
+name: shapes.ts
+-->
 ```ts
 function addShape(shape: Triangle | Quadrilateral) {
   if (shape.numberOfSides === 3) {
@@ -76,6 +83,9 @@ When we have a union (like `Triangle | Quadrilateral`) that can be narrowed by a
 ## Do these props look too loose on me?
 You’re writing a Select component (i.e., a fancy replacement for an HTMLSelectElement) with React and TypeScript. Perhaps you look at the [`SelectHTMLAttributes` interface](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/eda212cfd64119cf2edc2f4ab12e53c4654a9b87/types/react/index.d.ts#L1979-L1990) from [`@types/react`](https://www.npmjs.com/package/@types/react)  for inspiration, and notice that a native select element, in React, can have a `value` of type `string | string[] | number`. From TypeScript’s perspective, you can pass a single value or an array of values indiscriminately, but you know that an array of values is really only meaningful if the `multiple` prop is set. Nonetheless, you try this approach for your component:
 
+<!--@
+name: select-1.tsx
+-->
 ```ts
 interface SelectProps {
   placeholder?: string;
@@ -92,6 +102,9 @@ class Select extends React.Component<SelectProps> {
 
 The idea is that when `multiple` is `true`, the consumer should set `value` to an array and expect an array back as `newValue` in `onChange`. You’ll quickly realize that this looseness of your API allows for some invalid configurations and headaches for your consumers:
 
+<!--@
+name: select-1.tsx
+-->
 ```ts
 // Missing `multiple` prop, but no compiler error
 <Select
@@ -124,6 +137,9 @@ Sure, you could add some validation in your runtime code, like fancy custom `pro
 ## Props unions to the rescue
 Since you care deeply about developer experience, you decide to iterate on your initial API by applying what you know about union types to these props. It occurs to you that where you initially wrote _multiple unions_ within a _single interface_, your intent is actually better expressed by _one union_ of _multiple interfaces_:
 
+<!--@
+name: select-2.tsx
+-->
 ```ts
 interface CommonSelectProps {
   placeholder?: string;
@@ -151,6 +167,9 @@ class Select extends React.Component<SelectProps> {
 
 As triangles and quadrilaterals can be distinguished by their number of sides, the union type `SelectProps` can be discriminated by its `multiple` property. And as luck would have it, TypeScript will do exactly that when you pass (or don’t pass) the `multiple` prop to your new and improved component:
 
+<!--@
+name: select-2.tsx
+-->
 ```ts
 // Compiler knows that `value` shouldn’t be an array
 <Select
@@ -208,6 +227,9 @@ Writing each of those options out as a complete interface of possible Select pro
 
 You can avoid repeating yourself and writing out every combination by taking advantage of some set theory. Instead of writing four complete interfaces that repeat props from each other, you can write interfaces for each discrete piece of functionality and combine them via intersection:
 
+<!--@
+name: select-3.tsx
+-->
 ```ts
 interface CommonSelectProps {
   placeholder?: string;
@@ -284,6 +306,9 @@ If, like me, you haven’t studied computer science in an academic setting, this
 
 So, the resulting type of `SelectProps` expands to every possible combination that we outlined earlier. And TypeScript will discriminate between each of those four constituents based on the props you pass to `Select`[^3]:
 
+<!--@
+name: select-3.tsx
+-->
 ```ts
 // `renderGroupTitle` doesn’t exist unless `grouped` is set
 <Select

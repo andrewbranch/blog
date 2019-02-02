@@ -12,7 +12,7 @@ export interface UseLazyTokenizerOptions {
   initialTokens: CacheableLineTokens<ComposedTokenT>[];
   editable: boolean;
   fileName: string;
-  preambleCode?: string;
+  visibleSpan?: import('typescript').TextSpan;
   languageService?: import('typescript').LanguageService;
 }
 

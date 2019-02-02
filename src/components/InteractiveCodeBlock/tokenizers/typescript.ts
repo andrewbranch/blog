@@ -51,13 +51,13 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
   return {
     tokenizeDocument: fullText => {
       const { fileName, languageService } = options;
-      const preambleCode = options.preambleCode || '';
+      const visibleSpan = options.visibleSpan || { start: 0, length: fullText.length };
       const lines = fullText.split('\n');
-
-      const visibleSpan = { start: preambleCode.length, length: fullText.length };
       const syntacticClassifications = languageService.getSyntacticClassifications(fileName, visibleSpan);
       const syntacticDiagnostics = languageService.getSyntacticDiagnostics(fileName);
       const semanticDiagnostics = languageService.getSemanticDiagnostics(fileName);
+      while (syntacticDiagnostics[0] && syntacticDiagnostics[0].start < visibleSpan.start) syntacticDiagnostics.shift();
+      while (semanticDiagnostics[0] && (semanticDiagnostics[0].start || 0) < visibleSpan.start) semanticDiagnostics.shift();
       return lines.reduce(({ consumedLength, tokens }, line, index) => {
         const newConsumedLength = consumedLength + line.length + 1; // Add one for '\n' removed in split
         tokens[index] = { hash: '', tokens: [] };
@@ -117,7 +117,7 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
 
         return { consumedLength: newConsumedLength, tokens };
       }, {
-        consumedLength: preambleCode.length,
+        consumedLength: visibleSpan.start,
         tokens: [] as CacheableLineTokens<TypeScriptToken>[],
       }).tokens;
     },

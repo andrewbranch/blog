@@ -7,7 +7,7 @@ export interface CacheableLineTokens<T extends Token<string, string>> {
 
 export interface TypeScriptTokenizerOptions {
   fileName: string;
-  preambleCode?: string;
+  visibleSpan?: import('typescript').TextSpan;
   languageService: import('typescript').LanguageService;
 }
 

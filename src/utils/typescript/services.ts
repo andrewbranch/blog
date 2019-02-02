@@ -161,7 +161,7 @@ export interface VirtualTypeScriptEnvironment {
   languageService: ts.LanguageService;
   typeChecker: ts.TypeChecker;
   updateFile: (sourceFile: ts.SourceFile) => void;
-  updateFileFromText: (fileName: string, content: string) => void;
+  updateFileFromText: (fileName: string, content: string, replaceTextSpan: ts.TextSpan) => void;
 }
 
 export function createVirtualTypeScriptEnvironment(
@@ -178,6 +178,7 @@ export function createVirtualTypeScriptEnvironment(
     watchHostController.watchHost,
   );
   const languageService = ts.createLanguageService(languageServiceHostController.languageServiceHost);
+  const program = languageService.getProgram()!;
   const watchProgram = ts.createWatchProgram({
     ...watchHostController.watchHost,
     rootFiles,
@@ -196,10 +197,16 @@ export function createVirtualTypeScriptEnvironment(
   return {
     watchProgram,
     languageService,
-    typeChecker: watchProgram.getProgram().getProgram().getTypeChecker(),
+    typeChecker: program.getTypeChecker(),
     updateFile,
-    updateFileFromText: (fileName, content) => {
-      updateFile(ts.createSourceFile(fileName, content, ts.ScriptTarget.ES2015));
+    updateFileFromText: (fileName, content, prevTextSpan) => {
+      const prevSourceFile = program.getSourceFile(fileName)!;
+      const prevFullContents = prevSourceFile.text;
+      const newText = prevFullContents.slice(0, prevTextSpan.start)
+        + content
+        + prevFullContents.slice(prevTextSpan.start + prevTextSpan.length);
+      const newSourceFile = ts.updateSourceFile(prevSourceFile, newText, { span: prevTextSpan, newLength: content.length });
+      updateFile(newSourceFile);
     },
   };
 }

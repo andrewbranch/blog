@@ -4,6 +4,7 @@
   "rules": {
     "array-type": [true, "array"],
     "arrow-parens": [true, "ban-single-arg-parens"],
+    "curly": false,,
     "forin": false,
     "interface-name": [true, "never-prefix"],
     "jsx-no-lambda": false,
