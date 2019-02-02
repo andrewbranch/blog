@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useEffect, useRef, useContext, useState } from 'react';
+import React, { HTMLAttributes, useEffect, useRef, useContext, useState, useMemo } from 'react';
 import Layout from '../components/layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
@@ -206,9 +206,14 @@ function Post({ data, pageContext }: PostProps) {
     ...clone,
     [codeBlockId]: { ...pageContext.codeBlocks[codeBlockId] },
   }), {} as Record<string, CodeBlockContext>));
-  const [editable, setEditable] = React.useState(false);
-  const [tsEnv, setTsEnv] = React.useState<VirtualTypeScriptEnvironment | undefined>(undefined);
-  const renderAst = React.useMemo(() => createRenderer(pageContext, setEditable), [pageContext.codeBlocks]);
+  const [editable, setEditable] = useState(false);
+  const [tsEnv, setTsEnv] = useState<VirtualTypeScriptEnvironment | undefined>(undefined);
+  const renderAst = useMemo(() => createRenderer(pageContext, setEditable), [pageContext.codeBlocks]);
+  const context = useMemo(() => ({
+    editable,
+    tsEnv,
+    mutableCodeBlocks: mutableCodeBlocks.current,
+  }), [editable, tsEnv, mutableCodeBlocks.current]);
   Object.assign(window, { tsEnv, pageContext });
 
   useEffect(() => {
@@ -251,7 +256,7 @@ function Post({ data, pageContext }: PostProps) {
     <Layout>
       <div>
         <h1>{post.frontmatter.title}</h1>
-        <EditableContext.Provider value={{ editable, tsEnv, mutableCodeBlocks: mutableCodeBlocks.current }}>
+        <EditableContext.Provider value={context}>
           <div>{renderAst(data.markdownRemark.htmlAst)}</div>
         </EditableContext.Provider>
       </div>

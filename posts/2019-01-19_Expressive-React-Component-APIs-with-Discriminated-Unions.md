@@ -198,6 +198,7 @@ name: select-2.tsx
 
 // Compiler knows that `newValue` will be a string
 <Select
+  multiple={false}
   options={['Red', 'Green', 'Blue']}
   value="Red"
   onChange={newValue => {
@@ -246,7 +247,7 @@ interface CommonSelectProps {
 }
 
 interface SingleSelectPropsFragment {
-  multiple?: false;
+  multiple: false;
   value: string;
   onChange: (newValue: string[]) => void;
 }

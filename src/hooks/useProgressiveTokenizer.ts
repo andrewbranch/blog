@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { CacheableLineTokens, Tokenizer } from '../components/InteractiveCodeBlock/tokenizers/types';
 import { createStaticTokenizer } from '../components/InteractiveCodeBlock/tokenizers/static';
 import { TextMateToken, createTmGrammarTokenizer } from '../components/InteractiveCodeBlock/tokenizers/tmGrammar';
@@ -34,28 +34,35 @@ export function useProgressiveTokenizer({
   initialTokens,
   editable,
   languageService,
+  visibleSpan,
   ...options
 }: UseLazyTokenizerOptions): ComposedTokenizer {
   const emptyTokenizer = createStaticTokenizer(initialTokens);
+  const prevVisibleSpan = useRef(visibleSpan);
   const [tokenizer, setTokenizer] = React.useState({
     initialized: false,
     loading: false,
     tokenizer: emptyTokenizer,
   });
 
-  if (editable && !tokenizer.initialized && !tokenizer.loading && languageService) {
-    setTokenizer({ ...tokenizer, loading: true });
-    Promise.all([
-      getTmTokenizer(),
-      getTypeScriptTokenizer({ languageService, ...options }),
-    ]).then(([tmTokenizer, typeScriptTokenizer]) => {
-      setTokenizer({
-        initialized: true,
-        loading: false,
-        tokenizer: composeTokenizers(tmTokenizer, typeScriptTokenizer),
+  useEffect(() => {
+    const needsInitialTokenizer = !tokenizer.initialized && !tokenizer.loading;
+    const startChanged = visibleSpan && prevVisibleSpan.current && visibleSpan.start !== prevVisibleSpan.current.start;
+    if (editable && languageService && (needsInitialTokenizer || startChanged)) {
+      prevVisibleSpan.current = visibleSpan;
+      setTokenizer({ ...tokenizer, loading: true });
+      Promise.all([
+        getTmTokenizer(),
+        getTypeScriptTokenizer({ languageService, visibleSpan, ...options }),
+      ]).then(([tmTokenizer, typeScriptTokenizer]) => {
+        setTokenizer({
+          initialized: true,
+          loading: false,
+          tokenizer: composeTokenizers(tmTokenizer, typeScriptTokenizer),
+        });
       });
-    });
-  }
+    }
+  });
 
   return tokenizer.tokenizer;
 }

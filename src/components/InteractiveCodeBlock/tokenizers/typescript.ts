@@ -104,7 +104,8 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
           && semanticDiagnostics[0].start
           && semanticDiagnostics[0].start < newConsumedLength
         ) {
-          const { start, length, messageText } = semanticDiagnostics.shift()!;
+          const { start, length, messageText, reportsUnnecessary } = semanticDiagnostics.shift()!;
+          if (reportsUnnecessary) continue;
           const end = Math.min(start! + length! - consumedLength, line.length);
           const token = TypeScriptDiagnosticToken({
             scopes: [TypeScriptDiagnosticTokenType.Semantic],
