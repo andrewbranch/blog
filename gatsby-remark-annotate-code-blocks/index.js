@@ -19,7 +19,8 @@ module.exports = ({ markdownAST }) => {
         hProperties: {
           ...metaAttrs,
           ...(node.data && node.data.hProperties),
-          id: `code-${id++}`
+          id: `code-${id++}`,
+          'data-lang': node.lang,
         }
       };
       node.value = node.value.trim();

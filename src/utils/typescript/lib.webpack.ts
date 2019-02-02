@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { ThirdPartyLibraryFile, ThirdPartyLib, Libraries } from './types';
+import { ExtraLibFile, Extra, Libraries } from './types';
 
 const tsLibFiles = new Map<string, ts.SourceFile>([
   ['/lib.es5.d.ts', ts.createSourceFile(
@@ -68,28 +68,39 @@ const tsLibFiles = new Map<string, ts.SourceFile>([
     require('!raw-loader!typescript/lib/lib.es2015.symbol.wellknown.d.ts'),
     ts.ScriptTarget.ES2015,
   )],
-  ['/lib.dom.d.ts', ts.createSourceFile(
+]);
+
+const domLibFile: ExtraLibFile = {
+  moduleName: Extra.DOM,
+  modulePath: '/lib.dom.d.ts',
+  getSourceFiles: async () => [ts.createSourceFile(
     '/lib.dom.d.ts',
     // tslint:disable-next-line:no-var-requires no-implicit-dependencies
     require('!raw-loader!typescript/lib/lib.dom.d.ts'),
     ts.ScriptTarget.ES2015,
   )],
-]);
+};
 
-const reactLibraryFile: ThirdPartyLibraryFile = {
-  moduleName: ThirdPartyLib.React,
-  modulePath: '/node_modules/react/index.js',
-  getTypingsSourceFile: async () => ts.createSourceFile(
+const reactLibFile: ExtraLibFile = {
+  moduleName: Extra.React,
+  modulePath: '/node_modules/@types/react/index.d.ts',
+  getSourceFiles: async () => [ts.createSourceFile(
     '/node_modules/@types/react/index.d.ts',
     // tslint:disable-next-line:no-implicit-dependencies
     (await import('!raw-loader!@types/react/index.d.ts')).default,
     ts.ScriptTarget.ES2015,
-  ),
+  ), ts.createSourceFile(
+    '/node_modules/@types/react/global.d.ts',
+    // tslint:disable-next-line:no-implicit-dependencies
+    (await import('!raw-loader!@types/react/global.d.ts')).default,
+    ts.ScriptTarget.ES2015,
+  )],
 };
 
 export const lib: Libraries = {
-  ts: tsLibFiles,
+  core: tsLibFiles,
   extra: {
-    [ThirdPartyLib.React]: reactLibraryFile,
+    [Extra.DOM]: domLibFile,
+    [Extra.React]: reactLibFile,
   },
 };

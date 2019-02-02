@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useEffect } from 'react';
+import React, { HTMLAttributes, useEffect, useRef, useContext, useState } from 'react';
 import Layout from '../components/layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
@@ -12,6 +12,7 @@ import { TypeScriptDiagnosticToken } from '../components/InteractiveCodeBlock/Ty
 import 'katex/dist/katex.min.css';
 
 export interface CodeBlockContext {
+  id: string;
   text: string;
   fileName: string;
   start: number;
@@ -59,24 +60,44 @@ export const query = graphql`
   }
 `;
 
+function getStartOfCodeBlock(
+  codeBlockId: string,
+  codeBlocks: Record<string, CodeBlockContext>,
+  sourceFileContext: SourceFileContext,
+): number {
+  const blockIndex = sourceFileContext.fragments.findIndex(f => f.codeBlockId === codeBlockId);
+  if (blockIndex === 0) {
+    return sourceFileContext.preamble.length;
+  }
+
+  const prevBlock = sourceFileContext.fragments[blockIndex - 1];
+  return codeBlocks[prevBlock.codeBlockId].end + 1;
+}
+
 interface ProgressiveCodeBlockProps {
   codeBlock: CodeBlockContext;
+  sourceFile: SourceFileContext;
   onStartEditing: () => void;
 }
 
 function ProgressiveCodeBlock({
   codeBlock,
+  sourceFile,
   onStartEditing,
 }: ProgressiveCodeBlockProps) {
-  const { start, end, tokens: initialTokens, quickInfo, text, fileName } = codeBlock;
-  const { editable, tsEnv } = React.useContext(EditableContext);
-  const visibleSpan = { start, length: end - start };
+  const { tokens: initialTokens, quickInfo, text, fileName } = codeBlock;
+  const { editable, tsEnv, mutableCodeBlocks } = useContext(EditableContext);
+  const [span, setSpan] = useState<import('typescript').TextSpan>({
+    start: codeBlock.start,
+    length: text.length,
+  });
+
   const tokenizer = useProgressiveTokenizer({
     initialTokens,
     editable,
     languageService: tsEnv && tsEnv.languageService,
     fileName: codeBlock.fileName,
-    visibleSpan,
+    visibleSpan: span,
   });
   const deferredCodeBlock = useDeferredRender(() => (
     <InteractiveCodeBlock
@@ -85,7 +106,16 @@ function ProgressiveCodeBlock({
       tokenizer={tokenizer}
       readOnly={!editable}
       onClick={() => editable || onStartEditing()}
-      onChange={value => tsEnv && tsEnv.updateFileFromText(fileName, value, visibleSpan)}
+      onChange={value => {
+        const start = getStartOfCodeBlock(codeBlock.id, mutableCodeBlocks, sourceFile);
+        const end = start + value.length;
+        const newSpan = { start, length: value.length };
+        setSpan(newSpan);
+        mutableCodeBlocks[codeBlock.id].end = end;
+        if (tsEnv) {
+          tsEnv.updateFileFromText(fileName, value, span);
+        }
+      }}
       renderToken={(token, tokenProps) => (
         <EditableContext.Consumer>
           {({ tsEnv: innerTsEnv }) => {
@@ -126,22 +156,31 @@ function ProgressiveCodeBlock({
 type VirtualTypeScriptEnvironment = import('../utils/typescript/services').VirtualTypeScriptEnvironment;
 interface EditableContext {
   editable: boolean;
+  mutableCodeBlocks: Record<string, CodeBlockContext>;
   tsEnv: VirtualTypeScriptEnvironment | undefined;
 }
 
-const EditableContext = React.createContext<EditableContext>({ editable: false, tsEnv: undefined });
+const EditableContext = React.createContext<EditableContext>({
+  editable: false,
+  tsEnv: undefined,
+  mutableCodeBlocks: {},
+});
 
-function createRenderer(tokens: { [key: string]: CodeBlockContext }, setEditable: (editable: boolean) => void) {
+function createRenderer(
+  { codeBlocks, sourceFiles }: PostProps['pageContext'],
+  setEditable: (editable: boolean) => void,
+) {
   const renderAst = new RehypeReact({
     createElement: (type, props, children) => {
       if (type === 'pre') {
         const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = (children as any)[0];
         const id = codeChild.props.id!;
-        const codeBlock = tokens[id];
+        const codeBlock = codeBlocks[id];
         if (codeBlock) {
           return (
             <ProgressiveCodeBlock
               key={id}
+              sourceFile={sourceFiles[codeBlock.fileName]}
               codeBlock={codeBlock}
               onStartEditing={() => setEditable(true)}
             />
@@ -161,9 +200,13 @@ function getFullText(sourceFileContext: SourceFileContext, codeBlocks: Record<st
 
 function Post({ data, pageContext }: PostProps) {
   const post = data.markdownRemark;
+  const mutableCodeBlocks = useRef(Object.keys(pageContext.codeBlocks).reduce((clone, codeBlockId) => ({
+    ...clone,
+    [codeBlockId]: { ...pageContext.codeBlocks[codeBlockId] },
+  }), {} as Record<string, CodeBlockContext>));
   const [editable, setEditable] = React.useState(false);
   const [tsEnv, setTsEnv] = React.useState<VirtualTypeScriptEnvironment | undefined>(undefined);
-  const renderAst = React.useMemo(() => createRenderer(pageContext.codeBlocks, setEditable), [pageContext.codeBlocks]);
+  const renderAst = React.useMemo(() => createRenderer(pageContext, setEditable), [pageContext.codeBlocks]);
   Object.assign(window, { tsEnv, pageContext });
 
   useEffect(() => {
@@ -186,7 +229,7 @@ function Post({ data, pageContext }: PostProps) {
           ];
           return entries;
         }));
-        setTsEnv(createVirtualTypeScriptEnvironment(sourceFiles, lib.ts));
+        setTsEnv(createVirtualTypeScriptEnvironment(sourceFiles, lib.core));
       })();
     }
 
@@ -201,7 +244,7 @@ function Post({ data, pageContext }: PostProps) {
     <Layout>
       <div>
         <h1>{post.frontmatter.title}</h1>
-        <EditableContext.Provider value={{ editable, tsEnv }}>
+        <EditableContext.Provider value={{ editable, tsEnv, mutableCodeBlocks: mutableCodeBlocks.current }}>
           <div>{renderAst(data.markdownRemark.htmlAst)}</div>
         </EditableContext.Provider>
       </div>

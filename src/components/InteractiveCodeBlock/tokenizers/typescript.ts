@@ -57,7 +57,9 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
       const syntacticDiagnostics = languageService.getSyntacticDiagnostics(fileName);
       const semanticDiagnostics = languageService.getSemanticDiagnostics(fileName);
       while (syntacticDiagnostics[0] && syntacticDiagnostics[0].start < visibleSpan.start) syntacticDiagnostics.shift();
-      while (semanticDiagnostics[0] && (semanticDiagnostics[0].start || 0) < visibleSpan.start) semanticDiagnostics.shift();
+      while (semanticDiagnostics[0] && (semanticDiagnostics[0].start || 0) < visibleSpan.start) {
+        semanticDiagnostics.shift();
+      }
       return lines.reduce(({ consumedLength, tokens }, line, index) => {
         const newConsumedLength = consumedLength + line.length + 1; // Add one for '\n' removed in split
         tokens[index] = { hash: '', tokens: [] };

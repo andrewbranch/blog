@@ -53,7 +53,12 @@ exports.createPages = async ({ graphql, actions }) => {
               slug
             },
             frontmatter {
-              globalPreamble
+              globalPreamble,
+              lib,
+              preambles {
+                file,
+                text
+              },
             }
           }
         }
@@ -62,34 +67,39 @@ exports.createPages = async ({ graphql, actions }) => {
   `);
   const grammar = await getTmRegistry(ssrFileProvider).loadGrammar('source.tsx');
   const tmTokenizer = createTmGrammarTokenizer({ grammar });
-  result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+  if (result.errors) {
+    throw new Error(result.errors.join('\n'));
+  }
+
+  return result.data.allMarkdownRemark.edges.map(async ({ node }) => {
     const sourceFileContext = {};
     const codeBlockContext = {};
     visit(
       node.htmlAst,
-      node => node.tagName === 'code' && node.properties.className && node.properties.className.includes('language-ts'),
+      node => node.tagName === 'code' && ['ts', 'tsx'].includes(node.properties.dataLang),
       code => {
         const codeBlockId = code.properties.id;
         const metaData = deserializeAttributes(code.properties);
-        const fileName = metaData.name || `/${codeBlockId}.tsx`;
+        const fileName = metaData.name || `/${codeBlockId}.${metaData.lang}`;
         const text = code.children[0].value.trim();
-        const codeBlock = { text, fileName };
+        const codeBlock = { text, fileName, id: codeBlockId };
         codeBlockContext[codeBlockId] = codeBlock;
         const sourceFileFragment = { codeBlockId };
         const existingSourceFile = sourceFileContext[fileName];
         if (existingSourceFile) {
           const { codeBlockId: prevCodeBlockId } = existingSourceFile.fragments[existingSourceFile.fragments.length - 1];
           const prevCodeBlock = codeBlockContext[prevCodeBlockId];
-          codeBlock.start = prevCodeBlock.text.length + 1;
-          codeBlock.end = prevCodeBlock.start + text.length;
+          codeBlock.start = prevCodeBlock.end + 1;
+          codeBlock.end = codeBlock.start + text.length;
           existingSourceFile.fragments.push(sourceFileFragment);
-          existingSourceFile.preamble = compact([existingSourceFile.preamble, metaData.preamble]).join('\n');
         } else {
-          codeBlock.start = (node.frontmatter.globalPreamble || '').length;
+          const filePreamble = node.frontmatter.preambles.find(p => p.file === fileName);
+          const preamble = (node.frontmatter.globalPreamble || '') + (filePreamble ? filePreamble.text : '');
+          codeBlock.start = preamble.length;
           codeBlock.end = codeBlock.start + text.length;
           sourceFileContext[fileName] = {
             fragments: [sourceFileFragment],
-            preamble: node.frontmatter.globalPreamble || '',
+            preamble,
           };
         }
       }
@@ -103,7 +113,11 @@ exports.createPages = async ({ graphql, actions }) => {
       return entry;
     }));
 
-    const { languageService } = createVirtualTypeScriptEnvironment(sourceFiles, lib.ts);
+    const extraLibFiles = new Map(await Promise.all(node.frontmatter.lib.map(async libName => [
+      lib.extra[libName].modulePath,
+      await lib.extra[libName].getSourceFiles()
+    ])));
+    const { languageService } = createVirtualTypeScriptEnvironment(sourceFiles, lib.core, extraLibFiles);
     Object.keys(codeBlockContext).forEach(codeBlockId => {
       const codeBlock = codeBlockContext[codeBlockId];
       const { fileName } = codeBlock;

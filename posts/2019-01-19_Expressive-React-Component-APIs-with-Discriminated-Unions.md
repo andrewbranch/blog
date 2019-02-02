@@ -3,6 +3,16 @@ title: "Expressive React Component APIs with Discriminated Unions"
 date: "2019-01-19"
 slug: "expressive-react-component-apis-with-discriminated-unions"
 globalPreamble: "const onChange = () => {};\n"
+preambles:
+  - file: select-1.tsx
+    text: "import React from 'react';\n"
+  - file: select-2.tsx
+    text: "import React from 'react';\n"
+  - file: select-3.tsx
+    text: "import React from 'react';\n"
+lib:
+  - dom
+  - react
 ---
 
 One of TypeScript’s most underrated features is _discriminated union types_. Borrowed primarily from functional programming (FP) languages, they match an elegant FP concept to a pattern people intuitively write in JavaScript. Discriminated unions also enable a useful pattern for typing complex React component props more safely and expressively. But first, we’ll review what discriminated unions look like independent of React.
@@ -105,7 +115,7 @@ The idea is that when `multiple` is `true`, the consumer should set `value` to a
 <!--@
 name: select-1.tsx
 -->
-```ts
+```tsx
 // Missing `multiple` prop, but no compiler error
 <Select
   options={['Red', 'Green', 'Blue']}
@@ -140,7 +150,7 @@ Since you care deeply about developer experience, you decide to iterate on your 
 <!--@
 name: select-2.tsx
 -->
-```ts
+```tsx
 interface CommonSelectProps {
   placeholder?: string;
   options: string[];
@@ -170,7 +180,7 @@ As triangles and quadrilaterals can be distinguished by their number of sides, t
 <!--@
 name: select-2.tsx
 -->
-```ts
+```tsx
 // Compiler knows that `value` shouldn’t be an array
 <Select
   options={['Red', 'Green', 'Blue']}
@@ -309,7 +319,7 @@ So, the resulting type of `SelectProps` expands to every possible combination th
 <!--@
 name: select-3.tsx
 -->
-```ts
+```tsx
 // `renderGroupTitle` doesn’t exist unless `grouped` is set
 <Select
   options={['Red', 'Green', 'Blue']}

@@ -1,16 +1,17 @@
 import ts from 'typescript';
 
-export enum ThirdPartyLib {
+export enum Extra {
+  DOM = 'dom',
   React = 'react',
 }
 
-export interface ThirdPartyLibraryFile {
-  moduleName: ThirdPartyLib;
+export interface ExtraLibFile {
+  moduleName: Extra;
   modulePath: string;
-  getTypingsSourceFile: () => Promise<ts.SourceFile>;
+  getSourceFiles: () => Promise<ts.SourceFile[]>;
 }
 
 export interface Libraries {
-  ts: Map<string, ts.SourceFile>;
-  extra: { [K in ThirdPartyLib]: ThirdPartyLibraryFile; };
+  core: Map<string, ts.SourceFile>;
+  extra: { [K in Extra]: ExtraLibFile; };
 }
