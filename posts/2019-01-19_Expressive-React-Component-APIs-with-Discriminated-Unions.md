@@ -159,7 +159,7 @@ interface CommonSelectProps {
 interface SingleSelectProps extends CommonSelectProps {
   multiple?: false;
   value: string;
-  onChange: (newValue: string[]) => void;
+  onChange: (newValue: string) => void;
 }
 
 interface MultipleSelectProps extends CommonSelectProps {

@@ -19,6 +19,7 @@ const { TypeScriptTokenType } = require('./src/components/InteractiveCodeBlock/t
 const { createTypeScriptTokenizer } = require('./src/components/InteractiveCodeBlock/tokenizers/typescript');
 const { composeTokenizers } = require('./src/components/InteractiveCodeBlock/tokenizers/composeTokenizers');
 const { createVirtualTypeScriptEnvironment } = require('./src/utils/typescript/services');
+const { getExtraLibFiles } = require('./src/utils/typescript/utils');
 const { lib } = require('./src/utils/typescript/lib.ssr');
 const { deserializeAttributes } = require('./gatsby-remark-annotate-code-blocks');
 const visit = require('unist-util-visit');
@@ -113,10 +114,7 @@ exports.createPages = async ({ graphql, actions }) => {
       return entry;
     }));
 
-    const extraLibFiles = new Map(await Promise.all(node.frontmatter.lib.map(async libName => [
-      lib.extra[libName].modulePath,
-      await lib.extra[libName].getSourceFiles()
-    ])));
+    const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib, lib);
     const { languageService } = createVirtualTypeScriptEnvironment(sourceFiles, lib.core, extraLibFiles);
     Object.keys(codeBlockContext).forEach(codeBlockId => {
       const codeBlock = codeBlockContext[codeBlockId];

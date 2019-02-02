@@ -36,6 +36,7 @@ export interface PostProps {
       htmlAst: any;
       frontmatter: {
         title: string;
+        lib: import('../utils/typescript/types').Extra[];
       };
     };
   };
@@ -54,7 +55,8 @@ export const query = graphql`
     markdownRemark(fields: { slug: { eq: $slug } }) {
       htmlAst,
       frontmatter {
-        title
+        title,
+        lib
       }
     }
   }
@@ -212,10 +214,11 @@ function Post({ data, pageContext }: PostProps) {
   useEffect(() => {
     if (editable) {
       (async () => {
-        const [ts, { createVirtualTypeScriptEnvironment }, { lib }] = await Promise.all([
+        const [ts, { createVirtualTypeScriptEnvironment }, { lib }, { getExtraLibFiles }] = await Promise.all([
           await import('typescript'),
           await import('../utils/typescript/services'),
           await import('../utils/typescript/lib.webpack'),
+          await import('../utils/typescript/utils'),
         ]);
         const sourceFiles = new Map(Object.keys(pageContext.sourceFiles).map(fileName => {
           const entries: [string, import('typescript').SourceFile] = [
@@ -229,7 +232,11 @@ function Post({ data, pageContext }: PostProps) {
           ];
           return entries;
         }));
-        setTsEnv(createVirtualTypeScriptEnvironment(sourceFiles, lib.core));
+        setTsEnv(createVirtualTypeScriptEnvironment(
+          sourceFiles,
+          lib.core,
+          await getExtraLibFiles(post.frontmatter.lib, lib),
+        ));
       })();
     }
 
