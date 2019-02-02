@@ -159,7 +159,6 @@ export function createVirtualLanguageServiceHost(
 export interface VirtualTypeScriptEnvironment {
   watchProgram: ts.WatchOfFilesAndCompilerOptions<ts.BuilderProgram>;
   languageService: ts.LanguageService;
-  typeChecker: ts.TypeChecker;
   updateFile: (sourceFile: ts.SourceFile) => void;
   updateFileFromText: (fileName: string, content: string, replaceTextSpan: ts.TextSpan) => void;
 }
@@ -178,7 +177,6 @@ export function createVirtualTypeScriptEnvironment(
     watchHostController.watchHost,
   );
   const languageService = ts.createLanguageService(languageServiceHostController.languageServiceHost);
-  const program = languageService.getProgram()!;
   const watchProgram = ts.createWatchProgram({
     ...watchHostController.watchHost,
     rootFiles,
@@ -197,10 +195,9 @@ export function createVirtualTypeScriptEnvironment(
   return {
     watchProgram,
     languageService,
-    typeChecker: program.getTypeChecker(),
     updateFile,
     updateFileFromText: (fileName, content, prevTextSpan) => {
-      const prevSourceFile = program.getSourceFile(fileName)!;
+      const prevSourceFile = languageService.getProgram()!.getSourceFile(fileName)!;
       const prevFullContents = prevSourceFile.text;
       const newText = prevFullContents.slice(0, prevTextSpan.start)
         + content
