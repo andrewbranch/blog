@@ -4,6 +4,7 @@ import { Spacer } from './Spacer';
 import { Icon } from './Icon';
 import { Link } from 'gatsby';
 import { Logo } from './Logo';
+import { DarkModeSwitch } from './DarkModeSwitch';
 
 export interface HeaderProps {
   siteTitle: string;
@@ -25,8 +26,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({ siteTitle }) => (
       </h3>
     </Link>
     <Spacer space={0.5}>
+      <DarkModeSwitch css={{ padding: '0px 4px'}} />
       <a href="https://github.com/andrewbranch">
-        <Icon src={require('../images/github-icon.svg')} css={darkMode({ filter: 'invert()' })} />
+        <Icon src={require('../images/github-icon.svg')} css={darkMode({ filter: 'invert(100%)' })} />
       </a>
       <a href="https://twitter.com/atcb">
         <Icon src={require('../images/twitter-icon.svg')} size={26} />

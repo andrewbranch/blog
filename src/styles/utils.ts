@@ -48,8 +48,23 @@ const unanchor: ObjectInterpolation<any> = {
   textDecoration: 'none',
 };
 
+const unbutton: ObjectInterpolation<any> = {
+  WebkitAppearance: 'none',
+  background: 'transparent',
+  border: 'none',
+  boxShadow: 'none',
+  cursor: 'pointer',
+  padding: '0',
+  margin: '0',
+  fontSize: 'inherit',
+  fontWeight: 'unset',
+  color: 'unset',
+  textAlign: 'unset',
+};
+
 export const resets = {
   unanchor,
+  unbutton,
 };
 
 export const textColor = {
@@ -90,5 +105,6 @@ export function margin(rhythm: number, sides = Side.Vertical | Side.Horizontal):
 export function darkMode(styles: Interpolation<any>): ObjectInterpolation<any> {
   return {
     '@media (prefers-color-scheme: dark)': styles,
+    'html[data-prefers-dark] &': styles,
   };
 }

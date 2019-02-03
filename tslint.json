@@ -7,6 +7,7 @@
     "curly": false,
     "forin": false,
     "interface-name": [true, "never-prefix"],
+    "jsx-boolean-value": false,
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
     "no-bitwise": false,

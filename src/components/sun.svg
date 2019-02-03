@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Oval" stroke="#000000" stroke-width="8" cx="64" cy="64" r="36"></circle>
+        <path d="M64.5,13 L64.5,5" id="Line" stroke="#000000" stroke-width="8" stroke-linecap="round"></path>
+        <path d="M64.5,123 L64.5,115" id="Line-Copy-2" stroke="#000000" stroke-width="8" stroke-linecap="round"></path>
+        <path d="M116,64.5 L124,64.5" id="Line-Copy" stroke="#000000" stroke-width="8" stroke-linecap="round"></path>
+        <path d="M4,64.5 L12,64.5" id="Line-Copy-3" stroke="#000000" stroke-width="8" stroke-linecap="round"></path>
+        <path d="M103.951533,28.7555736 L103.951533,20.7555736" id="Line" stroke="#000000" stroke-width="8" stroke-linecap="round" transform="translate(103.951533, 24.755574) rotate(-315.000000) translate(-103.951533, -24.755574) "></path>
+        <path d="M24.7555736,107.951533 L24.7555736,99.9515331" id="Line-Copy-2" stroke="#000000" stroke-width="8" stroke-linecap="round" transform="translate(24.755574, 103.951533) rotate(-315.000000) translate(-24.755574, -103.951533) "></path>
+        <path d="M99.2444264,103.951533 L107.244426,103.951533" id="Line-Copy" stroke="#000000" stroke-width="8" stroke-linecap="round" transform="translate(103.244426, 103.951533) rotate(-315.000000) translate(-103.244426, -103.951533) "></path>
+        <path d="M20.0484669,24.7555736 L28.0484669,24.7555736" id="Line-Copy-3" stroke="#000000" stroke-width="8" stroke-linecap="round" transform="translate(24.048467, 24.755574) rotate(-315.000000) translate(-24.048467, -24.755574) "></path>
+    </g>
+</svg>
