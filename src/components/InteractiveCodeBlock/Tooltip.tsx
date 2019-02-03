@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useHover, HoverProps, UseHoverOptions } from '../../hooks';
 import { ClassNames, css } from '@emotion/core';
-import { gray } from '../../utils/typography';
 import { isSSR } from '../../utils/ssr';
 
 export interface InjectedTriggerProps extends HoverProps, React.RefAttributes<HTMLElement> {
@@ -37,11 +36,11 @@ function createPositionStyle(triggerElement: HTMLElement | null, margin: number)
 }
 
 const overlayStyles = css({
-  backgroundColor: 'white',
+  backgroundColor: 'var(--color-bg100)',
   zIndex: 1,
   borderRadius: 2,
   fontSize: '85%',
-  boxShadow: `0 0 0 1px ${gray(0.1)}`,
+  boxShadow: '0 0 0 1px var(--color-fg10)',
   maxWidth: 700,
 });
 
@@ -49,7 +48,7 @@ const tooltipSectionStyles = css({
   display: 'block',
   padding: '2px 4px',
   ':not(:last-child)': {
-    borderBottom: `1px solid ${gray(0.1)}`,
+    borderBottom: '1px solid var(--color-fg05)',
   },
 });
 

@@ -1,5 +1,5 @@
 import { rhythm as createRhythm, groteskSansFamily, textColors, monoFamily } from '../utils/typography';
-import { ObjectInterpolation } from '@emotion/core';
+import { ObjectInterpolation, Interpolation } from '@emotion/core';
 
 export const variables = {
   colors: {
@@ -84,5 +84,11 @@ export function margin(rhythm: number, sides = Side.Vertical | Side.Horizontal):
     marginRight: sides & Side.Right ? amount : undefined,
     marginBottom: sides & Side.Bottom ? amount : undefined,
     marginLeft: sides & Side.Left ? amount : undefined,
+  };
+}
+
+export function darkMode(styles: Interpolation<any>): ObjectInterpolation<any> {
+  return {
+    '@media (prefers-color-scheme: dark)': styles,
   };
 }

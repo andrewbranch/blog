@@ -7,19 +7,17 @@ export const groteskSansFamily = [sansTypefaceName, 'Helvetica Neue', 'Helvetica
 export const serifFamily = [serifTypefaceName, 'Georgia', 'serif'];
 export const monoFamily = ['menlo', 'monaco', 'monospace'];
 
-export function gray(alpha: number) {
-  return `rgba(0, 0, 0, ${alpha})`;
-}
-
 export const textColors = {
-  primary: gray(0.9),
-  secondary: gray(0.51),
-  disabled: gray(0.32),
+  highContrast: 'var(--highContrastText)',
+  primary: 'var(--primaryText)',
+  secondary: 'var(--secondaryText)',
+  disabled: 'var(--disabled)',
+  link: 'var(--linkText)',
 };
 
 const typography = new Typography({
   bodyColor: textColors.primary,
-  headerColor: textColors.primary,
+  headerColor: textColors.highContrast,
   baseFontSize: '18px',
   baseLineHeight: 1.6,
   scaleRatio: 2.8,

@@ -12,6 +12,30 @@
   --property: #816927;
   --punctuation: #000000;
   --operator: #000000;
+
+  --diagnostic-bg: rgba(209, 47, 27, 0.1);
+  --diagnostic-underline: rgba(209, 47, 27, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --function: #FF816F;
+    --types: #91D462;
+    --controlflow: #FF7AB2;
+    --variablename: #ffffff;
+    --regexp: #d16969;
+    --comment: #7F8C99;
+    --keyword: #FF7AB2;
+    --numeric: #A79DF8;
+    --string: #FC6A5D;
+    --primitive: #8AD1C3;
+    --property: #8AD1C3;
+    --punctuation: #ffffff;
+    --operator: #ffffff;
+
+    --diagnostic-bg: rgba(218, 54, 63, 0.2);
+    --diagnostic-underline: rgba(218, 54, 63, 1);
+  }
 }
 
 .tm-theme-vscode {

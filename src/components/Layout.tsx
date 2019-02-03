@@ -2,8 +2,9 @@ import React from 'react';
 import { StaticQuery, graphql } from 'gatsby';
 import { Global } from '@emotion/core';
 import Header from './Header';
-import { rhythm, gray } from '../utils/typography';
+import { rhythm } from '../utils/typography';
 import { padding, Side, type, textColor, variables } from '../styles/utils';
+import '../styles/variables.css';
 import '../styles/fonts/fonts.css';
 
 const Layout: React.FunctionComponent = ({ children }) => (
@@ -23,6 +24,7 @@ const Layout: React.FunctionComponent = ({ children }) => (
           html: {
             height: '100%',
             minHeight: '100%',
+            backgroundColor: 'var(--background)',
           },
           'body, body > *, body > * > *': {
             height: '100%',
@@ -31,10 +33,11 @@ const Layout: React.FunctionComponent = ({ children }) => (
             fontSize: '0.9rem',
           },
           a: {
-            color: variables.colors.blue,
+            color: variables.colors.text.link,
             '> code': {
               background: 'transparent',
               padding: 0,
+              color: 'inherit',
             },
           },
           pre: {
@@ -42,7 +45,8 @@ const Layout: React.FunctionComponent = ({ children }) => (
           },
           code: [type.mono, {
             fontSize: '0.8rem',
-            background: gray(0.05),
+            background: 'var(--color-fg05)',
+            color: 'var(--highContrastText)',
             padding: '0 3px',
             borderRadius: 3,
           }],

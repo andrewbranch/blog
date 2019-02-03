@@ -2,7 +2,6 @@ import React from 'react';
 import shallowEqual from 'shallowequal';
 import { Tooltip } from './Tooltip';
 import { TypeScriptQuickInfo } from './TypeScriptQuickInfo';
-import { gray } from '../../utils/typography';
 import { css } from '@emotion/core';
 
 const styles = css({
@@ -11,8 +10,8 @@ const styles = css({
 
 const hoveringStyles = css({
   borderRadius: 2,
-  backgroundColor: gray(0.05),
-  boxShadow: `0 0 0 2px ${gray(0.05)}`,
+  backgroundColor: 'var(--color-fg05)',
+  boxShadow: '0 0 0 2px var(--color-fg05)',
 });
 
 function getQuickInfo({
