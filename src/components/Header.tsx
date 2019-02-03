@@ -1,4 +1,5 @@
 import React from 'react';
+import { OutboundLink } from 'gatsby-plugin-google-analytics';
 import { flex, padding, Side, resets, type, textColor, margin, darkMode } from '../styles/utils';
 import { Spacer } from './Spacer';
 import { Icon } from './Icon';
@@ -26,13 +27,13 @@ const Header: React.FunctionComponent<HeaderProps> = ({ siteTitle }) => (
       </h3>
     </Link>
     <Spacer space={0.5}>
-      <DarkModeSwitch css={{ padding: '0px 4px'}} />
-      <a href="https://github.com/andrewbranch">
+      <DarkModeSwitch css={{ padding: '0px 2px'}} />
+      <OutboundLink href="https://github.com/andrewbranch">
         <Icon src={require('../images/github-icon.svg')} css={darkMode({ filter: 'invert(100%)' })} />
-      </a>
-      <a href="https://twitter.com/atcb">
+      </OutboundLink>
+      <OutboundLink href="https://twitter.com/atcb">
         <Icon src={require('../images/twitter-icon.svg')} size={26} />
-      </a>
+      </OutboundLink>
     </Spacer>
   </div>
 );

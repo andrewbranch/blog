@@ -1,0 +1,12 @@
+import * as React from "react"
+
+declare module 'gatsby-plugin-google-analytics' {
+  interface OutboundLinkProps {
+    onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+  }
+
+  class OutboundLink extends React.Component<
+    OutboundLinkProps & React.HTMLProps<HTMLAnchorElement>,
+    any
+  > {}
+}

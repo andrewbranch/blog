@@ -5,6 +5,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    // TODO: fix gatsby-plugin-google-analytics
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "jsx": "react",
     "types": [
@@ -12,6 +14,7 @@
     ]
   },
   "exclude": [
-    "**/*.ssr.ts"
+    "**/*.ssr.ts",
+    "./node_modules/gatsby-plugin-google-analytics/**/*"
   ]
 }
