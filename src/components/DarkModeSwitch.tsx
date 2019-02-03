@@ -28,8 +28,10 @@ export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
   useEffect(() => {
     if (!isSSR) {
       if (prefersDark) {
+        ga('send', 'event', 'theme', 'change', 'dark');
         document.documentElement.setAttribute('data-prefers-dark', 'true');
       } else {
+        ga('send', 'event', 'theme', 'change', 'light');
         document.documentElement.removeAttribute('data-prefers-dark');
       }
     }
