@@ -7,7 +7,6 @@ import { commonBlockStyles } from './themes';
 import { Tokenizer, CacheableLineTokens } from './tokenizers/types';
 import { Token } from './tokenizers/token';
 import 'requestidlecallback';
-import { shallowEqualIgnoringFunctions } from '../../utils/shallowEqualIgnoringFunctions';
 
 function createValueFromString(text: string): Value {
   return Value.fromJSON({
@@ -121,7 +120,7 @@ export interface InteractiveCodeBlockProps<
 
 let callbackId: number;
 
-function InteractiveCodeBlock<
+export function InteractiveCodeBlock<
   TokenTypeT extends string,
   ScopeNameT extends string,
   TokenT extends Token<TokenTypeT, ScopeNameT>
@@ -168,10 +167,12 @@ function InteractiveCodeBlock<
             setState(x);
           });
         }}
-        renderMark={renderMark}
+        plugins={[{
+          onClick: props.onClick,
+          renderMark,
+        }]}
         decorateNode={decorateLineSync}
         className={props.className}
-        onClick={props.onClick}
         css={commonBlockStyles}
         spellCheck={false}
         autoCorrect={false}
@@ -188,8 +189,3 @@ const defaultProps: Pick<InteractiveCodeBlockProps<any, any, any>, 'padding' | '
 };
 
 InteractiveCodeBlock.defaultProps = defaultProps;
-
-const MemoizedInteractiveCodeBlock = React.memo(
-  InteractiveCodeBlock,
-  shallowEqualIgnoringFunctions) as any as typeof InteractiveCodeBlock;
-export { MemoizedInteractiveCodeBlock as InteractiveCodeBlock };

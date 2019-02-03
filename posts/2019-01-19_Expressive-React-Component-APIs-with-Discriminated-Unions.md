@@ -271,6 +271,7 @@ type OptionGroup = {
 interface GroupedSelectPropsFragment {
   grouped: true;
   options: OptionGroup[];
+  renderGroup: (group: OptionGroup) => React.ReactNode;
 }
 
 // All together now...
@@ -332,10 +333,10 @@ name: select-3.tsx
 // Everything together, looking good 👍🏽
 <Select
   grouped
-  options={{
+  options={[{
     title: 'Colors',
     options: ['Red', 'Green', 'Blue']
-  }}
+  }]}
   multiple
   value={['Red']}
   renderGroup={group => group.title}
@@ -344,7 +345,7 @@ name: select-3.tsx
     newValue.forEach(value => {
       // ...
     });
-  }
+  }}
 />
 ```
 
