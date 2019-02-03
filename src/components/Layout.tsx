@@ -3,7 +3,7 @@ import { StaticQuery, graphql } from 'gatsby';
 import { Global } from '@emotion/core';
 import Header from './Header';
 import { rhythm } from '../utils/typography';
-import { padding, Side, type, textColor, variables } from '../styles/utils';
+import { padding, Side, type, textColor, variables, darkMode } from '../styles/utils';
 import '../styles/variables.css';
 import '../styles/fonts/fonts.css';
 import { useOutlineStatus } from '../hooks/useOutlineStatus';
@@ -63,6 +63,9 @@ const Layout: React.FunctionComponent = ({ children }) => {
             },
             'ol, ul': {
               marginLeft: rhythm(2),
+            },
+            hr: {
+              background: 'var(--color-fg20)',
             },
           }}
         />
