@@ -36,7 +36,7 @@ function createPositionStyle(triggerElement: HTMLElement | null, margin: number)
 }
 
 const overlayStyles = css({
-  backgroundColor: 'var(--color-bg100)',
+  backgroundColor: 'var(--background-alt)',
   zIndex: 1,
   borderRadius: 2,
   fontSize: '85%',

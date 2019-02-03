@@ -26,6 +26,7 @@
   --blue: #2e8099;
 
   --background: var(--color-bg100);
+  --background-alt: #fafafa;
   --highContrastText: var(--color-fg100);
   --primaryText: var(--color-fg85);
   --secondaryText: var(--color-fg54);
@@ -60,6 +61,7 @@
     --color-bg100: rgba(0, 0, 0, 1);
 
     --background: var(--color-bg90);
+    --background-alt: var(--color-bg100);
 
     --linkText: #2ca7cc;
   }

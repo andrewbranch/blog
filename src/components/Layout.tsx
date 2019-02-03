@@ -34,6 +34,8 @@ const Layout: React.FunctionComponent = ({ children }) => (
           },
           a: {
             color: variables.colors.text.link,
+            textDecorationSkip: 'ink',
+            textDecorationSkipInk: 'auto',
             '> code': {
               background: 'transparent',
               padding: 0,
@@ -52,6 +54,9 @@ const Layout: React.FunctionComponent = ({ children }) => (
           }],
           '.footnote-backref': {
             display: 'none',
+          },
+          'ol, ul': {
+            marginLeft: rhythm(2),
           },
         }}
       />

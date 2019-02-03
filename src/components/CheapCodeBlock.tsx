@@ -1,12 +1,13 @@
 import React from 'react';
 import { css } from '@emotion/core';
 import { commonBlockStyles } from './InteractiveCodeBlock/themes';
+import { rhythm } from '../utils/typography';
 
 const styles = css([
   commonBlockStyles,
   {
     whiteSpace: 'pre',
-    padding: 20,
+    padding: `${rhythm(0.5)} ${rhythm(2)}`,
   },
 ]);
 

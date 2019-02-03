@@ -7,6 +7,7 @@ import { commonBlockStyles } from './themes';
 import { Tokenizer, CacheableLineTokens } from './tokenizers/types';
 import { Token } from './tokenizers/token';
 import 'requestidlecallback';
+import { rhythm } from '../../utils/typography';
 
 function createValueFromString(text: string): Value {
   return Value.fromJSON({
@@ -184,7 +185,7 @@ export function InteractiveCodeBlock<
 }
 
 const defaultProps: Pick<InteractiveCodeBlockProps<any, any, any>, 'padding' | 'renderToken'> = {
-  padding: 20,
+  padding: `${rhythm(0.5)} ${rhythm(2)}`,
   renderToken: (_, props) => <span {...props} />,
 };
 
