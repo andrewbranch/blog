@@ -135,6 +135,9 @@ const identifierClassifications = new Set([
   ts.ClassificationTypeNames.parameterName,
   ts.ClassificationTypeNames.typeAliasName,
   ts.ClassificationTypeNames.typeParameterName,
+  ts.ClassificationTypeNames.jsxOpenTagName,
+  ts.ClassificationTypeNames.jsxSelfClosingTagName,
+  ts.ClassificationTypeNames.jsxAttribute,
 ]);
 
 export function isIdentifierClassification(classification: ts.ClassificationTypeNames) {
