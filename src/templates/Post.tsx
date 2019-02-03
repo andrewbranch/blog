@@ -192,6 +192,7 @@ function Post({ data, pageContext }: PostProps) {
       sourceFiles: pageContext.sourceFiles,
       onStartEditing: async fileName => {
         if (!initializedFiles[fileName]) {
+          ga('send', 'event', 'code', 'edit', fileName);
           let initializedTsEnv = tsEnv;
           if (!initializedTsEnv) {
             const [

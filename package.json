@@ -58,6 +58,7 @@
     "@babel/generator": "^7.3.0",
     "@babel/parser": "^7.3.1",
     "@babel/types": "^7.3.0",
+    "@types/google.analytics": "0.0.39",
     "@types/immutable": "^3.8.7",
     "@types/lodash.sortedindex": "^4.1.4",
     "@types/memoizee": "^0.4.2",
