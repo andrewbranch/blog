@@ -1,5 +1,3 @@
-import ts from 'typescript';
-
 export enum Extra {
   DOM = 'dom',
   React = 'react',
@@ -8,10 +6,10 @@ export enum Extra {
 export interface ExtraLibFile {
   moduleName: Extra;
   modulePath: string;
-  getSourceFiles: () => Promise<ts.SourceFile[]>;
+  getFiles: () => Promise<Map<string, string>>;
 }
 
 export interface Libraries {
-  core: Map<string, ts.SourceFile>;
+  core: Map<string, string>;
   extra: { [K in Extra]: ExtraLibFile; };
 }

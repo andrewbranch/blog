@@ -18,6 +18,7 @@ const { createTmGrammarTokenizer } = require('./src/components/InteractiveCodeBl
 const { TypeScriptTokenType } = require('./src/components/InteractiveCodeBlock/tokenizers/types');
 const { createTypeScriptTokenizer } = require('./src/components/InteractiveCodeBlock/tokenizers/typescript');
 const { composeTokenizers } = require('./src/components/InteractiveCodeBlock/tokenizers/composeTokenizers');
+const { createSystem } = require('./src/utils/typescript/sys');
 const { createVirtualTypeScriptEnvironment } = require('./src/utils/typescript/services');
 const { getExtraLibFiles } = require('./src/utils/typescript/utils');
 const { lib } = require('./src/utils/typescript/lib.ssr');
@@ -109,13 +110,18 @@ exports.createPages = async ({ graphql, actions }) => {
     const sourceFiles = new Map(Object.keys(sourceFileContext).map(fileName => {
       const context = sourceFileContext[fileName];
       const fullText = context.preamble + context.fragments.map(f => codeBlockContext[f.codeBlockId].text).join('\n');
-      /** @type [string, ts.SourceFile] */
-      const entry = [fileName, ts.createSourceFile(fileName, fullText, ts.ScriptTarget.ES2015)];
+      /** @type [string, string] */
+      const entry = [fileName, fullText];
       return entry;
     }));
 
     const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib, lib);
-    const { languageService } = createVirtualTypeScriptEnvironment(sourceFiles, lib.core, extraLibFiles);
+    const system = createSystem(new Map([
+      ...Array.from(sourceFiles.entries()),
+      ...Array.from(lib.core.entries()),
+      ...Array.from(extraLibFiles.entries()),
+    ]));
+    const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
     Object.keys(codeBlockContext).forEach(codeBlockId => {
       const codeBlock = codeBlockContext[codeBlockId];
       const { fileName } = codeBlock;

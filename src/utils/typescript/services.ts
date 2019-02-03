@@ -1,195 +1,135 @@
 import ts from 'typescript';
 
-const compilerOptions: ts.CompilerOptions = {
+const defaultCompilerOptions = {
   ...ts.getDefaultCompilerOptions(),
   jsx: ts.JsxEmit.React,
   strict: true,
   target: ts.ScriptTarget.ES2015,
   esModuleInterop: true,
-  lib: ['lib.dom.d.ts'],
   module: ts.ModuleKind.ES2015,
   suppressOutputPathCheck: true,
   skipLibCheck: true,
   skipDefaultLibCheck: true,
+  moduleResolution: ts.ModuleResolutionKind.NodeJs,
 };
 
 export function createVirtualCompilerHost(
-  sourceFiles: Map<string, ts.SourceFile>,
-  coreLibFiles: Map<string, ts.SourceFile>,
-  extraLibFiles: Map<string, ts.SourceFile[]> = new Map(),
+  sys: ts.System,
+  compilerOptions: ts.CompilerOptions,
 ): {
   compilerHost: ts.CompilerHost,
   updateFile: (sourceFile: ts.SourceFile) => boolean,
 } {
-  const flattenedDependencies = new Map(Array.from(extraLibFiles.values()).reduce((entries, files) => [
-    ...entries,
-    ...files.map((file): [string, ts.SourceFile] => [file.fileName, file]),
-  ], [] as [string, ts.SourceFile][]));
+  const sourceFiles = new Map<string, ts.SourceFile>();
+  const save = (sourceFile: ts.SourceFile) => {
+    sourceFiles.set(sourceFile.fileName, sourceFile);
+    return sourceFile;
+  };
 
-  const fileNames = [
-    ...Array.from(sourceFiles.keys()),
-    ...Array.from(coreLibFiles.keys()),
-    ...Array.from(flattenedDependencies.keys()),
-  ];
   return {
     compilerHost: {
-      fileExists: fileName => {
-        return sourceFiles.has(fileName)
-          || coreLibFiles.has(fileName)
-          || flattenedDependencies.has(fileName);
-      },
+      ...sys,
       getCanonicalFileName: fileName => fileName,
-      getCurrentDirectory: () => '/',
       getDefaultLibFileName: () => '/lib.es2015.d.ts',
       getDirectories: () => [],
-      readDirectory: directory => directory === '/' ? fileNames : [],
-      getNewLine: () => '\n',
+      getNewLine: () => sys.newLine,
       getSourceFile: fileName => {
-        return sourceFiles.get(fileName)
-          || coreLibFiles.get(fileName)
-          || flattenedDependencies.get(fileName);
+        return sourceFiles.get(fileName) || save(ts.createSourceFile(
+          fileName,
+          sys.readFile(fileName)!,
+          compilerOptions.target || defaultCompilerOptions.target,
+          false,
+        ));
       },
-      readFile: fileName => {
-        return (sourceFiles.get(fileName)
-          || coreLibFiles.get(fileName)
-          || flattenedDependencies.get(fileName))!.text;
-      },
-      useCaseSensitiveFileNames: () => true,
-      writeFile: () => null,
+      useCaseSensitiveFileNames: () => sys.useCaseSensitiveFileNames,
     },
     updateFile: sourceFile => {
       const alreadyExists = sourceFiles.has(sourceFile.fileName);
+      sys.writeFile(sourceFile.fileName, sourceFile.text);
       sourceFiles.set(sourceFile.fileName, sourceFile);
       return alreadyExists;
     },
   };
 }
 
-export function createVirtualWatchHost(
-  sourceFiles: Map<string, ts.SourceFile>,
-  coreLibFiles: Map<string, ts.SourceFile>,
-  extraLibFiles: Map<string, ts.SourceFile[]> = new Map(),
-): {
-  watchHost: ts.CompilerHost & ts.WatchCompilerHost<ts.BuilderProgram>,
-  updateFile: (sourceFile: ts.SourceFile) => void,
-} {
-  const fileNames = Array.from(sourceFiles.keys());
-  const watchedFiles = new Map<string, Set<ts.FileWatcherCallback>>();
-  const { compilerHost, updateFile } = createVirtualCompilerHost(sourceFiles, coreLibFiles, extraLibFiles);
-  return {
-    watchHost: {
-      ...compilerHost,
-      createProgram: (rootNames, _, host, oldProgram, configFileParsingDiagnostics, projectReferences) => {
-        return ts.createAbstractBuilder(
-          ts.createProgram({
-            rootNames: rootNames || fileNames,
-            options: compilerOptions,
-            host,
-            oldProgram: oldProgram && oldProgram.getProgram(),
-            configFileParsingDiagnostics,
-            projectReferences,
-          }),
-          { useCaseSensitiveFileNames: () => true },
-        );
-      },
-      watchFile: (path, callback) => {
-        const callbacks = watchedFiles.get(path) || new Set();
-        callbacks.add(callback);
-        watchedFiles.set(path, callbacks);
-        return {
-          close: () => {
-            const cbs = watchedFiles.get(path);
-            if (cbs) {
-              cbs.delete(callback);
-            }
-          },
-        };
-      },
-      watchDirectory: () => ({ close: () => null }),
-    },
-    updateFile: sourceFile => {
-      const alreadyExists = updateFile(sourceFile);
-      const callbacks = watchedFiles.get(sourceFile.fileName);
-      if (callbacks) {
-        Array.from(callbacks.values()).forEach(cb => {
-          cb(sourceFile.fileName, alreadyExists ? ts.FileWatcherEventKind.Changed : ts.FileWatcherEventKind.Created);
-        });
-      }
-    },
-  };
-}
-
 export function createVirtualLanguageServiceHost(
-  compilerHost: ts.CompilerHost,
+  sys: ts.System,
+  rootFiles: string[],
+  compilerOptions: ts.CompilerOptions,
 ): {
   languageServiceHost: ts.LanguageServiceHost,
   updateFile: (sourceFile: ts.SourceFile) => void,
 } {
-  const fileNames = compilerHost.readDirectory!('/', [], undefined, []);
+  const fileNames = [...rootFiles];
+  const { compilerHost, updateFile } = createVirtualCompilerHost(sys, compilerOptions);
   const fileVersions = new Map<string, string>();
   let projectVersion = 0;
-  return {
-    languageServiceHost: {
-      ...compilerHost,
-      getProjectVersion: () => projectVersion.toString(),
-      getCompilationSettings: () => ({ sourceFiles: fileNames, ...compilerOptions }),
-      getScriptFileNames: () => fileNames,
-      getScriptSnapshot: fileName => {
-        const sourceFile = compilerHost.getSourceFile(fileName, ts.ScriptTarget.ES2015);
-        if (sourceFile) {
-          return ts.ScriptSnapshot.fromString(sourceFile.text);
-        }
-      },
-      getScriptVersion: fileName => {
-        return fileVersions.get(fileName) || '0';
-      },
-      writeFile: () => null,
+  const languageServiceHost: ts.LanguageServiceHost = {
+    ...compilerHost,
+    getProjectVersion: () => projectVersion.toString(),
+    getCompilationSettings: () => compilerOptions,
+    getScriptFileNames: () => fileNames,
+    getScriptSnapshot: fileName => {
+      const contents = sys.readFile(fileName);
+      if (contents) {
+        return ts.ScriptSnapshot.fromString(contents);
+      }
     },
-    updateFile: ({ fileName }: ts.SourceFile) => {
+    getScriptVersion: fileName => {
+      return fileVersions.get(fileName) || '0';
+    },
+    writeFile: sys.writeFile,
+  };
+
+  return {
+    languageServiceHost,
+    updateFile: sourceFile => {
       projectVersion++;
-      fileVersions.set(fileName, projectVersion.toString());
+      fileVersions.set(sourceFile.fileName, projectVersion.toString());
+      if (!fileNames.includes(sourceFile.fileName)) {
+        fileNames.push(sourceFile.fileName);
+      }
+      updateFile(sourceFile);
     },
   };
 }
 
 export interface VirtualTypeScriptEnvironment {
-  watchProgram: ts.WatchOfFilesAndCompilerOptions<ts.BuilderProgram>;
+  sys: ts.System;
   languageService: ts.LanguageService;
-  updateFile: (sourceFile: ts.SourceFile) => void;
-  updateFileFromText: (fileName: string, content: string, replaceTextSpan: ts.TextSpan) => void;
+  createFile: (fileName: string, content: string) => void;
+  updateFile: (fileName: string, content: string, replaceTextSpan: ts.TextSpan) => void;
 }
 
 export function createVirtualTypeScriptEnvironment(
-  sourceFiles: Map<string, ts.SourceFile>,
-  coreLibFiles: Map<string, ts.SourceFile>,
-  extraLibFiles: Map<string, ts.SourceFile[]> = new Map(),
+  sys: ts.System,
+  rootFiles: string[],
+  compilerOptions: ts.CompilerOptions = {},
 ): VirtualTypeScriptEnvironment {
-  const rootFiles = Array.from(sourceFiles.keys());
-  const watchHostController = createVirtualWatchHost(sourceFiles, coreLibFiles, extraLibFiles);
-  const languageServiceHostController = createVirtualLanguageServiceHost(
-    watchHostController.watchHost,
-  );
-  const languageService = ts.createLanguageService(languageServiceHostController.languageServiceHost);
-  const watchProgram = ts.createWatchProgram({
-    ...watchHostController.watchHost,
+  const mergedCompilerOptions = { ...defaultCompilerOptions, ...compilerOptions };
+  const { languageServiceHost, updateFile } = createVirtualLanguageServiceHost(
+    sys,
     rootFiles,
-    options: compilerOptions,
-  });
-  const updateFile = (sourceFile: ts.SourceFile) => {
-    languageServiceHostController.updateFile(sourceFile);
-    watchHostController.updateFile(sourceFile);
-  };
+    mergedCompilerOptions,
+  );
 
+  const languageService = ts.createLanguageService(languageServiceHost);
   const diagnostics = languageService.getCompilerOptionsDiagnostics();
   if (diagnostics.length) {
-    throw new Error(ts.formatDiagnostics(diagnostics, watchHostController.watchHost));
+    throw new Error(ts.formatDiagnostics(diagnostics, {
+      getCurrentDirectory: sys.getCurrentDirectory,
+      getNewLine: () => sys.newLine,
+      getCanonicalFileName: fileName => fileName,
+    }));
   }
 
   return {
-    watchProgram,
+    sys,
     languageService,
-    updateFile,
-    updateFileFromText: (fileName, content, prevTextSpan) => {
+    createFile: (fileName, content) => {
+      updateFile(ts.createSourceFile(fileName, content, mergedCompilerOptions.target, false));
+    },
+    updateFile: (fileName, content, prevTextSpan) => {
       const prevSourceFile = languageService.getProgram()!.getSourceFile(fileName)!;
       const prevFullContents = prevSourceFile.text;
       const newText = prevFullContents.slice(0, prevTextSpan.start)
@@ -200,6 +140,7 @@ export function createVirtualTypeScriptEnvironment(
         newText,
         { span: prevTextSpan, newLength: content.length },
       );
+
       updateFile(newSourceFile);
     },
   };

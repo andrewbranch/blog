@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useEffect, useRef, useContext, useState, useMemo } from 'react';
+import React, { HTMLAttributes, useEffect, useContext, useState, useMemo } from 'react';
 import Layout from '../components/layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
@@ -10,6 +10,7 @@ import { CheapCodeBlock } from '../components/CheapCodeBlock';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 import { TypeScriptDiagnosticToken } from '../components/InteractiveCodeBlock/TypeScriptDiagnosticToken';
 import 'katex/dist/katex.min.css';
+import { shallowClone } from '../utils/shallowClone';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -82,11 +83,12 @@ function getStartOfCodeBlock(
 }
 
 function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttributes<HTMLElement>>] }) {
-  const { editable, tsEnv, onStartEditing, mutableCodeBlocks, sourceFiles } = useContext(EditableContext);
+  const { initializedFiles, tsEnv, onStartEditing, mutableCodeBlocks, sourceFiles } = useContext(EditableContext);
   const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = props.children[0];
   const id = codeChild.props.id!;
   const codeBlock = mutableCodeBlocks[id];
   const { tokens: initialTokens, quickInfo, text, fileName } = codeBlock!;
+  const isInitialized = initializedFiles[fileName];
   const [span, setSpan] = useState<import('typescript').TextSpan>({
     start: codeBlock!.start,
     length: text.length,
@@ -94,7 +96,7 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
 
   const tokenizer = useProgressiveTokenizer({
     initialTokens,
-    editable,
+    editable: isInitialized,
     languageService: tsEnv && tsEnv.languageService,
     fileName,
     visibleSpan: span,
@@ -104,8 +106,8 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
       className="tm-theme"
       initialValue={text}
       tokenizer={tokenizer}
-      readOnly={!editable}
-      onClick={() => editable || onStartEditing!()}
+      readOnly={!isInitialized}
+      onClick={() => isInitialized || onStartEditing!(fileName)}
       onChange={value => {
         const start = getStartOfCodeBlock(id, mutableCodeBlocks, sourceFiles![codeBlock.fileName]);
         const end = start + value.length;
@@ -113,7 +115,7 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
         mutableCodeBlocks[id].end = end;
         if (tsEnv && mutableCodeBlocks[id].text !== value) {
           mutableCodeBlocks[id].text = value;
-          tsEnv.updateFileFromText(fileName, value, span);
+          tsEnv.updateFile(fileName, value, span);
         }
         setSpan(newSpan);
       }}
@@ -130,7 +132,7 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
             return (
               <TypeScriptIdentifierToken
                 staticQuickInfo={quickInfo}
-                languageService={tsEnv && tsEnv.languageService}
+                languageService={tsEnv && isInitialized && tsEnv.languageService}
                 sourceFileName={fileName}
                 position={token.sourcePosition}
                 {...tokenProps}
@@ -152,17 +154,17 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
 
 type VirtualTypeScriptEnvironment = import('../utils/typescript/services').VirtualTypeScriptEnvironment;
 interface EditableContext {
-  editable: boolean;
   mutableCodeBlocks: Record<string, CodeBlockContext>;
+  initializedFiles: Record<string, true>;
   sourceFiles?: Record<string, SourceFileContext>;
   tsEnv: VirtualTypeScriptEnvironment | undefined;
-  onStartEditing?: () => void;
+  onStartEditing?: (fileName: string) => void;
 }
 
 const EditableContext = React.createContext<EditableContext>({
-  editable: false,
   tsEnv: undefined,
   mutableCodeBlocks: {},
+  initializedFiles: {},
 });
 
 function getFullText(sourceFileContext: SourceFileContext, codeBlocks: Record<string, CodeBlockContext>) {
@@ -171,57 +173,64 @@ function getFullText(sourceFileContext: SourceFileContext, codeBlocks: Record<st
 
 function Post({ data, pageContext }: PostProps) {
   const post = data.markdownRemark;
-  const mutableCodeBlocks = useRef(Object.keys(pageContext.codeBlocks).reduce((clone, codeBlockId) => ({
-    ...clone,
-    [codeBlockId]: { ...pageContext.codeBlocks[codeBlockId] },
-  }), {} as Record<string, CodeBlockContext>));
 
-  const [editable, setEditable] = useState(false);
+  // Clone code blocks from page context to provide via context.
+  // Values will be mutated on change, but changes don’t need to cause
+  // anyone to rerender, so the most efficient thing is to simply mutate
+  // the object inside context. Changed values will only be read inside
+  // event handlers.
+  const mutableCodeBlocks = useMemo(() => shallowClone(pageContext.codeBlocks), [pageContext.codeBlocks]);
+  const [initializedFiles, setInitializedFiles] = useState<Record<string, true>>({});
   const [tsEnv, setTsEnv] = useState<VirtualTypeScriptEnvironment | undefined>(undefined);
-  const context: EditableContext = useMemo(() => ({
-    editable,
-    tsEnv,
-    mutableCodeBlocks: mutableCodeBlocks.current,
-    onStartEditing: () => editable || setEditable(true),
-    sourceFiles: pageContext.sourceFiles,
-  }), [editable, tsEnv, mutableCodeBlocks.current]);
-  Object.assign(window, { tsEnv, pageContext });
+  useEffect(() => () => tsEnv && tsEnv.languageService.dispose(), []);
 
-  useEffect(() => {
-    if (editable) {
-      (async () => {
-        const [ts, { createVirtualTypeScriptEnvironment }, { lib }, { getExtraLibFiles }] = await Promise.all([
-          await import('typescript'),
-          await import('../utils/typescript/services'),
-          await import('../utils/typescript/lib.webpack'),
-          await import('../utils/typescript/utils'),
-        ]);
-        const sourceFiles = new Map(Object.keys(pageContext.sourceFiles).map(fileName => {
-          const entries: [string, import('typescript').SourceFile] = [
+  const context = useMemo(() => {
+    const editableContext: EditableContext = {
+      tsEnv,
+      initializedFiles,
+      mutableCodeBlocks,
+      sourceFiles: pageContext.sourceFiles,
+      onStartEditing: async fileName => {
+        if (!initializedFiles[fileName]) {
+          let initializedTsEnv = tsEnv;
+          if (!initializedTsEnv) {
+            const [
+              { createVirtualTypeScriptEnvironment },
+              { createSystem },
+              { lib },
+              { getExtraLibFiles },
+            ] = await Promise.all([
+              await import('../utils/typescript/services'),
+              await import('../utils/typescript/sys'),
+              await import('../utils/typescript/lib.webpack'),
+              await import('../utils/typescript/utils'),
+            ]);
+            const extraFiles = (await getExtraLibFiles(post.frontmatter.lib, lib)).entries();
+            const sysFiles = new Map([
+              ...Array.from(lib.core.entries()),
+              ...Array.from(extraFiles),
+            ]);
+            initializedTsEnv = createVirtualTypeScriptEnvironment(
+              createSystem(sysFiles),
+              [],
+            );
+            setTsEnv(initializedTsEnv);
+          }
+
+          initializedTsEnv!.createFile(
             fileName,
-            ts.createSourceFile(
-              fileName,
-              getFullText(pageContext.sourceFiles[fileName], pageContext.codeBlocks),
-              ts.ScriptTarget.ES2015,
-              false,
-            ),
-          ];
-          return entries;
-        }));
-        setTsEnv(createVirtualTypeScriptEnvironment(
-          sourceFiles,
-          lib.core,
-          await getExtraLibFiles(post.frontmatter.lib, lib),
-        ));
-      })();
-    }
+            getFullText(pageContext.sourceFiles[fileName], pageContext.codeBlocks),
+          );
 
-    return () => {
-      if (tsEnv) {
-        tsEnv.languageService.dispose();
-      }
+          setInitializedFiles({
+            ...initializedFiles,
+            [fileName]: true,
+          });
+        }
+      },
     };
-  }, [editable]);
+    return editableContext;
+  }, [tsEnv, mutableCodeBlocks, initializedFiles]);
 
   return (
     <Layout>

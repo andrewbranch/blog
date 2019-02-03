@@ -1,12 +1,9 @@
-import ts from 'typescript';
 import { Extra, Libraries } from './types';
 
-export async function getExtraLibFiles(libNames: Extra[], lib: Libraries): Promise<Map<string, ts.SourceFile[]>> {
-  return new Map(await Promise.all(libNames.map(async libName => {
-    const entry: [string, ts.SourceFile[]] = [
-      lib.extra[libName].modulePath,
-      await lib.extra[libName].getSourceFiles(),
-    ];
-    return entry;
-  })));
+export async function getExtraLibFiles(libNames: Extra[], lib: Libraries): Promise<Map<string, string>> {
+  const maps = await Promise.all(libNames.map(libName => lib.extra[libName].getFiles()));
+  return new Map(maps.reduce((entries: [string, string][], map) => [
+    ...Array.from(entries),
+    ...Array.from(map.entries()),
+  ], []));
 }
