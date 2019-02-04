@@ -1,13 +1,15 @@
-import React, { useState, useMemo } from 'react';
-import { Editor, EditorProps, EventHook } from 'slate-react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Editor, EditorProps } from 'slate-react';
+import { css } from '@emotion/core';
 import { List } from 'immutable';
 import { Value, NodeJSON, Operation, Decoration, Point, Mark, Node, Text, Document } from 'slate';
-import { Global, css } from '@emotion/core';
 import { commonBlockStyles } from './themes';
 import { Tokenizer, CacheableLineTokens } from './tokenizers/types';
 import { Token } from './tokenizers/token';
 import 'requestidlecallback';
 import { rhythm } from '../../utils/typography';
+import { padding, Side, resets, darkMode, animations } from '../../styles/utils';
+import { Icon } from '../Icon';
 
 function createValueFromString(text: string): Value {
   return Value.fromJSON({
@@ -99,6 +101,12 @@ function createNodeDecorator<TokenT extends Token<string, string>>(tokenizer: To
   return { decorateDocument, decorateLine, decorateNode };
 }
 
+function getFullText(value: Value): string {
+  return value.document.getTexts().map(t => t!.text).join('\n');
+}
+
+let callbackId: number;
+
 interface InjectedTokenProps {
   children: React.ReactNode;
 }
@@ -112,14 +120,36 @@ export interface InteractiveCodeBlockProps<
   renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
   initialValue: string;
   onChange?: (value: string, operations: List<Operation>) => void;
-  onClick?: EventHook;
   className?: string;
-  padding: number | string;
   readOnly?: boolean;
+  isLoading: boolean;
+  onStartEditing: () => void;
   css?: React.DOMAttributes<any>['css'];
 }
 
-let callbackId: number;
+const iconStyles = css({
+  opacity: 0.6,
+  ...darkMode({ filter: 'invert(100%)' }),
+});
+
+// tslint:disable:no-var-requires
+const loadingIcon = (
+  <Icon css={[iconStyles, animations.spinning]} src={require('../icons/loading.svg')} alt="Loading" />
+);
+const editIcon = <Icon css={iconStyles} src={require('../icons/pencil.svg')} alt="Edit" />;
+const resetIcon = <Icon css={iconStyles} src={require('../icons/reset.svg')} alt="Reset" />;
+const containerStyles = css([
+  padding(1, Side.Left),
+  padding(2, Side.Right),
+  padding(0.5, Side.Vertical),
+  {
+    position: 'relative',
+    fontSize: '1rem',
+    ':hover > button': {
+      opacity: 1,
+    },
+  },
+]);
 
 export function InteractiveCodeBlock<
   TokenTypeT extends string,
@@ -137,28 +167,29 @@ export function InteractiveCodeBlock<
     return next();
   }, [decorateNode]);
   const [state, setState] = useState(() => decorateValue(createValueFromString(props.initialValue)));
-  const renderMark = useMemo(() => createMarkRenderer(props.renderToken), [props.renderToken]);
-  const globalStyles = useMemo(() => css({
-    '[data-slate-leaf]:last-child': {
-      position: 'relative',
-      '&:after': {
-        content: '""',
-        position: 'relative',
-        top: 0,
-        right: typeof props.padding === 'string' ? `-${props.padding}` : -props.padding,
-        width: props.padding,
-      },
-    },
-  }), [props.padding]);
+  const { current: originalState } = useRef(state);
+  const editorRef = useRef<Editor>(null);
+  const plugins = useMemo(() => ([{ renderMark: createMarkRenderer(props.renderToken) }]), [props.renderToken]);
+  const isChanged = props.initialValue !== getFullText(state);
+  const buttonIcon = props.isLoading ? loadingIcon
+    : props.readOnly ? editIcon
+    : isChanged ? resetIcon
+    : null;
+
+  useEffect(() => {
+    if (!props.readOnly && !props.isLoading && editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, [props.isLoading]);
 
   return (
-    <>
-      <Global styles={globalStyles} />
+    <pre css={containerStyles}>
       <Editor
+        ref={editorRef}
         value={state}
         onChange={({ value, operations }) => {
           if (props.onChange) {
-            props.onChange(value.document.getTexts().map(t => t!.text).join('\n'), operations);
+            props.onChange(getFullText(value), operations);
           }
 
           setState(value);
@@ -168,25 +199,54 @@ export function InteractiveCodeBlock<
             setState(x);
           });
         }}
-        plugins={[{
-          onClick: props.onClick,
-          renderMark,
-        }]}
+        plugins={plugins}
         decorateNode={decorateLineSync}
         className={props.className}
         css={commonBlockStyles}
         spellCheck={false}
         autoCorrect={false}
         readOnly={props.readOnly}
-        style={{ wordWrap: 'normal', whiteSpace: 'pre', padding: props.padding }}
+        style={{ wordWrap: 'normal', whiteSpace: 'pre' }}
       />
-    </>
+      {buttonIcon ? (
+        <Button
+          css={{ opacity: buttonIcon === resetIcon ? 1 : 0}}
+          disabled={props.isLoading}
+          onClick={isChanged
+            ? () => setTimeout(() => setState(originalState), 50)
+            : () => {
+              props.onStartEditing();
+              if (!props.isLoading && editorRef.current) {
+                editorRef.current.focus();
+              }
+            }
+          }
+          aria-label={buttonIcon.props.alt}
+        >
+          {buttonIcon}
+        </Button>
+      ) : null}
+    </pre>
   );
 }
 
-const defaultProps: Pick<InteractiveCodeBlockProps<any, any, any>, 'padding' | 'renderToken'> = {
-  padding: `${rhythm(0.5)} ${rhythm(2)}`,
+const defaultProps: Pick<InteractiveCodeBlockProps<any, any, any>, 'renderToken'> = {
   renderToken: (_, props) => <span {...props} />,
 };
 
 InteractiveCodeBlock.defaultProps = defaultProps;
+
+const buttonStyles = css([resets.unbutton], {
+  padding: '4px 6px',
+  borderRadius: 4,
+  fontSize: 0,
+  position: 'absolute',
+  top: rhythm(0.5),
+  right: rhythm(1),
+});
+
+function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button css={buttonStyles} {...props} />
+  );
+}

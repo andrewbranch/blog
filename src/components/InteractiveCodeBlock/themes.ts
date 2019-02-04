@@ -1,5 +1,5 @@
 import { css } from '@emotion/core';
-import { rhythm, monoFamily } from '../../utils/typography';
+import { monoFamily } from '../../utils/typography';
 import './themes.css';
 
 export enum SyntacticColors {
@@ -25,7 +25,4 @@ export const commonBlockStyles = css({
   borderRadius: 3,
   overflow: 'auto',
   whiteSpace: 'nowrap',
-  ':not(:last-child)': {
-    marginBottom: rhythm(1),
-  },
 });

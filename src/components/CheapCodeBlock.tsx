@@ -7,7 +7,7 @@ const styles = css([
   commonBlockStyles,
   {
     whiteSpace: 'pre',
-    padding: `${rhythm(0.5)} ${rhythm(2)}`,
+    padding: `${rhythm(0.5)} ${rhythm(1)}`,
   },
 ]);
 

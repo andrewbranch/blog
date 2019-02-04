@@ -1,5 +1,5 @@
 import { rhythm as createRhythm, groteskSansFamily, textColors, monoFamily } from '../utils/typography';
-import { ObjectInterpolation, Interpolation } from '@emotion/core';
+import { ObjectInterpolation, Interpolation, keyframes } from '@emotion/core';
 
 export const variables = {
   colors: {
@@ -43,6 +43,12 @@ const mono: ObjectInterpolation<any> = {
 
 export const type = { grotesk, mono };
 
+export const textColor = {
+  primary: { color: variables.colors.text.primary },
+  secondary: { color: variables.colors.text.secondary },
+  disabled: { color: variables.colors.text.disabled },
+};
+
 const unanchor: ObjectInterpolation<any> = {
   color: 'unset',
   textDecoration: 'none',
@@ -67,11 +73,16 @@ export const resets = {
   unbutton,
 };
 
-export const textColor = {
-  primary: { color: variables.colors.text.primary },
-  secondary: { color: variables.colors.text.secondary },
-  disabled: { color: variables.colors.text.disabled },
+const spinningKeyframes = keyframes({
+  '0%': { transform: 'rotateZ(0deg)' },
+  '100%': { transform: 'rotateZ(360deg)' },
+});
+
+const spinning: ObjectInterpolation<any> = {
+  animation: `${spinningKeyframes} 1s linear infinite`,
 };
+
+export const animations = { spinning };
 
 export enum Side {
   Top = 1 << 0,

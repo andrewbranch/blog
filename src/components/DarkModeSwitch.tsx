@@ -58,7 +58,7 @@ export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
                 }}
               >
                 <Icon
-                  src={require('./moon.svg')}
+                  src={require('./icons/moon.svg')}
                   css={[iconStyles, { filter: 'invert(100%)' }]}
                   size={26}
                   alt="Switch to light theme"
@@ -76,7 +76,7 @@ export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
                 }}
               >
                 <Icon
-                  src={require('./sun.svg')}
+                  src={require('./icons/sun.svg')}
                   css={iconStyles}
                   size={26}
                   alt="Switch to dark theme"

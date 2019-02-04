@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useEffect, useContext, useState, useMemo } from 'react';
+import React, { HTMLAttributes, useEffect, useContext, useState, useMemo, useRef } from 'react';
 import Layout from '../components/layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
@@ -88,7 +88,10 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
   const id = codeChild.props.id!;
   const codeBlock = mutableCodeBlocks[id];
   const { tokens: initialTokens, quickInfo, text, fileName } = codeBlock!;
+  const [shouldInitialize, setShouldInitialize] = useState(false);
   const isInitialized = initializedFiles[fileName];
+  const isLoading = shouldInitialize && !isInitialized;
+  const { current: originalText } = useRef(text);
   const [span, setSpan] = useState<import('typescript').TextSpan>({
     start: codeBlock!.start,
     length: text.length,
@@ -104,10 +107,14 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
   const deferredCodeBlock = useDeferredRender(() => (
     <InteractiveCodeBlock
       className="tm-theme"
-      initialValue={text}
+      initialValue={originalText}
       tokenizer={tokenizer}
       readOnly={!isInitialized}
-      onClick={() => isInitialized || onStartEditing!(fileName)}
+      onStartEditing={() => {
+        setShouldInitialize(true);
+        onStartEditing!(fileName);
+      }}
+      isLoading={isLoading}
       onChange={value => {
         const start = getStartOfCodeBlock(id, mutableCodeBlocks, sourceFiles![codeBlock.fileName]);
         const end = start + value.length;
