@@ -3,6 +3,11 @@ workflow "New workflow" {
   resolves = ["GitHub Action for AWS-1"]
 }
 
+action "install" {
+  uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
+  args = "install"
+}
+
 action "build" {
   uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
   args = "run build"
