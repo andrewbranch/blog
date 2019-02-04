@@ -1,4 +1,4 @@
-workflow "New workflow" {
+workflow "Deploy beta site" {
   on = "push"
   resolves = ["GitHub Action for AWS-1"]
 }
