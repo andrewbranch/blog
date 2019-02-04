@@ -1,5 +1,5 @@
 import React, { HTMLAttributes, useEffect, useContext, useState, useMemo, useRef } from 'react';
-import Layout from '../components/layout';
+import Layout from '../components/Layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
 import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
