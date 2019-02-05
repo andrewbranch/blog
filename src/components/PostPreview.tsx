@@ -9,9 +9,11 @@ export interface PostPreviewProps {
   excerpt: string;
 }
 
-export const PostPreview = React.memo<PostPreviewProps>(({ title, slug, excerpt }) => (
-  <Link to={slug} css={resets.unanchor}>
-    <h3 css={margin(0.5, Side.Bottom)}>{title}</h3>
-    <p dangerouslySetInnerHTML={{ __html: excerpt }} />
-  </Link>
-));
+export const PostPreview = React.memo<PostPreviewProps>(({ title, slug, excerpt }) => {
+  return (
+    <Link to={slug} css={resets.unanchor}>
+      <h3 css={margin(0.5, Side.Bottom)}>{title}</h3>
+      <div dangerouslySetInnerHTML={{ __html: excerpt }} />
+    </Link>
+  );
+});
