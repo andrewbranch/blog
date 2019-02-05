@@ -63,6 +63,16 @@ module.exports = {
         respectDNT: true,
       },
     },
+    {
+      resolve: 'gatsby-plugin-s3',
+      options: {
+        bucketName: 'blog.andrewbran.ch',
+        region: 'us-west-1',
+        protocol: 'https',
+        hostname: 'beta.blog.andrewbran.ch',
+        removeNonexistentObjects: true,
+      },
+    },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
     // 'gatsby-plugin-offline',

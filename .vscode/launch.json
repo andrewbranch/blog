@@ -7,6 +7,12 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Debug Deploy",
+      "program": "${workspaceFolder}/scripts/deploy.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Debug Build",
       "program": "${workspaceFolder}/node_modules/.bin/gatsby",
       "args": ["build"]
