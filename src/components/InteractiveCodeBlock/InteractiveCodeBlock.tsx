@@ -261,7 +261,7 @@ const buttonStyles = css([resets.unbutton], {
   top: rhythm(0.5),
   right: 0,
   background: 'var(--background)',
-  ...minWidth(variables.sizes.bigEnough, padding(1, Side.Right)),
+  ...minWidth(variables.sizes.bigEnough, { right: rhythm(1) }),
 });
 
 function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {

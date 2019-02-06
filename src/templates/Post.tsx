@@ -12,6 +12,7 @@ import { TypeScriptDiagnosticToken } from '../components/InteractiveCodeBlock/Ty
 import 'katex/dist/katex.min.css';
 import { shallowClone } from '../utils/shallowClone';
 import SEO from '../components/SEO';
+import { ErrorCatcher } from '../components/ErrorCatcher';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -157,7 +158,11 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
     />
   ), { timeout: 1000 });
 
-  return deferredCodeBlock || <CheapCodeBlock>{text}</CheapCodeBlock>;
+  return (
+    <ErrorCatcher renderFallback={() => <CheapCodeBlock>{text}</CheapCodeBlock>}>
+      {deferredCodeBlock || <CheapCodeBlock>{text}</CheapCodeBlock>}
+    </ErrorCatcher>
+  );
 }
 
 type VirtualTypeScriptEnvironment = import('../utils/typescript/services').VirtualTypeScriptEnvironment;
