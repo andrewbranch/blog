@@ -12,7 +12,9 @@ const buttonStyles = css([
     '@media (prfers-color-scheme: dark)': { display: 'none' },
     boxSizing: 'content-box',
     position: 'relative',
-    width: 26,
+    width: 30,
+    height: 30,
+    textAlign: 'center',
   },
 ]);
 
@@ -21,7 +23,7 @@ const iconStyles = css({ position: 'absolute', top: 0, left: 0 });
 const transitionEnter = css({ opacity: 0, transform: 'translateY(30px)' });
 const transitionEnterActive = { opacity: 1, transform: 'translateY(0)', transition: 'all 0.15s ease-out' };
 const transitionExit = transitionEnterActive;
-const transitionExitActive = css({ opacity: 1, transform: 'translateY(-30px)', transition: 'all 0.15s ease-out' });
+const transitionExitActive = css({ opacity: 0, transform: 'translateY(-30px)', transition: 'all 0.15s ease-out' });
 
 export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
   const [prefersDark, setPrefersDark] = useLocalStorage('prefersDark');
@@ -59,7 +61,7 @@ export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
               >
                 <Icon
                   src={require('./icons/moon.svg')}
-                  css={[iconStyles, { filter: 'invert(100%)' }]}
+                  css={[iconStyles, { paddingTop: 2, paddingLeft: 2 }]}
                   size={26}
                   alt="Switch to light theme"
                 />
@@ -78,7 +80,7 @@ export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
                 <Icon
                   src={require('./icons/sun.svg')}
                   css={iconStyles}
-                  size={26}
+                  size={30}
                   alt="Switch to dark theme"
                 />
               </CSSTransition>

@@ -4,14 +4,16 @@
     <title>sun</title>
     <desc>Created with Sketch.</desc>
     <g id="sun" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <circle id="Oval" stroke="#000000" stroke-width="11.3999999" cx="64" cy="64" r="29"></circle>
-        <path d="M64.5,16 L64.5,8" id="Line" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round"></path>
-        <path d="M64.5,120 L64.5,112" id="Line-Copy-2" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round"></path>
-        <path d="M113,64.5 L121,64.5" id="Line-Copy" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round"></path>
-        <path d="M7,64.5 L15,64.5" id="Line-Copy-3" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round"></path>
-        <path d="M101.5,31 L101.5,23" id="Line" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round" transform="translate(101.500000, 27.000000) rotate(-315.000000) translate(-101.500000, -27.000000) "></path>
-        <path d="M26.5,106 L26.5,98" id="Line-Copy-2" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round" transform="translate(26.500000, 102.000000) rotate(-315.000000) translate(-26.500000, -102.000000) "></path>
-        <path d="M97,101.5 L105,101.5" id="Line-Copy" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round" transform="translate(101.000000, 101.500000) rotate(-315.000000) translate(-101.000000, -101.500000) "></path>
-        <path d="M22,26.5 L30,26.5" id="Line-Copy-3" stroke="#000000" stroke-width="11.3999999" stroke-linecap="round" transform="translate(26.000000, 26.500000) rotate(-315.000000) translate(-26.000000, -26.500000) "></path>
+        <g id="Group" transform="translate(7.000000, 8.000000)" stroke="#8C7410" stroke-width="8">
+            <circle id="Oval" cx="57" cy="56" r="29"></circle>
+            <path d="M57.5,8 L57.5,0" id="Line" stroke-linecap="round"></path>
+            <path d="M57.5,112 L57.5,104" id="Line-Copy-2" stroke-linecap="round"></path>
+            <path d="M106,56.5 L114,56.5" id="Line-Copy" stroke-linecap="round"></path>
+            <path d="M0,56.5 L8,56.5" id="Line-Copy-3" stroke-linecap="round"></path>
+            <path d="M94.5,23 L94.5,15" id="Line" stroke-linecap="round" transform="translate(94.500000, 19.000000) rotate(-315.000000) translate(-94.500000, -19.000000) "></path>
+            <path d="M19.5,98 L19.5,90" id="Line-Copy-2" stroke-linecap="round" transform="translate(19.500000, 94.000000) rotate(-315.000000) translate(-19.500000, -94.000000) "></path>
+            <path d="M90,93.5 L98,93.5" id="Line-Copy" stroke-linecap="round" transform="translate(94.000000, 93.500000) rotate(-315.000000) translate(-94.000000, -93.500000) "></path>
+            <path d="M15,18.5 L23,18.5" id="Line-Copy-3" stroke-linecap="round" transform="translate(19.000000, 18.500000) rotate(-315.000000) translate(-19.000000, -18.500000) "></path>
+        </g>
     </g>
 </svg>

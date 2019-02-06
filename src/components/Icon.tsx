@@ -13,9 +13,7 @@ const Icon = (props: IconProps) => {
   return (
     <img
       src={src}
-      width={size}
-      height={size}
-      css={{ margin: 0, userSelect: 'none' }}
+      css={{ margin: 0, userSelect: 'none', flexShrink: 0, width: size, height: size }}
       {...passthrough}
     />
   );

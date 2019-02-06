@@ -2,10 +2,12 @@ import { rhythm as createRhythm, groteskSansFamily, textColors, monoFamily } fro
 import { ObjectInterpolation, Interpolation, keyframes } from '@emotion/core';
 
 export const variables = {
+  sizes: {
+    plusPhone: 414,
+    tablet: 768,
+  },
   colors: {
     text: textColors,
-    red: '#992E37',
-    blue: '#2E8099',
   },
 };
 
@@ -117,5 +119,12 @@ export function darkMode(styles: Interpolation<any>): ObjectInterpolation<any> {
   return {
     '@media (prefers-color-scheme: dark)': styles,
     'html[data-prefers-dark] &': styles,
+  };
+}
+
+export function minWidth(width: number | string, styles: Interpolation<any>): ObjectInterpolation<any> {
+  const widthString = typeof width === 'string' ? width : `${width}px`;
+  return {
+    [`@media (min-width: ${widthString})`]: styles,
   };
 }

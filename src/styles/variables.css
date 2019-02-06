@@ -23,7 +23,7 @@
   --color-bg90: rgba(255, 255, 255, 0.9);
   --color-bg100: rgba(255, 255, 255, 1);
 
-  --blue: #2e8099;
+  --blue: #1382a4;
 
   --background: var(--color-bg100);
   --background-alt: #fafafa;
@@ -62,8 +62,6 @@
 
     --background: var(--color-bg90);
     --background-alt: var(--color-bg100);
-
-    --linkText: #2ca7cc;
   }
 }
 

@@ -1,41 +1,32 @@
 import React from 'react';
+import { css } from '@emotion/core';
 import { OutboundLink } from 'gatsby-plugin-google-analytics';
-import { flex, padding, Side, resets, type, textColor, margin, darkMode } from '../styles/utils';
+import { flex, padding, Side, darkMode, minWidth, variables } from '../styles/utils';
 import { Spacer } from './Spacer';
 import { Icon } from './Icon';
-import { Link } from 'gatsby';
-import { Logo } from './Logo';
+import { WordMark } from './WordMark';
 import { DarkModeSwitch } from './DarkModeSwitch';
 
-export interface HeaderProps {
-  siteTitle: string;
-}
+const hiddenWhileTiny = css([
+  { display: 'none' },
+  minWidth(variables.sizes.plusPhone, { display: 'flex' }),
+]);
 
-const Header: React.FunctionComponent<HeaderProps> = ({ siteTitle }) => (
-  <div css={[flex.stretch, flex.verticallyCenter, padding(1, Side.Top), padding(2, Side.Bottom)]}>
-    <Link to="/" css={[resets.unanchor, flex.alignBaselines]}>
-      <Logo />
-      <h3
-        css={[
-          type.grotesk,
-          textColor.secondary,
-          { margin: 0, textTransform: 'lowercase', color: 'var(--color-fg100)', opacity: 0.54 },
-          margin(0.5, Side.Left),
-        ]}
-      >
-        {siteTitle}
-      </h3>
-    </Link>
-    <Spacer space={0.5}>
-      <DarkModeSwitch css={{ padding: '0px 2px'}} />
-      <OutboundLink href="https://github.com/andrewbranch">
-        <Icon src={require('../images/github-icon.svg')} css={darkMode({ filter: 'invert(100%)' })} />
-      </OutboundLink>
-      <OutboundLink href="https://twitter.com/atcb">
-        <Icon src={require('../images/twitter-icon.svg')} size={26} />
-      </OutboundLink>
-    </Spacer>
-  </div>
-);
+function Header() {
+  return (
+    <div css={[flex.stretch, { alignItems: 'flex-start' }, padding(1, Side.Top), padding(2, Side.Bottom)]}>
+      <WordMark />
+      <Spacer space={0.5}>
+        <DarkModeSwitch />
+        <OutboundLink href="https://github.com/andrewbranch" css={hiddenWhileTiny}>
+          <Icon src={require('../images/github-icon.svg')} css={darkMode({ filter: 'invert(100%)' })} />
+        </OutboundLink>
+        <OutboundLink href="https://twitter.com/atcb" css={hiddenWhileTiny}>
+          <Icon src={require('../images/twitter-icon.svg')} size={26} />
+        </OutboundLink>
+      </Spacer>
+    </div>
+  );
+}
 
 export default Header;
