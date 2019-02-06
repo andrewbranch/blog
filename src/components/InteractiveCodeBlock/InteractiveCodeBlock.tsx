@@ -8,7 +8,7 @@ import { Tokenizer, CacheableLineTokens } from './tokenizers/types';
 import { Token } from './tokenizers/token';
 import 'requestidlecallback';
 import { rhythm } from '../../utils/typography';
-import { padding, Side, resets, darkMode, animations } from '../../styles/utils';
+import { padding, Side, resets, darkMode, animations, minWidth, variables, masked } from '../../styles/utils';
 import { Icon } from '../Icon';
 
 function createValueFromString(text: string): Value {
@@ -139,14 +139,31 @@ const loadingIcon = (
 const editIcon = <Icon css={iconStyles} src={require('../icons/pencil.svg')} alt="Edit" />;
 const resetIcon = <Icon css={iconStyles} src={require('../icons/reset.svg')} alt="Reset" />;
 const containerStyles = css([
-  padding(1, Side.Left),
-  padding(2, Side.Right),
   padding(0.5, Side.Vertical),
   {
     position: 'relative',
     fontSize: '1rem',
     ':hover > button': {
       opacity: 1,
+    },
+    ...minWidth(variables.sizes.bigEnough, [
+      padding(1, Side.Left),
+      padding(2, Side.Right),
+    ]),
+  },
+]);
+const editorStyles = css([
+  commonBlockStyles,
+  masked(rhythm(0.2), rhythm(0.5)),
+  {
+    '[data-slate-leaf]:last-child [data-slate-content]:last-child': {
+      position: 'relative',
+      ':after': {
+        content: '""',
+        position: 'relative',
+        width: rhythm(0.5),
+        right: rhythm(-0.5),
+      },
     },
   },
 ]);
@@ -202,7 +219,7 @@ export function InteractiveCodeBlock<
         plugins={plugins}
         decorateNode={decorateLineSync}
         className={props.className}
-        css={commonBlockStyles}
+        css={editorStyles}
         spellCheck={false}
         autoCorrect={false}
         readOnly={props.readOnly}
@@ -242,7 +259,9 @@ const buttonStyles = css([resets.unbutton], {
   fontSize: 0,
   position: 'absolute',
   top: rhythm(0.5),
-  right: rhythm(1),
+  right: 0,
+  background: 'var(--background)',
+  ...minWidth(variables.sizes.bigEnough, padding(1, Side.Right)),
 });
 
 function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {

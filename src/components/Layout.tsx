@@ -2,7 +2,7 @@ import React from 'react';
 import { Global } from '@emotion/core';
 import Header from './Header';
 import { rhythm } from '../utils/typography';
-import { padding, Side, type, textColor, variables } from '../styles/utils';
+import { padding, Side, type, textColor, variables, minWidth, masked } from '../styles/utils';
 import '../styles/variables.css';
 import '../styles/fonts/fonts.css';
 import { useOutlineStatus } from '../hooks/useOutlineStatus';
@@ -27,6 +27,19 @@ const Layout: React.FunctionComponent = ({ children }) => {
           '.katex': {
             fontSize: '0.9rem',
           },
+          '.katex-display': {
+            margin: 0,
+            // Get the potential scrollbar out of the way of the content
+            ...padding(1, Side.Bottom),
+            // Mask overflow
+            overflow: 'auto',
+            ...masked(rhythm(0.2), rhythm(0.5)),
+            '.katex-html .base:last-child': padding(0.5, Side.Right),
+          },
+          h1: {
+            fontSize: '2.4rem',
+            ...minWidth(variables.sizes.tablet, { fontSize: '2.8rem' }),
+          },
           a: {
             color: variables.colors.text.link,
             textDecorationSkip: 'ink',
@@ -50,9 +63,9 @@ const Layout: React.FunctionComponent = ({ children }) => {
           '.footnote-backref': {
             display: 'none',
           },
-          'ol, ul': {
+          'ol, ul': minWidth(variables.sizes.bigEnough, {
             marginLeft: rhythm(2),
-          },
+          }),
           hr: {
             background: 'var(--color-fg20)',
           },

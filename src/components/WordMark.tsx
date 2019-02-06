@@ -48,9 +48,8 @@ const subtitleStyles = css([
 const logoStyles = css(darkMode({ filter: 'hue-rotate(-30deg)', opacity: 0.9 }));
 const floatingStyles = css({
   position: 'absolute',
-  marginLeft: iconMargin,
   right: 0,
-  top: `${iconSize - iconMargin}em`,
+  top: `${iconSize - iconMargin / 2}em`,
   overflow: 'visible',
 });
 

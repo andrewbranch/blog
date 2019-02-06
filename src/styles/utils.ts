@@ -100,20 +100,20 @@ export enum Side {
 export function padding(rhythm: number, sides = Side.Vertical | Side.Horizontal): ObjectInterpolation<any> {
   const amount = createRhythm(rhythm);
   return {
-    paddingTop: sides & Side.Top ? amount : undefined,
-    paddingRight: sides & Side.Right ? amount : undefined,
-    paddingBottom: sides & Side.Bottom ? amount : undefined,
-    paddingLeft: sides & Side.Left ? amount : undefined,
+    ...(sides & Side.Top ? { paddingTop: amount } : undefined),
+    ...(sides & Side.Right ? { paddingRight: amount } : undefined),
+    ...(sides & Side.Bottom ? { paddingBottom: amount } : undefined),
+    ...(sides & Side.Left ? { paddingLeft: amount } : undefined),
   };
 }
 
 export function margin(rhythm: number, sides = Side.Vertical | Side.Horizontal): ObjectInterpolation<any> {
   const amount = createRhythm(rhythm);
   return {
-    marginTop: sides & Side.Top ? amount : undefined,
-    marginRight: sides & Side.Right ? amount : undefined,
-    marginBottom: sides & Side.Bottom ? amount : undefined,
-    marginLeft: sides & Side.Left ? amount : undefined,
+    ...(sides & Side.Top ? { marginTop: amount } : undefined),
+    ...(sides & Side.Right ? { marginRight: amount } : undefined),
+    ...(sides & Side.Bottom ? { marginBottom: amount } : undefined),
+    ...(sides & Side.Left ? { marginLeft: amount } : undefined),
   };
 }
 
@@ -128,5 +128,22 @@ export function minWidth(width: number | string, styles: Interpolation<any>): Ob
   const widthString = typeof width === 'string' ? width : `${width}px`;
   return {
     [`@media (min-width: ${widthString})`]: styles,
+  };
+}
+
+export function masked(maskStart: number | string, maskEnd: number | string): ObjectInterpolation<any> {
+  const startString = typeof maskStart === 'string' ? maskStart : `${maskStart}px`;
+  const endString = typeof maskEnd === 'string' ? maskEnd : `${maskEnd}px`;
+  return {
+    ...margin(-0.5, Side.Horizontal),
+    ...padding(0.5, Side.Horizontal),
+    maskImage: `linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0) ${startString},
+      rgba(0, 0, 0, 1) ${endString},
+      rgba(0, 0, 0, 1) calc(100% - ${endString}),
+      rgba(0, 0, 0, 0) calc(100% - ${startString})
+    )`,
   };
 }
