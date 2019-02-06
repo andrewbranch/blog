@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useHover, HoverProps, UseHoverOptions } from '../../hooks';
 import { ClassNames, css } from '@emotion/core';
@@ -21,17 +21,25 @@ export interface TooltipProps extends UseHoverOptions {
   priority: number;
 }
 
-function createPositionStyle(triggerElement: HTMLElement | null, margin: number): React.CSSProperties {
-  if (!triggerElement) {
-    return {};
+function createPositionStyle(
+  triggerElement: HTMLElement | null,
+  tooltipRect: ClientRect | null,
+  margin: number,
+): React.CSSProperties {
+  const maxWidth = window.innerWidth - margin * 2;
+  if (!triggerElement || !tooltipRect) {
+    return { maxWidth };
   }
 
-  const rect = triggerElement.getBoundingClientRect();
+  const triggerRect = triggerElement.getBoundingClientRect();
+  const rightOverflow = Math.max(0, triggerRect.left + tooltipRect.width - window.innerWidth);
+  const left = triggerRect.left - rightOverflow;
   return {
+    maxWidth,
     position: 'absolute',
-    bottom: window.innerHeight - window.scrollY - rect.bottom + rect.height + margin,
+    bottom: window.innerHeight - window.scrollY - triggerRect.bottom + triggerRect.height + margin,
     height: 'auto',
-    left: rect.left,
+    left,
   };
 }
 
@@ -48,7 +56,7 @@ const tooltipSectionStyles = css({
   display: 'block',
   padding: '2px 4px',
   ':not(:last-child)': {
-    borderBottom: '1px solid var(--color-fg05)',
+    borderBottom: '1px solid var(--color-fg10)',
   },
 });
 
@@ -65,8 +73,8 @@ interface TooltipContext {
 const TooltipContext = React.createContext<TooltipContext>({
   isInTooltip: false,
   priority: 0,
-  renderInParent: (node, _, props, portalNode) => createPortal(
-    <div css={overlayStyles} {...props}>{node}</div>,
+  renderInParent: (node, ref, props, portalNode) => createPortal(
+    <div ref={ref as any} css={overlayStyles} {...props}>{node}</div>,
     portalNode,
   ),
 });
@@ -82,8 +90,18 @@ function Tooltip({
   const [isHovering, hoverProps] = useHover(useHoverOptions);
   const triggerRef = useRef<HTMLElement>(null);
   const tooltipRef = useRef<HTMLElement>(null);
+  const [tooltipRect, setTooltipRect] = useState<ClientRect | null>(null);
   const [childTooltip, setChildTooltip] = useState<React.ReactNode>(null);
   const [offset, setOffset] = useState(0);
+  useLayoutEffect(() => {
+    if (tooltipRef.current) {
+      const newRect = tooltipRef.current.getBoundingClientRect();
+      // Only using width for now, might improve things and look at height later
+      if (!tooltipRect || newRect.width !== tooltipRect.width) {
+        setTooltipRect(newRect);
+      }
+    }
+  });
   return (
     <TooltipContext.Consumer>
       {({ renderInParent, priority: parentPriority }) => (
@@ -120,7 +138,7 @@ function Tooltip({
             tooltipRef,
             {
               ...hoverProps,
-              style: createPositionStyle(triggerRef.current, triggerMargin + offset),
+              style: createPositionStyle(triggerRef.current, tooltipRect, triggerMargin + offset),
             },
             portalNode,
           )}
