@@ -8,7 +8,7 @@ import { Tokenizer, CacheableLineTokens } from './tokenizers/types';
 import { Token } from './tokenizers/token';
 import 'requestidlecallback';
 import { rhythm } from '../../utils/typography';
-import { padding, Side, resets, darkMode, animations, minWidth, variables, masked } from '../../styles/utils';
+import { padding, Side, resets, darkMode, animations, minWidth, variables, masked, margin } from '../../styles/utils';
 import { Icon } from '../Icon';
 
 function createValueFromString(text: string): Value {
@@ -139,16 +139,19 @@ const loadingIcon = (
 const editIcon = <Icon css={iconStyles} src={require('../icons/pencil.svg')} alt="Edit" />;
 const resetIcon = <Icon css={iconStyles} src={require('../icons/reset.svg')} alt="Reset" />;
 const containerStyles = css([
-  padding(0.5, Side.Vertical),
+  padding(0.5),
+  margin(-0.5, Side.Horizontal),
   {
     position: 'relative',
     fontSize: '1rem',
-    ':hover > button': {
-      opacity: 1,
+    ':focus-within': {
+      background: 'var(--background-alt)',
     },
     ...minWidth(variables.sizes.bigEnough, [
+      margin(0, Side.Horizontal),
       padding(1, Side.Left),
       padding(2, Side.Right),
+      { borderRadius: 8 },
     ]),
   },
 ]);
@@ -200,31 +203,33 @@ export function InteractiveCodeBlock<
   }, [props.isLoading]);
 
   return (
-    <pre css={containerStyles}>
-      <Editor
-        ref={editorRef}
-        value={state}
-        onChange={({ value, operations }) => {
-          if (props.onChange) {
-            props.onChange(getFullText(value), operations);
-          }
+    <div css={{ position: 'relative', ':hover > button': { opacity: 1 } }}>
+      <pre css={containerStyles}>
+        <Editor
+          ref={editorRef}
+          value={state}
+          onChange={({ value, operations }) => {
+            if (props.onChange) {
+              props.onChange(getFullText(value), operations);
+            }
 
-          setState(value);
-          cancelIdleCallback(callbackId);
-          callbackId = requestIdleCallback(() => {
-            const x = value.set('decorations', decorateDocument(value.document)) as Value;
-            setState(x);
-          });
-        }}
-        plugins={plugins}
-        decorateNode={decorateLineSync}
-        className={props.className}
-        css={editorStyles}
-        spellCheck={false}
-        autoCorrect={false}
-        readOnly={props.readOnly}
-        style={{ wordWrap: 'normal', whiteSpace: 'pre' }}
-      />
+            setState(value);
+            cancelIdleCallback(callbackId);
+            callbackId = requestIdleCallback(() => {
+              const x = value.set('decorations', decorateDocument(value.document)) as Value;
+              setState(x);
+            });
+          }}
+          plugins={plugins}
+          decorateNode={decorateLineSync}
+          className={props.className}
+          css={editorStyles}
+          spellCheck={false}
+          autoCorrect={false}
+          readOnly={props.readOnly}
+          style={{ wordWrap: 'normal', whiteSpace: 'pre' }}
+        />
+      </pre>
       {buttonIcon ? (
         <Button
           css={{ opacity: buttonIcon === resetIcon ? 1 : 0}}
@@ -243,7 +248,7 @@ export function InteractiveCodeBlock<
           {buttonIcon}
         </Button>
       ) : null}
-    </pre>
+    </div>
   );
 }
 
