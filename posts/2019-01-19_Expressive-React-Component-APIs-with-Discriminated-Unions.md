@@ -37,10 +37,6 @@ name: shapes.ts
 interface Polygon {
   numberOfSides: number;
   sideLengths: number[];
-  angles: number[];
-  getArea(): number;
-  getPerimeter(): number;
-  isRegular(): boolean;
 }
 
 enum TriangleKind {
@@ -54,18 +50,9 @@ interface Triangle extends Polygon {
   triangleKind: TriangleKind;
 }
 
-enum QuadrilateralFlags {
-  Parallelogram = 1 << 0,
-  Rectangle = 1 << 1,
-  Square = 1 << 2,
-  Rhombus = 1 << 3,
-  Trapezoid = 1 << 4,
-  Kite = 1 << 5
-}
-
 interface Quadrilateral extends Polygon {
   numberOfSides: 4;
-  quadrilateralFlags: QuadrilateralFlags;
+  isRectangle: boolean;
 }
 ```
 
@@ -78,19 +65,21 @@ name: shapes.ts
 function addShape(shape: Triangle | Quadrilateral) {
   if (shape.numberOfSides === 3) {
     // In here, the compiler knows that `shape` is a `Triangle`,
-    // so we can access triangle-specific properties
+    // so we can access triangle-specific properties.
+    // See for yourself: hover each occurance of “shape” and
+    // compare the typing info.
     console.log(shape.triangleKind);
   } else {
     // In here, the compiler knows that `shape` is a `Quadrilateral`.
-    console.log(shape.quadrilateralFlags);
+    console.log(shape.isRectangle);
   }
 }
 ```
 
-When we have a union (like `Triangle | Quadrilateral`) that can be narrowed by a specific property (like `numberOfSides`), that union is called a _discriminated union_ and that property is called the _discriminant property_.
+When we have a union (like `Triangle | Quadrilateral`) that can be narrowed by a literal member (like `numberOfSides`), that union is called a _discriminated union_ and that property is called the _discriminant property_.
 
-## Do these props look too loose on me?
-You’re writing a Select component (i.e., a fancy replacement for an HTMLSelectElement) with React and TypeScript. Perhaps you look at the [`SelectHTMLAttributes` interface](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/eda212cfd64119cf2edc2f4ab12e53c4654a9b87/types/react/index.d.ts#L1979-L1990) from [`@types/react`](https://www.npmjs.com/package/@types/react)  for inspiration, and notice that a native select element, in React, can have a `value` of type `string | string[] | number`. From TypeScript’s perspective, you can pass a single value or an array of values indiscriminately, but you know that an array of values is really only meaningful if the `multiple` prop is set. Nonetheless, you try this approach for your component:
+## The problem: Overly permissive props
+You’re writing a Select component (i.e., a fancy replacement for an HTMLSelectElement) with React and TypeScript. You want it to support both single-selection and multiple-selection, just like a native select element. Perhaps you look at the [`SelectHTMLAttributes` interface](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/eda212cfd64119cf2edc2f4ab12e53c4654a9b87/types/react/index.d.ts#L1979-L1990) from [`@types/react`](https://www.npmjs.com/package/@types/react)  for inspiration, and notice that a native select element, in React, can have a `value` of type `string | string[] | number`. From TypeScript’s perspective, you can pass a single value or an array of values indiscriminately, but you know that an array of values is really only meaningful if the `multiple` prop is set. Nonetheless, you try this approach for your component:
 
 <!--@
 name: select-1.tsx
@@ -115,7 +104,8 @@ The idea is that when `multiple` is `true`, the consumer should set `value` to a
 name: select-1.tsx
 -->
 ```tsx
-// Missing `multiple` prop, but no compiler error
+// Value is an array, but it’s missing the `multiple`
+// prop, but no compiler error
 <Select
   options={['Red', 'Green', 'Blue']}
   value={['Red', 'Blue']}
@@ -174,7 +164,7 @@ class Select extends React.Component<SelectProps> {
 }
 ```
 
-As triangles and quadrilaterals can be distinguished by their number of sides, the union type `SelectProps` can be discriminated by its `multiple` property. And as luck would have it, TypeScript will do exactly that when you pass (or don’t pass) the `multiple` prop to your new and improved component:
+As triangles and quadrilaterals can be distinguished by their number of sides, the union type `SelectProps` can be discriminated by its `multiple` property. And as luck would have it, TypeScript will do exactly that when you pass (or don’t pass) the `multiple` prop to your new and improved component: [^1]
 
 <!--@
 name: select-2.tsx
@@ -209,7 +199,7 @@ name: select-2.tsx
 Whoa, this is a bazillion times better! Nice work; consumers of your component will thank you for coaching them down the right path _before_ they run their code in a browser. 🎉
 
 ## Going deeper with the distributive law of sets
-Time goes by. Your Select component was a big hit with the other developers who were using it. Maybe you got a promotion. But then, the design team shows you specs for a Select component with _groups_ of options, with customizable titles for each group. You start prototyping the props you’ll have to add in your head:
+Time goes by. Your Select component was a big hit with the other developers who were using it. But then, the design team shows you specs for a Select component with _groups_ of options, with customizable titles for each group. You start prototyping the props you’ll have to add in your head:
 
 ```ts
 type OptionGroup = {
@@ -220,7 +210,7 @@ type OptionGroup = {
 interface YourMentalModelOfChangesToSelectProps {
   grouped?: boolean;
   options: string[] | OptionGroup[];
-  renderGroupTitle?: (group: OptionGroup) => JSX.Element;
+  renderGroupTitle?: (group: OptionGroup) => React.ReactNode;
 }
 ```
 
@@ -233,7 +223,7 @@ With two different choices to make (multiple and grouped), each with two options
 3. single selection, grouped
 4. multiple selection, grouped.
 
-Writing each of those options out as a complete interface of possible Select props and creating a union of all four isn’t unthinkably tedious, but the relationship is exponential: three boolean choices makes a union of 2^3 = 8, four choices is 16, and so on. Rather sooner than later, it becomes unwieldy to express every combination of essentially unrelated choices explicitly.
+Writing each of those options out as a complete interface of possible Select props and creating a union of all four isn’t unthinkably tedious, but the relationship is exponential: three boolean choices makes a union of $2^3 = 8$, four choices is 16, and so on. Rather sooner than later, it becomes unwieldy to express every combination of essentially unrelated choices explicitly.
 
 You can avoid repeating yourself and writing out every combination by taking advantage of some set theory. Instead of writing four complete interfaces that repeat props from each other, you can write interfaces for each discrete piece of functionality and combine them via intersection:
 
@@ -285,7 +275,7 @@ class Select extends React.Component<SelectProps> {
 
 Let’s break down what happened here:
 
-1. For each constituent in the union, we removed its `extends` clause so the interface reflects only a discrete subset of functionality that can be intersected cleanly with anything else. (In this example, that’s not strictly necessary, but I think it’s cleaner, and I have an unverified theory that it’s less work for the compiler.[^1]) To reflect this change in our naming, we also suffixed each interface with `Fragment` to be clear that it’s not a complete working set of Select props.
+1. For each constituent in the union, we removed its `extends` clause so the interface reflects only a discrete subset of functionality that can be intersected cleanly with anything else. (In this example, that’s not strictly necessary, but I think it’s cleaner, and I have an unverified theory that it’s less work for the compiler.[^2]) To reflect this change in our naming, we also suffixed each interface with `Fragment` to be clear that it’s not a complete working set of Select props.
 2. We broke down grouped and non-grouped selects into two interfaces discriminated on `grouped`, just like we did before with `multiple`.
 3. We combined everything together with an intersection of unions. In plain English, SelectProps is made up of:
 	- `CommonSelectProps`, along with
@@ -307,7 +297,7 @@ $$
 If, like me, you haven’t studied computer science in an academic setting, this may look intimidatingly theoretical, but quickly make the following mental substitutions:
 
 - Set theory’s union operator, $\cup$, is written as `|` in TypeScript
-- Set theory’s intersection operator, $\cap$, is written as `&` in TypeScript[^2]
+- Set theory’s intersection operator, $\cap$, is written as `&` in TypeScript[^3]
 - Let $Z =$ `CommonSelectProps`
 - Let $A =$ `SingleSelectPropsFragment`
 - Let $B =$ `MultipleSelectPropsFragment`
@@ -356,8 +346,10 @@ Discriminated unions can be a powerful tool for writing better React component t
 - [Tagged union - Wikipedia](https://en.wikipedia.org/wiki/Tagged_union)
 
 [^1]:
-  My hypothesis is that in calculating the intersection of _N_ types that all include common properties, the compiler must calculate for each of _n_ common properties of type _T_ that _T_ intersected with itself _N_ times is still _T_. This is surely not a computationally expensive code path, but unless there’s a clever short circuit early in the calculation,  it still has to happen _N ⨉ n_ times, all of which are unnecessary. This is purely unscientific speculation, and I would be happy for someone to correct or corroborate this theory.
+  Interestingly, in the final case here, the explicit value `multiple={false}` is required not to pass type checking, but to get accurate inference on the argument to `onChange`. This seems like a limitation/bug to me.
 [^2]:
-  This statement applies only in the type declaration space. `|` and `&` are bitwise operators in the variable declaration space. E.g., `|` is the union operator in `var x: string | number` but the bitwise _or_ operator in `var x = 0xF0 | 0x0F`.
+  My hypothesis is that in calculating the intersection of _N_ types that all include common properties, the compiler must calculate for each of _n_ common properties of type _T_ that _T_ intersected with itself _N_ times is still _T_. This is surely not a computationally expensive code path, but unless there’s a clever short circuit early in the calculation,  it still has to happen _N ⨉ n_ times, all of which are unnecessary. This is purely unscientific speculation, and I would be happy for someone to correct or corroborate this theory.
 [^3]:
+  This statement applies only in the type declaration space. `|` and `&` are bitwise operators in the variable declaration space. E.g., `|` is the union operator in `var x: string | number` but the bitwise _or_ operator in `var x = 0xF0 | 0x0F`.
+[^4]:
   TypeScript does successfully discriminate between these constituents, but type inference [is currently broken](https://github.com/Microsoft/TypeScript/issues/29340) for properties that have different function signatures in different constituents when any of those constituents are an intersection type.

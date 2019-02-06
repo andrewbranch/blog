@@ -27,6 +27,9 @@ const Layout: React.FunctionComponent = ({ children }) => {
           '.katex': {
             fontSize: '0.9rem',
           },
+          'p > .katex, li > .katex': {
+            padding: '0 2px',
+          },
           '.katex-display': {
             margin: 0,
             // Get the potential scrollbar out of the way of the content
