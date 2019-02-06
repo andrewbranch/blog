@@ -1,5 +1,5 @@
 import React from 'react';
-import { margin, Side, resets } from '../styles/utils';
+import { margin, Side, resets, textColor } from '../styles/utils';
 import { Link } from 'gatsby';
 
 export interface PostPreviewProps {
@@ -9,11 +9,12 @@ export interface PostPreviewProps {
   excerpt: string;
 }
 
-export const PostPreview = React.memo<PostPreviewProps>(({ title, slug, excerpt }) => {
+export const PostPreview = React.memo<PostPreviewProps>(({ title, slug, date, excerpt }) => {
   return (
     <Link to={slug} css={resets.unanchor}>
-      <h3 css={margin(0.5, Side.Bottom)}>{title}</h3>
-      <div dangerouslySetInnerHTML={{ __html: excerpt }} />
+      <div css={[textColor.secondary, { fontStyle: 'italic' }]}>{date}</div>
+      <h3 css={margin(0.25, Side.Vertical)}>{title}</h3>
+      <div css={{ '*': { margin: 0 } }} dangerouslySetInnerHTML={{ __html: excerpt }} />
     </Link>
   );
 });

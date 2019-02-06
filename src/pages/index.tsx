@@ -3,6 +3,7 @@ import { graphql } from 'gatsby';
 import Layout from '../components/Layout';
 import { PostPreview } from '../components/PostPreview';
 import SEO from '../components/SEO';
+import { Spacer } from '../components/Spacer';
 
 export interface IndexPageProps {
   data: {
@@ -50,15 +51,17 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => {
   return (
     <Layout>
       <SEO title="All Posts" />
-      {data.allMarkdownRemark.edges.map(({ node }) => (
-        <PostPreview
-          key={node.id}
-          slug={node.fields.slug}
-          title={node.frontmatter.title}
-          date={node.frontmatter.date}
-          excerpt={node.excerpt}
-        />
-      ))}
+      <Spacer vertical space={2}>
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <PostPreview
+            key={node.id}
+            slug={node.fields.slug}
+            title={node.frontmatter.title}
+            date={node.frontmatter.date}
+            excerpt={node.excerpt}
+          />
+        ))}
+      </Spacer>
     </Layout>
   );
 });
