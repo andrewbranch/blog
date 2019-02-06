@@ -11,6 +11,7 @@ import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/Ty
 import { TypeScriptDiagnosticToken } from '../components/InteractiveCodeBlock/TypeScriptDiagnosticToken';
 import 'katex/dist/katex.min.css';
 import { shallowClone } from '../utils/shallowClone';
+import SEO from '../components/SEO';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -242,6 +243,7 @@ function Post({ data, pageContext }: PostProps) {
 
   return (
     <Layout>
+      <SEO title={post.frontmatter.title} />
       <div>
         <h1>{post.frontmatter.title}</h1>
         <EditableContext.Provider value={context}>

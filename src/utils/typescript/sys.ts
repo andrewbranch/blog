@@ -1,4 +1,5 @@
 import ts from 'typescript';
+const AUDIT = false;
 
 function notImplemented(methodName: string): any {
   throw new Error(`Method '${methodName}' is not implemented.`);
@@ -9,8 +10,10 @@ function audit<ArgsT extends any[], ReturnT>(
   fn: (...args: ArgsT) => ReturnT,
 ): (...args: ArgsT) => ReturnT {
   return (...args) => {
-    // tslint:disable-next-line:no-console
-    console.log(name, ...args);
+    if (AUDIT) {
+      // tslint:disable-next-line:no-console
+      console.log(name, ...args);
+    }
     return fn(...args);
   };
 }

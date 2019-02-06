@@ -46,7 +46,7 @@ function Nav(props: React.HTMLAttributes<HTMLElement>) {
 
 function Header() {
   return (
-    <div css={padding(1, Side.Vertical)}>
+    <div css={[padding(1, Side.Vertical), minWidth(variables.sizes.tablet, padding(2, Side.Bottom))]}>
       <div css={[flex.stretch, { alignItems: 'flex-start' }]}>
         <Spacer role="navigation" space={2} css={flex.alignBaselines}>
           <WordMark />

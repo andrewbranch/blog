@@ -2,6 +2,7 @@ import React from 'react';
 import { graphql } from 'gatsby';
 import Layout from '../components/Layout';
 import { PostPreview } from '../components/PostPreview';
+import SEO from '../components/SEO';
 
 export interface IndexPageProps {
   data: {
@@ -48,6 +49,7 @@ export const query = graphql`
 const IndexPage = React.memo<IndexPageProps>(({ data }) => {
   return (
     <Layout>
+      <SEO title="All Posts" />
       {data.allMarkdownRemark.edges.map(({ node }) => (
         <PostPreview
           key={node.id}

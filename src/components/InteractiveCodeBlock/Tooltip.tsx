@@ -26,7 +26,7 @@ function createPositionStyle(
   tooltipRect: ClientRect | null,
   margin: number,
 ): React.CSSProperties {
-  const maxWidth = document.documentElement.clientWidth - margin * 2;
+  const maxWidth = Math.min(700, document.documentElement.clientWidth - margin * 2);
   if (!triggerElement || !tooltipRect) {
     return { maxWidth };
   }
@@ -49,7 +49,6 @@ const overlayStyles = css({
   borderRadius: 2,
   fontSize: '85%',
   boxShadow: '0 0 0 1px var(--color-fg10)',
-  maxWidth: 700,
 });
 
 const tooltipSectionStyles = css({
