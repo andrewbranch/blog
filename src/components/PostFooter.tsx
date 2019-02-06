@@ -9,10 +9,8 @@ export function PostFooter({ date }: PostFooterProps) {
     <>
       <hr />
       <p>
-        <small>
-          Published on {date}.<br />
-          Questions? Comments? Corrections? Kudos? Find me on <a href="https://twitter.com/atcb">Twitter</a>.
-        </small>
+        Published on {date}.<br />
+        Questions? Comments? Corrections? Kudos? Find me on <a href="https://twitter.com/atcb">Twitter</a>.
       </p>
     </>
   );
