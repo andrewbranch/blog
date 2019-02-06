@@ -11,6 +11,7 @@ const containerStyles = css([
   flex.alignBaselines,
   {
     paddingBottom: `${iconMargin}em`,
+    paddingRight: `${iconSize + iconMargin}em`,
     position: 'relative',
     flexShrink: 0,
     fontSize: '1rem', // Can be used to adjust scale of whole WordMark
@@ -20,7 +21,7 @@ const containerStyles = css([
 const titleStyles = css([
   type.grotesk,
   textColor.secondary,
-  darkMode({ WebkitFontSmoothing: 'antialiased', opacity: 0.9 }),
+  darkMode({ opacity: 0.9 }),
   {
     whiteSpace: 'nowrap',
     margin: 0,
@@ -48,7 +49,7 @@ const logoStyles = css(darkMode({ filter: 'hue-rotate(-30deg)', opacity: 0.9 }))
 const floatingStyles = css({
   position: 'absolute',
   marginLeft: iconMargin,
-  right: `-${iconSize + iconMargin}em`,
+  right: 0,
   top: `${iconSize - iconMargin}em`,
   overflow: 'visible',
 });

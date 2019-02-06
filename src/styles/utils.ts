@@ -4,6 +4,7 @@ import { ObjectInterpolation, Interpolation, keyframes } from '@emotion/core';
 export const variables = {
   sizes: {
     plusPhone: 414,
+    bigEnough: 540,
     tablet: 768,
   },
   colors: {
@@ -35,6 +36,7 @@ export const flex = {
 const grotesk: ObjectInterpolation<any> = {
   fontFamily: groteskSansFamily.join(', '),
   fontWeight: 400,
+  ...darkMode({ WebkitFontSmoothing: 'antialiased' }),
 };
 
 const mono: ObjectInterpolation<any> = {
