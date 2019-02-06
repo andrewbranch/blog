@@ -1,6 +1,6 @@
 import { css } from '@emotion/core';
-import { monoFamily } from '../../utils/typography';
 import './themes.css';
+import { type } from '../../styles/utils';
 
 export enum SyntacticColors {
   Function = 'var(--function)',
@@ -17,12 +17,10 @@ export enum SyntacticColors {
   Operator = 'var(--operator)',
 }
 
-export const commonBlockStyles = css({
-  fontFamily: monoFamily.join(', '),
-  fontVariantLigatures: 'none',
-  fontFeatureSettings: 'normal',
+export const commonBlockStyles = css([type.mono, {
   fontSize: '80%',
   borderRadius: 3,
   overflow: 'auto',
   whiteSpace: 'nowrap',
-});
+  WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
+}]);

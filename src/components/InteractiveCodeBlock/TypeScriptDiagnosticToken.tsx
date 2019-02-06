@@ -19,7 +19,7 @@ const messageStyles = css([type.mono, {
 export function TypeScriptDiagnosticToken({ message, ...props }: TypeScriptDiagnosticTokenProps) {
   return (
     <Tooltip
-      mouseEnterDelayMS={500}
+      mouseEnterDelayMS={200}
       mouseOutDelayMS={50}
       renderTrigger={triggerProps => <span {...triggerProps} {...props} css={styles} />}
       renderTooltip={tooltipProps => <span {...tooltipProps} css={messageStyles}>{message}</span>}

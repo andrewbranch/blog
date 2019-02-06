@@ -26,18 +26,18 @@ function createPositionStyle(
   tooltipRect: ClientRect | null,
   margin: number,
 ): React.CSSProperties {
-  const maxWidth = window.innerWidth - margin * 2;
+  const maxWidth = document.documentElement.clientWidth - margin * 2;
   if (!triggerElement || !tooltipRect) {
     return { maxWidth };
   }
 
   const triggerRect = triggerElement.getBoundingClientRect();
-  const rightOverflow = Math.max(0, triggerRect.left + tooltipRect.width - window.innerWidth);
+  const rightOverflow = Math.max(0, triggerRect.left + tooltipRect.width - document.documentElement.clientWidth);
   const left = triggerRect.left - rightOverflow;
   return {
     maxWidth,
     position: 'absolute',
-    bottom: window.innerHeight - window.scrollY - triggerRect.bottom + triggerRect.height + margin,
+    bottom: document.documentElement.clientHeight - window.scrollY - triggerRect.bottom + triggerRect.height + margin,
     height: 'auto',
     left,
   };

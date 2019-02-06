@@ -44,7 +44,7 @@ export const TypeScriptIdentifierToken = React.memo(({
   return (
     <Tooltip
       priority={1}
-      mouseEnterDelayMS={500}
+      mouseEnterDelayMS={200}
       mouseOutDelayMS={50}
       renderTrigger={(triggerProps, isHovering) => (
         <span
