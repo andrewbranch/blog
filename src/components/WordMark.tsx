@@ -57,6 +57,7 @@ export function WordMark() {
   return (
     <Link to="/" css={containerStyles}>
       <Icon
+        alt=""
         src={require('./icons/logo.svg')}
         size={`${iconSize}em`}
         css={[logoStyles, { marginRight: `${iconMargin}em` }]}
@@ -66,6 +67,7 @@ export function WordMark() {
         <h4 css={subtitleStyles}>Blogs About Things</h4>
       </div>
         <Icon
+          alt=""
           src={require('./icons/logo2.svg')}
           size={`${iconSize * 2}em`}
           css={[logoStyles, floatingStyles]}

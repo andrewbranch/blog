@@ -55,10 +55,14 @@ function Header() {
         <Spacer space={0.5}>
           <DarkModeSwitch />
           <OutboundLink href="https://github.com/andrewbranch" css={hiddenWhileTiny}>
-            <Icon src={require('../images/github-icon.svg')} css={darkMode({ filter: 'invert(100%)' })} />
+            <Icon
+              alt="GitHub profile"
+              src={require('../images/github-icon.svg')}
+              css={darkMode({ filter: 'invert(100%)' })}
+            />
           </OutboundLink>
           <OutboundLink href="https://twitter.com/atcb" css={hiddenWhileTiny}>
-            <Icon src={require('../images/twitter-icon.svg')} size={26} />
+            <Icon alt="Twitter profile" src={require('../images/twitter-icon.svg')} size={26} />
           </OutboundLink>
         </Spacer>
       </div>

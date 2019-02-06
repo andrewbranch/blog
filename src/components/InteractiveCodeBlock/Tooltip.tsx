@@ -4,8 +4,13 @@ import { useHover, HoverProps, UseHoverOptions } from '../../hooks';
 import { ClassNames, css } from '@emotion/core';
 import { isSSR } from '../../utils/ssr';
 
-export interface InjectedTriggerProps extends HoverProps, React.RefAttributes<HTMLElement> {
+let idCounter = 0;
+function uniqueTooltipId() {
+  return `tooltip-${idCounter++}`;
+}
 
+export interface InjectedTriggerProps extends HoverProps, React.RefAttributes<HTMLElement> {
+  'aria-describedby'?: string;
 }
 
 export interface InjectedTooltipProps extends React.RefAttributes<HTMLDivElement> {
@@ -67,13 +72,14 @@ interface TooltipContext {
     tooltipRef: React.RefObject<HTMLElement>,
     props: InjectedTooltipProps & HoverProps,
     portalNode: Element,
+    id: string,
   ) => React.ReactPortal | null;
 }
 const TooltipContext = React.createContext<TooltipContext>({
   isInTooltip: false,
   priority: 0,
-  renderInParent: (node, ref, props, portalNode) => createPortal(
-    <div ref={ref as any} css={overlayStyles} {...props}>{node}</div>,
+  renderInParent: (node, ref, props, portalNode, id) => createPortal(
+    <div role="tooltip" id={id} ref={ref as any} css={overlayStyles} {...props}>{node}</div>,
     portalNode,
   ),
 });
@@ -89,6 +95,7 @@ function Tooltip({
   const [isHovering, hoverProps] = useHover(useHoverOptions);
   const triggerRef = useRef<HTMLElement>(null);
   const tooltipRef = useRef<HTMLElement>(null);
+  const { current: id } = useRef(uniqueTooltipId());
   const [tooltipRect, setTooltipRect] = useState<ClientRect | null>(null);
   const [childTooltip, setChildTooltip] = useState<React.ReactNode>(null);
   const [offset, setOffset] = useState(0);
@@ -122,6 +129,7 @@ function Tooltip({
           {renderTrigger({
             ...hoverProps,
             ref: triggerRef,
+            'aria-describedby': isHovering ? id : undefined,
           }, isHovering)}
 
           {isSSR || !isHovering ? null : renderInParent(
@@ -140,6 +148,7 @@ function Tooltip({
               style: createPositionStyle(triggerRef.current, tooltipRect, triggerMargin + offset),
             },
             portalNode,
+            id,
           )}
         </TooltipContext.Provider>
       )}
