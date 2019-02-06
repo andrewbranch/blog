@@ -13,6 +13,7 @@ import 'katex/dist/katex.min.css';
 import { shallowClone } from '../utils/shallowClone';
 import SEO from '../components/SEO';
 import { ErrorCatcher } from '../components/ErrorCatcher';
+import { PostFooter } from '../components/PostFooter';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -45,6 +46,7 @@ export interface PostProps {
       frontmatter: {
         title: string;
         lib: import('../utils/typescript/types').Extra[];
+        date: string;
       };
     };
   };
@@ -64,7 +66,8 @@ export const query = graphql`
       htmlAst,
       frontmatter {
         title,
-        lib
+        lib,
+        date(formatString: "MMMM DD, YYYY")
       }
     }
   }
@@ -254,6 +257,7 @@ function Post({ data, pageContext }: PostProps) {
         <EditableContext.Provider value={context}>
           <div>{renderAst(data.markdownRemark.htmlAst)}</div>
         </EditableContext.Provider>
+        <PostFooter date={post.frontmatter.date} />
       </div>
     </Layout>
   );
