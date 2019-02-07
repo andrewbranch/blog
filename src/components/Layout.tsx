@@ -90,7 +90,10 @@ const Layout: React.FunctionComponent = ({ children }) => {
           {children}
         </div>
         <footer css={[padding(0.5, Side.Vertical), type.grotesk, textColor.secondary]}>
-          <small>© {new Date().getFullYear()}. All rights reserved.</small>
+          <small>
+            © {new Date().getFullYear()} Andrew Branch.
+            Licensed under <a href="http://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0.</a>
+          </small>
         </footer>
       </div>
     </>
