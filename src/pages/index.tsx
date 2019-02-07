@@ -53,7 +53,7 @@ export const query = graphql`
 const IndexPage = React.memo<IndexPageProps>(({ data }) => {
   return (
     <Layout>
-      <SEO title="All Posts" />
+      <SEO title="Blog Posts" />
       <Spacer vertical space={1}>
         {data.allMarkdownRemark.edges.map(({ node }) => (
           <PostPreview
