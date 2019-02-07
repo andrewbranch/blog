@@ -57,12 +57,12 @@ function Header() {
           <OutboundLink href="https://github.com/andrewbranch" css={hiddenWhileTiny}>
             <Icon
               alt="GitHub profile"
-              src={require('../images/github-icon.svg')}
+              src={require('./icons/github-icon.svg')}
               css={darkMode({ filter: 'invert(100%)' })}
             />
           </OutboundLink>
           <OutboundLink href="https://twitter.com/atcb" css={hiddenWhileTiny}>
-            <Icon alt="Twitter profile" src={require('../images/twitter-icon.svg')} size={26} />
+            <Icon alt="Twitter profile" src={require('./icons/twitter-icon.svg')} size={26} />
           </OutboundLink>
         </Spacer>
       </div>
