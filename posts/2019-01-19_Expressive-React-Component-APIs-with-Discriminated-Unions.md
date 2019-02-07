@@ -3,6 +3,7 @@ title: "Expressive React Component APIs with Discriminated Unions"
 date: "2019-01-19"
 slug: "expressive-react-component-apis-with-discriminated-unions"
 globalPreamble: "declare var onChange: () => void;declare var console: { log: Function };\n"
+template: CodePost
 preambles:
   - file: select-1.tsx
     text: "import React from 'react';\n"

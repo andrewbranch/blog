@@ -28,7 +28,10 @@ export interface IndexPageProps {
 
 export const query = graphql`
   query {
-    allMarkdownRemark {
+    allMarkdownRemark(sort: {
+      fields: [frontmatter___date]
+      order: DESC
+    }) {
       totalCount
       edges {
         node {
@@ -51,7 +54,7 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => {
   return (
     <Layout>
       <SEO title="All Posts" />
-      <Spacer vertical space={2}>
+      <Spacer vertical space={1}>
         {data.allMarkdownRemark.edges.map(({ node }) => (
           <PostPreview
             key={node.id}

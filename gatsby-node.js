@@ -57,6 +57,7 @@ exports.createPages = async ({ graphql, actions }) => {
             frontmatter {
               globalPreamble,
               lib,
+              template,
               preambles {
                 file,
                 text
@@ -67,6 +68,7 @@ exports.createPages = async ({ graphql, actions }) => {
       }
     }
   `);
+
   const grammar = await getTmRegistry(ssrFileProvider).loadGrammar('source.tsx');
   const tmTokenizer = createTmGrammarTokenizer({ grammar });
   if (result.errors) {
@@ -74,90 +76,102 @@ exports.createPages = async ({ graphql, actions }) => {
   }
 
   return result.data.allMarkdownRemark.edges.map(async ({ node }) => {
-    const sourceFileContext = {};
-    const codeBlockContext = {};
-    visit(
-      node.htmlAst,
-      node => node.tagName === 'code' && ['ts', 'tsx'].includes(node.properties.dataLang),
-      code => {
-        const codeBlockId = code.properties.id;
-        const metaData = deserializeAttributes(code.properties);
-        const fileName = metaData.name || `/${codeBlockId}.${metaData.lang}`;
-        const text = code.children[0].value.trim();
-        const codeBlock = { text, fileName, id: codeBlockId };
-        codeBlockContext[codeBlockId] = codeBlock;
-        const sourceFileFragment = { codeBlockId };
-        const existingSourceFile = sourceFileContext[fileName];
-        if (existingSourceFile) {
-          const { codeBlockId: prevCodeBlockId } = existingSourceFile.fragments[existingSourceFile.fragments.length - 1];
-          const prevCodeBlock = codeBlockContext[prevCodeBlockId];
-          codeBlock.start = prevCodeBlock.end + 1;
-          codeBlock.end = codeBlock.start + text.length;
-          existingSourceFile.fragments.push(sourceFileFragment);
-        } else {
-          const filePreamble = node.frontmatter.preambles.find(p => p.file === fileName);
-          const preamble = (node.frontmatter.globalPreamble || '') + (filePreamble ? filePreamble.text : '');
-          codeBlock.start = preamble.length;
-          codeBlock.end = codeBlock.start + text.length;
-          sourceFileContext[fileName] = {
-            fragments: [sourceFileFragment],
-            preamble,
-          };
-        }
-      }
-    );
-
-    const sourceFiles = new Map(Object.keys(sourceFileContext).map(fileName => {
-      const context = sourceFileContext[fileName];
-      const fullText = context.preamble + context.fragments.map(f => codeBlockContext[f.codeBlockId].text).join('\n');
-      /** @type [string, string] */
-      const entry = [fileName, fullText];
-      return entry;
-    }));
-
-    const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib, lib);
-    const system = createSystem(new Map([
-      ...Array.from(sourceFiles.entries()),
-      ...Array.from(lib.core.entries()),
-      ...Array.from(extraLibFiles.entries()),
-    ]));
-    const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
-    Object.keys(codeBlockContext).forEach(codeBlockId => {
-      const codeBlock = codeBlockContext[codeBlockId];
-      const { fileName } = codeBlock;
-      const typeScriptTokenizer = createTypeScriptTokenizer({
-        fileName,
-        languageService,
-        visibleSpan: { start: codeBlock.start, length: codeBlock.end - codeBlock.start },
-      });
-      const tokenizer = composeTokenizers(tmTokenizer, typeScriptTokenizer);
-      codeBlock.tokens = tokenizer.tokenizeDocument(codeBlock.text);
-      codeBlock.quickInfo = {};
-      codeBlock.tokens.forEach(line => {
-        line.tokens.forEach(token => {
-          switch (token.type) {
-            case TypeScriptTokenType.Identifier:
-              codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
-                fileName,
-                token.sourcePosition
-              );
+    if (node.frontmatter.template === 'CodePost') {
+      const sourceFileContext = {};
+      const codeBlockContext = {};
+      visit(
+        node.htmlAst,
+        node => node.tagName === 'code' && ['ts', 'tsx'].includes(node.properties.dataLang),
+        code => {
+          const codeBlockId = code.properties.id;
+          const metaData = deserializeAttributes(code.properties);
+          const fileName = metaData.name || `/${codeBlockId}.${metaData.lang}`;
+          const text = code.children[0].value.trim();
+          const codeBlock = { text, fileName, id: codeBlockId };
+          codeBlockContext[codeBlockId] = codeBlock;
+          const sourceFileFragment = { codeBlockId };
+          const existingSourceFile = sourceFileContext[fileName];
+          if (existingSourceFile) {
+            const { codeBlockId: prevCodeBlockId } = existingSourceFile.fragments[existingSourceFile.fragments.length - 1];
+            const prevCodeBlock = codeBlockContext[prevCodeBlockId];
+            codeBlock.start = prevCodeBlock.end + 1;
+            codeBlock.end = codeBlock.start + text.length;
+            existingSourceFile.fragments.push(sourceFileFragment);
+          } else {
+            const filePreamble = node.frontmatter.preambles.find(p => p.file === fileName);
+            const preamble = (node.frontmatter.globalPreamble || '') + (filePreamble ? filePreamble.text : '');
+            codeBlock.start = preamble.length;
+            codeBlock.end = codeBlock.start + text.length;
+            sourceFileContext[fileName] = {
+              fragments: [sourceFileFragment],
+              preamble,
+            };
           }
+        }
+      );
+
+      const sourceFiles = new Map(Object.keys(sourceFileContext).map(fileName => {
+        const context = sourceFileContext[fileName];
+        const fullText = context.preamble + context.fragments.map(f => codeBlockContext[f.codeBlockId].text).join('\n');
+        /** @type [string, string] */
+        const entry = [fileName, fullText];
+        return entry;
+      }));
+
+      const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib, lib);
+      const system = createSystem(new Map([
+        ...Array.from(sourceFiles.entries()),
+        ...Array.from(lib.core.entries()),
+        ...Array.from(extraLibFiles.entries()),
+      ]));
+      const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
+      Object.keys(codeBlockContext).forEach(codeBlockId => {
+        const codeBlock = codeBlockContext[codeBlockId];
+        const { fileName } = codeBlock;
+        const typeScriptTokenizer = createTypeScriptTokenizer({
+          fileName,
+          languageService,
+          visibleSpan: { start: codeBlock.start, length: codeBlock.end - codeBlock.start },
+        });
+        const tokenizer = composeTokenizers(tmTokenizer, typeScriptTokenizer);
+        codeBlock.tokens = tokenizer.tokenizeDocument(codeBlock.text);
+        codeBlock.quickInfo = {};
+        codeBlock.tokens.forEach(line => {
+          line.tokens.forEach(token => {
+            switch (token.type) {
+              case TypeScriptTokenType.Identifier:
+                codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
+                  fileName,
+                  token.sourcePosition
+                );
+            }
+          });
         });
       });
-    });
 
-    actions.createPage({
-      path: node.fields.slug,
-      component: path.resolve(`./src/templates/Post.tsx`),
-      context: {
-        // Data passed to context is available
-        // in page queries as GraphQL variables.
-        slug: node.fields.slug,
-        codeBlocks: codeBlockContext,
-        sourceFiles: sourceFileContext,
-      },
-    });
-    languageService.dispose();
+      actions.createPage({
+        path: node.fields.slug,
+        component: path.resolve(`./src/templates/CodePost.tsx`),
+        context: {
+          // Data passed to context is available
+          // in page queries as GraphQL variables.
+          slug: node.fields.slug,
+          codeBlocks: codeBlockContext,
+          sourceFiles: sourceFileContext,
+        },
+      });
+      languageService.dispose();
+    } else {
+      actions.createPage({
+        path: node.fields.slug,
+        component: path.resolve(`./src/templates/${node.frontmatter.template}.tsx`),
+        context: {
+          // Data passed to context is available
+          // in page queries as GraphQL variables.
+          slug: node.fields.slug,
+        },
+      });
+    }
   });
 };
 

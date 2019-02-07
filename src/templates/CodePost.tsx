@@ -39,7 +39,7 @@ export interface SourceFileContext {
   fragments: SourceFileFragment[];
 }
 
-export interface PostProps {
+export interface CodePostProps {
   data: {
     markdownRemark: {
       htmlAst: any;
@@ -187,7 +187,7 @@ function getFullText(sourceFileContext: SourceFileContext, codeBlocks: Record<st
   return sourceFileContext.preamble + sourceFileContext.fragments.map(f => codeBlocks[f.codeBlockId].text).join('\n');
 }
 
-function Post({ data, pageContext }: PostProps) {
+function CodePost({ data, pageContext }: CodePostProps) {
   const post = data.markdownRemark;
 
   // Clone code blocks from page context to provide via context.
@@ -263,5 +263,5 @@ function Post({ data, pageContext }: PostProps) {
   );
 }
 
-Post.displayName = 'Post';
-export default Post;
+CodePost.displayName = 'CodePost';
+export default CodePost;
