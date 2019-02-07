@@ -14,6 +14,7 @@ const onMouseDown = () => {
 export function useOutlineStatus() {
   useEffect(() => {
     if (!isSSR) {
+      onMouseDown();
       document.addEventListener('keydown', onKeyDown);
       document.addEventListener('mousedown', onMouseDown);
       return () => {

@@ -232,7 +232,7 @@ export function InteractiveCodeBlock<
       </pre>
       {buttonIcon ? (
         <Button
-          css={{ opacity: buttonIcon === resetIcon ? 1 : 0}}
+          css={{ opacity: buttonIcon === resetIcon ? 1 : 0, 'html:not([data-hide-outlines]) &': { opacity: 1 } }}
           disabled={props.isLoading}
           onClick={isChanged
             ? () => setTimeout(() => setState(originalState), 50)
