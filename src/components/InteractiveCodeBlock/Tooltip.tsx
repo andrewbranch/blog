@@ -38,7 +38,7 @@ function createPositionStyle(
 
   const triggerRect = triggerElement.getBoundingClientRect();
   const rightOverflow = Math.max(0, triggerRect.left + tooltipRect.width - document.documentElement.clientWidth);
-  const left = triggerRect.left - rightOverflow;
+  const left = Math.max(window.scrollX, triggerRect.left - rightOverflow);
   return {
     maxWidth,
     position: 'absolute',
