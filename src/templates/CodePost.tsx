@@ -2,7 +2,6 @@ import React, { HTMLAttributes, useEffect, useContext, useState, useMemo, useRef
 import Layout from '../components/Layout';
 import { graphql } from 'gatsby';
 import RehypeReact from 'rehype-react';
-import { InteractiveCodeBlock } from '../components/InteractiveCodeBlock/InteractiveCodeBlock';
 import { CacheableLineTokens, TypeScriptTokenType } from '../components/InteractiveCodeBlock/tokenizers/types';
 import { useProgressiveTokenizer, ComposedTokenT } from '../hooks';
 import { useDeferredRender } from '../hooks/useDeferredRender';
@@ -109,57 +108,60 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
     fileName,
     visibleSpan: span,
   });
-  const deferredCodeBlock = useDeferredRender(() => (
-    <InteractiveCodeBlock
-      className="tm-theme"
-      initialValue={originalText}
-      tokenizer={tokenizer}
-      readOnly={!isInitialized}
-      onStartEditing={() => {
-        setShouldInitialize(true);
-        onStartEditing!(fileName);
-      }}
-      isLoading={isLoading}
-      onChange={value => {
-        const start = getStartOfCodeBlock(id, mutableCodeBlocks, sourceFiles![codeBlock.fileName]);
-        const end = start + value.length;
-        const newSpan = { start, length: value.length };
-        mutableCodeBlocks[id].end = end;
-        if (tsEnv && mutableCodeBlocks[id].text !== value) {
-          mutableCodeBlocks[id].text = value;
-          tsEnv.updateFile(fileName, value, span);
-        }
-        setSpan(newSpan);
-      }}
-      renderToken={(token, tokenProps) => {
-        switch (token.type) {
-          case 'tm':
-            return (
-              <span
-                className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
-                {...tokenProps}
-              />
-            );
-          case TypeScriptTokenType.Identifier:
-            return (
-              <TypeScriptIdentifierToken
-                staticQuickInfo={quickInfo}
-                languageService={tsEnv && isInitialized && tsEnv.languageService}
-                sourceFileName={fileName}
-                position={token.sourcePosition}
-                {...tokenProps}
-              />
-            );
-          case TypeScriptTokenType.Diagnostic:
-            return (
-              <TypeScriptDiagnosticToken message={token.diagnosticMessage} {...tokenProps} />
-            );
-          default:
-            return <span {...tokenProps} />;
-        }
-      }}
-    />
-  ), { timeout: 1000 });
+  const deferredCodeBlock = useDeferredRender(async () => {
+    const { InteractiveCodeBlock } = await import('../components/InteractiveCodeBlock/InteractiveCodeBlock');
+    return (
+      <InteractiveCodeBlock
+        className="tm-theme"
+        initialValue={originalText}
+        tokenizer={tokenizer}
+        readOnly={!isInitialized}
+        onStartEditing={() => {
+          setShouldInitialize(true);
+          onStartEditing!(fileName);
+        }}
+        isLoading={isLoading}
+        onChange={value => {
+          const start = getStartOfCodeBlock(id, mutableCodeBlocks, sourceFiles![codeBlock.fileName]);
+          const end = start + value.length;
+          const newSpan = { start, length: value.length };
+          mutableCodeBlocks[id].end = end;
+          if (tsEnv && mutableCodeBlocks[id].text !== value) {
+            mutableCodeBlocks[id].text = value;
+            tsEnv.updateFile(fileName, value, span);
+          }
+          setSpan(newSpan);
+        }}
+        renderToken={(token, tokenProps) => {
+          switch (token.type) {
+            case 'tm':
+              return (
+                <span
+                  className={token.scopes.reduce((scopes, s) => `${scopes} ${s.split('.').join(' ')}`, '')}
+                  {...tokenProps}
+                />
+              );
+            case TypeScriptTokenType.Identifier:
+              return (
+                <TypeScriptIdentifierToken
+                  staticQuickInfo={quickInfo}
+                  languageService={tsEnv && isInitialized && tsEnv.languageService}
+                  sourceFileName={fileName}
+                  position={token.sourcePosition}
+                  {...tokenProps}
+                />
+              );
+            case TypeScriptTokenType.Diagnostic:
+              return (
+                <TypeScriptDiagnosticToken message={token.diagnosticMessage} {...tokenProps} />
+              );
+            default:
+              return <span {...tokenProps} />;
+          }
+        }}
+      />
+    );
+  }, { timeout: 1000 });
 
   return (
     <ErrorCatcher renderFallback={() => <CheapCodeBlock>{text}</CheapCodeBlock>}>
