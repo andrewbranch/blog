@@ -40,6 +40,7 @@ const subtitleStyles = css([
     letterSpacing: 2,
     margin: 0,
     opacity: 0.64, // Gives approximately the same visual weight as 0.54 for the title
+    width: 0, // Overflow is visible, but this prevents the right logo piece from getting pushed over during FOUT
     fontSize: '0.75em',
   },
   darkMode({ opacity: 0.74 }),
