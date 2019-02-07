@@ -43,7 +43,7 @@ export const query = graphql`
           fields {
             slug
           }
-          excerpt(format: HTML)
+          excerpt(format: HTML, pruneLength: 185)
         }
       }
     }
