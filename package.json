@@ -8,7 +8,8 @@
     "build": "gatsby build",
     "develop": "gatsby develop",
     "start": "npm run develop",
-    "deploy": "node scripts/deploy-staging.js"
+    "deploy:staging": "node scripts/deploy-staging.js",
+    "deploy:production": "node scripts/deploy-production.js"
   },
   "dependencies": {
     "@emotion/babel-preset-css-prop": "^10.0.6",
