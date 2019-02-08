@@ -87,11 +87,11 @@ const Layout: React.FunctionComponent = ({ children }) => {
           <Header />
           {children}
         </div>
-        <footer css={[margin(1, Side.Vertical), type.grotesk, textColor.secondary]}>
+        <footer css={[margin(1, Side.Top), padding(1, Side.Bottom), type.grotesk, textColor.secondary]}>
           <hr />
           <small>
-            © {new Date().getFullYear()} Andrew Branch.
-            Licensed under <a href="http://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0.</a>
+            ©&nbsp;{new Date().getFullYear()}&nbsp;Andrew&nbsp;Branch.
+            Licensed&nbsp;under&nbsp;<a href="http://creativecommons.org/licenses/by/4.0/legalcode">CC‑BY‑4.0.</a>
           </small>
         </footer>
       </div>
