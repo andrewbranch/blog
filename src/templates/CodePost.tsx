@@ -13,6 +13,7 @@ import SEO from '../components/SEO';
 import { ErrorCatcher } from '../components/ErrorCatcher';
 import { PostFooter } from '../components/PostFooter';
 import 'katex/dist/katex.min.css';
+import { textColor } from '../styles/utils';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -44,6 +45,7 @@ export interface CodePostProps {
       htmlAst: any;
       frontmatter: {
         title: string;
+        note?: string;
         lib: import('../utils/typescript/types').Extra[];
         date: string;
       };
@@ -62,10 +64,11 @@ export interface CodePostProps {
 export const query = graphql`
   query($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
-      htmlAst,
+      htmlAst
       frontmatter {
-        title,
-        lib,
+        title
+        note
+        lib
         date(formatString: "MMMM DD, YYYY")
       }
     }
@@ -256,6 +259,11 @@ function CodePost({ data, pageContext }: CodePostProps) {
       <SEO title={post.frontmatter.title} />
       <div>
         <h1>{post.frontmatter.title}</h1>
+        {post.frontmatter.note
+          ? <><p
+            css={[textColor.secondary, { fontStyle: 'italic' }]}
+            dangerouslySetInnerHTML={{ __html: post.frontmatter.note }}
+          /><hr /></> : null}
         <EditableContext.Provider value={context}>
           <div>{renderAst(data.markdownRemark.htmlAst)}</div>
         </EditableContext.Provider>

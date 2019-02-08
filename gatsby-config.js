@@ -11,6 +11,7 @@ module.exports = {
     'gatsby-plugin-typescript-checker',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-emotion',
+    'gatsby-plugin-catch-links',
     {
       resolve: `gatsby-plugin-typography`,
       options: {
