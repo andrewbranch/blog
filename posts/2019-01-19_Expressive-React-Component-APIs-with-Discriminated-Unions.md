@@ -1,5 +1,5 @@
 ---
-title: "Expressive React Component APIs with Discriminated Unions"
+title: "Expressive React Component APIs with Discriminated Unions"
 date: "2019-02-06"
 slug: "expressive-react-component-apis-with-discriminated-unions"
 globalPreamble: "declare var onChange: () => void;declare var console: { log: Function };\n"
