@@ -218,7 +218,7 @@ export function InteractiveCodeBlock<
             callbackId = requestIdleCallback(() => {
               const x = value.set('decorations', decorateDocument(value.document)) as Value;
               setState(x);
-            });
+            }, { timeout: 500 });
           }}
           plugins={plugins}
           decorateNode={decorateLineSync}

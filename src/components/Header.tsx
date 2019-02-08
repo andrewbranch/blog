@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'gatsby';
-import { css } from '@emotion/core';
+import { css, ClassNames } from '@emotion/core';
 import { OutboundLink } from 'gatsby-plugin-google-analytics';
 import { flex, padding, Side, darkMode, minWidth, variables, type, textColor, margin } from '../styles/utils';
 import { Spacer } from './Spacer';
@@ -37,7 +37,9 @@ const navLinkStyles = css([
 function Nav(props: React.HTMLAttributes<HTMLElement>) {
   return (
     <Spacer space={0.5} {...props}>
-      <Link css={navLinkStyles} to="/about">About</Link>
+      <ClassNames>{({ css: cn }) => (
+        <Link activeClassName={cn({ textDecoration: 'underline' })} css={navLinkStyles} to="/about">About</Link>
+      )}</ClassNames>
       <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="https://github.com/andrewbranch">GitHub</OutboundLink>
       <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="https://twitter.com/atcb">Twitter</OutboundLink>
     </Spacer>

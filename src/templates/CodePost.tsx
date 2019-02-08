@@ -8,11 +8,11 @@ import { useDeferredRender } from '../hooks/useDeferredRender';
 import { CheapCodeBlock } from '../components/CheapCodeBlock';
 import { TypeScriptIdentifierToken } from '../components/InteractiveCodeBlock/TypeScriptIdentifierToken';
 import { TypeScriptDiagnosticToken } from '../components/InteractiveCodeBlock/TypeScriptDiagnosticToken';
-import 'katex/dist/katex.min.css';
 import { shallowClone } from '../utils/shallowClone';
 import SEO from '../components/SEO';
 import { ErrorCatcher } from '../components/ErrorCatcher';
 import { PostFooter } from '../components/PostFooter';
+import 'katex/dist/katex.min.css';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,

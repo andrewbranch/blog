@@ -2,7 +2,7 @@ import React from 'react';
 import { Global } from '@emotion/core';
 import Header from './Header';
 import { rhythm } from '../utils/typography';
-import { padding, Side, type, textColor, variables, minWidth, masked } from '../styles/utils';
+import { padding, Side, type, textColor, variables, minWidth, masked, margin } from '../styles/utils';
 import '../styles/variables.css';
 import '../styles/fonts/fonts.css';
 import { useOutlineStatus } from '../hooks/useOutlineStatus';
@@ -39,14 +39,12 @@ const Layout: React.FunctionComponent = ({ children }) => {
             ...masked(rhythm(0.2), rhythm(0.5)),
             '.katex-html .base:last-child': padding(0.5, Side.Right),
           },
-          h1: {
-            fontSize: '2.4rem',
-            ...minWidth(variables.sizes.tablet, { fontSize: '2.8rem' }),
-          },
           a: {
             color: variables.colors.text.link,
             textDecorationSkip: 'ink',
             textDecorationSkipInk: 'auto',
+            textDecoration: 'none',
+            ':hover': { textDecoration: 'underline' },
             '> code': {
               background: 'transparent',
               padding: 0,
@@ -89,7 +87,8 @@ const Layout: React.FunctionComponent = ({ children }) => {
           <Header />
           {children}
         </div>
-        <footer css={[padding(0.5, Side.Vertical), type.grotesk, textColor.secondary]}>
+        <footer css={[margin(1, Side.Vertical), type.grotesk, textColor.secondary]}>
+          <hr />
           <small>
             © {new Date().getFullYear()} Andrew Branch.
             Licensed under <a href="http://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0.</a>

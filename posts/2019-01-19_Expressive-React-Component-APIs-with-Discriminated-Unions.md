@@ -1,6 +1,6 @@
 ---
-title: "Expressive React Component APIs with Discriminated Unions"
-date: "2019-01-19"
+title: "Expressive React Component APIs with Discriminated Unions"
+date: "2019-02-06"
 slug: "expressive-react-component-apis-with-discriminated-unions"
 globalPreamble: "declare var onChange: () => void;declare var console: { log: Function };\n"
 template: CodePost
@@ -13,6 +13,7 @@ preambles:
     text: "import React from 'react';\n"
 lib:
   - react
+note: When I wrote this piece, I realized it would be much easier to explain if I could show you how the TypeScript compiler handles the code I’m talking about, as if we were both sitting in front of your favorite code editor with language support. So, I built this blog to imitate that experience. Hover (or tap) on code underlined in red to see errors, hover identifiers to see type information, and even edit the samples if you want. I also <a href="/overengineering-a-blog-prologue-an-ode-to-red-squigglies/">wrote about</a> why I did this.
 ---
 
 One of TypeScript’s most underrated features is _discriminated union types_. Borrowed primarily from functional programming (FP) languages, they match an elegant FP concept to a pattern people intuitively write in JavaScript. Discriminated unions also enable a useful pattern for typing complex React component props more safely and expressively. But first, we’ll review what discriminated unions look like independent of React.

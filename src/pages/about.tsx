@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 export default function About() {
   return (
     <Layout>
-      <p><strong>Hi! I’m Andrew.</strong></p>
+      <h1>Hi! I’m Andrew.</h1>
       <p>
         I live in San Francisco. I moved here in 2015 to work for{' '}
         <a href="https://web.archive.org/web/20160801084220/https://www.xamarin.com/">Xamarin</a>,
@@ -24,7 +24,7 @@ export default function About() {
         hobby electronics projects that are totally impractical and will never get finished.
       </p>
       <p>
-        These days, I write a lot of <a href="https://www.typescriptlang.org">TypeScript</a>
+        These days, I write a lot of <a href="https://www.typescriptlang.org">TypeScript</a>{' '}
         and <a href="https://reactjs.org">React</a>. Aside from that, I try to spend my time doing things
         outside. One time I walked <a href="https://appalachiantrail.org">really far</a>, and I’ve
         biked across <a href="https://500px.com/atcb/galleries/scandinavian-bike-tour">a few small

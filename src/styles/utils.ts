@@ -56,6 +56,7 @@ export const textColor = {
 const unanchor: ObjectInterpolation<any> = {
   color: 'unset',
   textDecoration: 'none',
+  ':hover': { textDecoration: 'none' },
 };
 
 const unbutton: ObjectInterpolation<any> = {
