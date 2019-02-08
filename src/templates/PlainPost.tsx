@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import RehypeReact from 'rehype-react';
 import SEO from '../components/SEO';
 import { PostFooter } from '../components/PostFooter';
+import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -21,7 +22,6 @@ export const query = graphql`
   }
 `;
 
-
 export interface PlainPostProps {
   data: {
     markdownRemark: {
@@ -36,6 +36,7 @@ export interface PlainPostProps {
 
 export default function PlainPost({ data }: PlainPostProps) {
   const post = data.markdownRemark;
+  useScrollDepthTracking();
   return (
     <Layout>
       <SEO title={post.frontmatter.title} />

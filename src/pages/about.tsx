@@ -16,7 +16,7 @@ export default function About() {
         and then I stopped for a long time until college, where I took a job in which sometimes
         I would break down cardboard boxes and other times would write very bad PHP and SQL.
         Eventually I moved on to writing very bad C# and JavaScript, stopped breaking down
-        cardboard boxes, and did that until I got slightly less bad at it. (My SQL has not improved.)
+        cardboard boxes, and did that until I got less bad at it. (My SQL has not improved.)
       </p>
       <p>
         At the same time, I earned a degree in electrical engineering, which I neither use nor

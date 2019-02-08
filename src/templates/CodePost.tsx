@@ -14,6 +14,7 @@ import { ErrorCatcher } from '../components/ErrorCatcher';
 import { PostFooter } from '../components/PostFooter';
 import 'katex/dist/katex.min.css';
 import { textColor } from '../styles/utils';
+import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -204,6 +205,7 @@ function CodePost({ data, pageContext }: CodePostProps) {
   const [initializedFiles, setInitializedFiles] = useState<Record<string, true>>({});
   const [tsEnv, setTsEnv] = useState<VirtualTypeScriptEnvironment | undefined>(undefined);
   useEffect(() => () => tsEnv && tsEnv.languageService.dispose(), []);
+  useScrollDepthTracking();
 
   const context = useMemo(() => {
     const editableContext: EditableContext = {

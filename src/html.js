@@ -11,7 +11,7 @@ export default function HTML(props) {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
         />
-        <script type="text/javascript" dangerouslySetInnerHTML={{ __html: 'window.ga = function() {}' }} />
+        <script type="text/javascript" dangerouslySetInnerHTML={{ __html: 'window.ga = function() { console.log("ga", Array.prototype.slice.call(arguments)) }' }} />
         {props.headComponents}
       </head>
       <body {...props.bodyAttributes}>

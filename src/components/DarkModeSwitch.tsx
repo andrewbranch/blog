@@ -1,5 +1,5 @@
 import { CSSTransition } from 'react-transition-group';
-import React, { useEffect, HTMLAttributes } from 'react';
+import React, { useEffect, HTMLAttributes, useRef } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { isSSR } from '../utils/ssr';
 import { resets } from '../styles/utils';
@@ -27,15 +27,21 @@ const transitionExitActive = css({ opacity: 0, transform: 'translateY(-30px)', t
 
 export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
   const [prefersDark, setPrefersDark] = useLocalStorage('prefersDark');
+  const prevPrefersDark = useRef(prefersDark);
   useEffect(() => {
     if (!isSSR) {
       if (prefersDark) {
-        ga('send', 'event', 'theme', 'change', 'dark');
+        if (prevPrefersDark.current !== prefersDark) {
+          ga('send', 'event', 'theme', 'change', 'dark');
+        }
         document.documentElement.setAttribute('data-prefers-dark', 'true');
       } else {
-        ga('send', 'event', 'theme', 'change', 'light');
+        if (prevPrefersDark.current !== prefersDark) {
+          ga('send', 'event', 'theme', 'change', 'light');
+        }
         document.documentElement.removeAttribute('data-prefers-dark');
       }
+      prevPrefersDark.current = prefersDark;
     }
   }, [prefersDark]);
 
