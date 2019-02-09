@@ -11,7 +11,9 @@ export default function HTML(props) {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
         />
-        <script type="text/javascript" dangerouslySetInnerHTML={{ __html: 'window.ga = function() { if (location.port) console.log("ga", Array.prototype.slice.call(arguments)) }' }} />
+        {process.env.NODE_ENV === 'production' ? null :
+          <script type="text/javascript" dangerouslySetInnerHTML={{ __html: 'window.ga = function() { if (location.port) console.log("ga", Array.prototype.slice.call(arguments)) }' }} />
+        }
         {props.headComponents}
       </head>
       <body {...props.bodyAttributes}>
