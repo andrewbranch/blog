@@ -180,7 +180,10 @@ export function InteractiveCodeBlock<
   ScopeNameT extends string,
   TokenT extends Token<TokenTypeT, ScopeNameT>
 >(props: InteractiveCodeBlockProps<TokenTypeT, ScopeNameT, TokenT>) {
-  const { decorateDocument, decorateNode } = useMemo(() => createNodeDecorator(props.tokenizer), [props.tokenizer]);
+  const {
+    decorateDocument,
+    decorateNode,
+  } = useMemo(() => createNodeDecorator(props.tokenizer), [props.tokenizer]);
   const decorateValue = useMemo(() => {
     return (value: Value) => value.set('decorations', decorateDocument(value.document)) as Value;
   }, [decorateDocument]);
@@ -194,25 +197,29 @@ export function InteractiveCodeBlock<
   const { current: originalState } = useRef(state);
   const editorRef = useRef<Editor>(null);
   const plugins = useMemo(() => ([{ renderMark: createMarkRenderer(props.renderToken) }]), [props.renderToken]);
-  const onBlur = useMemo(() => () => props.tokenizer.dispose && props.tokenizer.dispose(), [props.tokenizer]);
-  const onFocus = () => {
-    if (props.tokenizer.subscribe) {
-      props.tokenizer.subscribe(() => {
-        // Read off of editorRef since the capture of `state` will be wrong
-        const { value } = editorRef.current!;
-        const x = value.set('decorations', decorateDocument(value.document)) as Value;
-        setState(x);
-      });
-    }
-  };
-
   const isChanged = props.initialValue !== getFullText(state);
   const buttonIcon = props.isLoading ? loadingIcon
   : props.readOnly ? editIcon
   : isChanged ? resetIcon
   : null;
 
-  useEffect(() => () => props.tokenizer.dispose && props.tokenizer.dispose(), []);
+  function updateTokens() {
+    // Read off of editorRef since the capture of `state` will be wrong
+    const { value } = editorRef.current!;
+    const x = value.set('decorations', decorateDocument(value.document)) as Value;
+    setState(x);
+  }
+
+  useEffect(updateTokens, [props.tokenizer]);
+  useEffect(() => {
+    if (state.selection.isFocused && props.tokenizer.subscribe) {
+      props.tokenizer.subscribe(updateTokens);
+    } else if (!state.selection.isFocused && props.tokenizer.dispose) {
+      props.tokenizer.dispose();
+    }
+    return () => props.tokenizer.dispose && props.tokenizer.dispose();
+  }, [props.tokenizer, state.selection.isFocused]);
+
   useEffect(() => {
     if (!props.readOnly && !props.isLoading && editorRef.current) {
       editorRef.current.focus();
@@ -236,8 +243,6 @@ export function InteractiveCodeBlock<
               setState(x);
             }, { timeout: 500 });
           }}
-          onFocus={onFocus}
-          onBlur={onBlur}
           plugins={plugins}
           decorateNode={decorateLineSync}
           className={props.className}
