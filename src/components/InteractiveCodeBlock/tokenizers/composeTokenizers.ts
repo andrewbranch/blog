@@ -23,6 +23,14 @@ export function composeTokenizers<T extends Tokenizer<Token<string, string>>[]>(
       if (tokenizer.dispose) {
         tokenizer.dispose();
       }
-    }
+    },
+    subscribe: (handler: () => void) => {
+      if (composed.subscribe) {
+        composed.subscribe(handler);
+      }
+      if (tokenizer.subscribe) {
+        tokenizer.subscribe(handler);
+      }
+    },
   }), {});
 }

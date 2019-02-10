@@ -80,6 +80,10 @@ function createNodeDecorator<TokenT extends Token<string, string>>(tokenizer: To
       const fullText = blocks.map(line => line!.text).join('\n');
       return tokenizer.tokenizeDocument(fullText).reduce((decorations, line, index) => {
         const block = blocks.get(index);
+        if (!block) {
+          return decorations;
+        }
+
         const textNode = block.getTexts().get(0);
         return decorations.concat(decorateLine(textNode, line)) as List<Decoration>;
       }, Decoration.createList());
@@ -191,12 +195,24 @@ export function InteractiveCodeBlock<
   const editorRef = useRef<Editor>(null);
   const plugins = useMemo(() => ([{ renderMark: createMarkRenderer(props.renderToken) }]), [props.renderToken]);
   const onBlur = useMemo(() => () => props.tokenizer.dispose && props.tokenizer.dispose(), [props.tokenizer]);
+  const onFocus = () => {
+    if (props.tokenizer.subscribe) {
+      props.tokenizer.subscribe(() => {
+        // Read off of editorRef since the capture of `state` will be wrong
+        const { value } = editorRef.current!;
+        const x = value.set('decorations', decorateDocument(value.document)) as Value;
+        setState(x);
+      });
+    }
+  };
+
   const isChanged = props.initialValue !== getFullText(state);
   const buttonIcon = props.isLoading ? loadingIcon
-    : props.readOnly ? editIcon
-    : isChanged ? resetIcon
-    : null;
+  : props.readOnly ? editIcon
+  : isChanged ? resetIcon
+  : null;
 
+  useEffect(() => () => props.tokenizer.dispose && props.tokenizer.dispose(), []);
   useEffect(() => {
     if (!props.readOnly && !props.isLoading && editorRef.current) {
       editorRef.current.focus();
@@ -220,6 +236,7 @@ export function InteractiveCodeBlock<
               setState(x);
             }, { timeout: 500 });
           }}
+          onFocus={onFocus}
           onBlur={onBlur}
           plugins={plugins}
           decorateNode={decorateLineSync}
