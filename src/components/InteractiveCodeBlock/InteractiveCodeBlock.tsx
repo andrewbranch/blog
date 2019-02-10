@@ -190,6 +190,7 @@ export function InteractiveCodeBlock<
   const { current: originalState } = useRef(state);
   const editorRef = useRef<Editor>(null);
   const plugins = useMemo(() => ([{ renderMark: createMarkRenderer(props.renderToken) }]), [props.renderToken]);
+  const onBlur = useMemo(() => () => props.tokenizer.dispose && props.tokenizer.dispose(), [props.tokenizer]);
   const isChanged = props.initialValue !== getFullText(state);
   const buttonIcon = props.isLoading ? loadingIcon
     : props.readOnly ? editIcon
@@ -209,17 +210,17 @@ export function InteractiveCodeBlock<
           ref={editorRef}
           value={state}
           onChange={({ value, operations }) => {
-            if (props.onChange) {
-              props.onChange(getFullText(value), operations);
-            }
-
             setState(value);
             cancelIdleCallback(callbackId);
             callbackId = requestIdleCallback(() => {
+              if (props.onChange) {
+                props.onChange(getFullText(value), operations);
+              }
               const x = value.set('decorations', decorateDocument(value.document)) as Value;
               setState(x);
             }, { timeout: 500 });
           }}
+          onBlur={onBlur}
           plugins={plugins}
           decorateNode={decorateLineSync}
           className={props.className}
