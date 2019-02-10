@@ -32,4 +32,6 @@ export type TypeScriptTokenTypeName = import('typescript').ClassificationTypeNam
 export interface Tokenizer<TokenT extends Token<string, string>> {
   tokenizeDocument?: (fullText: string) => CacheableLineTokens<TokenT>[];
   tokenizeLine?: (lineText: string) => CacheableLineTokens<TokenT>;
+  dispose?: () => void;
+  subscribe?: (onUpdated: () => void) => void;
 }

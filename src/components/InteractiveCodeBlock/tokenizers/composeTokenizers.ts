@@ -16,5 +16,21 @@ export function composeTokenizers<T extends Tokenizer<Token<string, string>>[]>(
       }
       return combinedResult;
     },
+    dispose: () => {
+      if (composed.dispose) {
+        composed.dispose();
+      }
+      if (tokenizer.dispose) {
+        tokenizer.dispose();
+      }
+    },
+    subscribe: (handler: () => void) => {
+      if (composed.subscribe) {
+        composed.subscribe(handler);
+      }
+      if (tokenizer.subscribe) {
+        tokenizer.subscribe(handler);
+      }
+    },
   }), {});
 }
