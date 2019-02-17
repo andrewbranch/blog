@@ -147,7 +147,6 @@ const containerStyles = css([
   margin(-0.5, Side.Horizontal),
   {
     position: 'relative',
-    fontSize: '1rem',
     ':focus-within': {
       background: 'var(--background-alt)',
     },

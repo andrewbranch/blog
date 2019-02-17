@@ -47,6 +47,14 @@ export function TypeScriptDiagnosticToken({
   };
 }
 
+function isIgnoredDiagnostic(diagnostic: ts.Diagnostic) {
+  // In example code, it’s useful to show JSX elements alone, which are useless expressions
+  return diagnostic.reportsUnnecessary
+  // Dynamic import is only supported when '--module' flag is 'commonjs' or 'esNext'.
+  // Can’t get this one to go away during static render. Don’t care enough to investigate.
+  || diagnostic.code === 1323;
+}
+
 export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): Tokenizer<TypeScriptToken> {
   let subscriber: (() => void) | undefined;
   let timerId: number | undefined;
@@ -108,8 +116,10 @@ export function createTypeScriptTokenizer(options: TypeScriptTokenizerOptions): 
         && semanticDiagnostics[0].start
         && semanticDiagnostics[0].start < newConsumedLength
       ) {
-        const { start, length, messageText, reportsUnnecessary } = semanticDiagnostics.shift()!;
-        if (reportsUnnecessary) continue;
+        const diagnostic = semanticDiagnostics.shift()!;
+        const { start, length, messageText } = diagnostic;
+        if (isIgnoredDiagnostic(diagnostic)) continue;
+
         const end = Math.min(start! + length! - consumedLength, line.length);
         const token = TypeScriptDiagnosticToken({
           scopes: [TypeScriptDiagnosticTokenType.Semantic],

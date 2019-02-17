@@ -2,9 +2,80 @@
 title: Overengineering A Blog
 date: 2019-02-16
 template: CodePost
+lib:
+  - react
 preambles:
+  - file: InteractiveCodeBlock.tsx
+    text: "import React, { useState } from 'react';
+      interface Point {
+        key: string;
+        offset: number;
+      }
+      interface Mark {
+        type: string;
+        data: Map<string, any>;
+      }
+      interface Decoration {
+        anchor: Point;
+        focus: Point;
+        mark: Mark;
+      }
+      interface Value {}
+      interface Node {}
+      interface Operation{}
+      interface CoreEditor {}
+      interface EditorProps {
+        value: Value;
+        onChange: (change: { value: Value, operations: Operation[] }) => void;
+        renderMark: (props: { mark: Mark, children: React.ReactChildren) => React.ReactNode;
+        decorateNode: (node: Node, editor: CoreEditor) => Decoration[];
+      }
+      declare var Editor: React.ComponentType<EditorProps>;
+      interface InteractiveCodeBlockProps {
+        initialValue: Value;
+        renderToken: (props: { mark: Mark, children: React.ReactChildren) => React.ReactNode;
+        tokenize: (node: Node, editor: CoreEditor) => Decoration[];
+      }\n"
   - file: silly.ts
-    text: 'declare var imaginaryObject: { sendMessage: (message: string) => void; }'
+    text: "declare var imaginaryObject: { sendMessage: (message: string) => void; }\n"
+  - file: createSystem.ts
+    text: "declare namespace ts {
+      export interface System {
+        args: string[];
+        newLine: string;
+        useCaseSensitiveFileNames: boolean;
+        write(s: string): void;
+        writeOutputIsTTY?(): boolean;
+        readFile(path: string, encoding?: string): string | undefined;
+        getFileSize?(path: string): number;
+        writeFile(path: string, data: string, writeByteOrderMark?: boolean): void;
+        watchFile?(path: string, callback: FileWatcherCallback, pollingInterval?: number): FileWatcher;
+        watchDirectory?(path: string, callback: DirectoryWatcherCallback, recursive?: boolean): FileWatcher;
+        resolvePath(path: string): string;
+        fileExists(path: string): boolean;
+        directoryExists(path: string): boolean;
+        createDirectory(path: string): void;
+        getExecutingFilePath(): string;
+        getCurrentDirectory(): string;
+        getDirectories(path: string): string[];
+        readDirectory(path: string, extensions?: Array<string>, exclude?: Array<string>, include?: Array<string>, depth?: number): string[];
+        getModifiedTime?(path: string): Date | undefined;
+        setModifiedTime?(path: string, time: Date): void;
+        deleteFile?(path: string): void;
+        createHash?(data: string): string;
+        createSHA256Hash?(data: string): string;
+        getMemoryUsage?(): number;
+        exit(exitCode?: number): void;
+        realpath?(path: string): string;
+        setTimeout?(callback: (...args: any[]) => void, ms: number, ...args: any[]): any;
+        clearTimeout?(timeoutId: any): void;
+        clearScreen?(): void;
+        base64decode?(input: string): string;
+        base64encode?(input: string): string;
+    } }
+    declare var otherStuffNotImportantToExample: Pick<ts.System, 'args' | 'newLine' | 'useCaseSensitiveFileNames' | 'write' | 'directoryExists' | 'resolvePath' | 'createDirectory' | 'getExecutingFilePath' | 'getDirectories' | 'exit'>;\n"
+  - file: getReactTypings.ts
+    text: "declare module '!raw-loader!*' { export default ('' as string); }\n"
 ---
 
 I talked a little already about [why I wanted to build a blog with interactive code](/overengineering-a-blog-prologue), but I have to be honest: part of why I wanted to do this, and particularly why I chose not to use a prepackaged solution like [Monaco Editor](https://microsoft.github.io/monaco-editor/), was to see if I could do it. Compilers and text editors are two computing topics that I find oddly fascinating. The chance to combine the two in a practical and narrowly scoped project was alluring.
@@ -27,10 +98,13 @@ I knew I wasn’t setting out to build an editor. I was building a learning tool
 In other words, I had a moral imperative to half-ass an editor in order to lower your data usage.
 
 ## The Editor Itself
-The editing experience was the least important aspect of the code blocks, but I also knew from a previous unfinished side project that the actual UI piece should be pretty easy with the help of [Slate](https://docs.slatejs.org). Slate is capable of handling some complex editing scenarios; it takes care of the nitty-gritty of working with [`contenteditable`](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) for you, and I assumed building components to render colors and tooltips would be simple enough. That’s mostly how it worked out. I give Slate a model that annotates spans of text with metadata (these annotated spans are called _Decorations_ in Slate), a function that renders a React component for a given span of text, and a simple `value` and `onChange` pair. In a greatly simplified version, this gist is:
+The editing experience was the least important aspect of the code blocks, but I also knew from a previous unfinished side project that the actual UI piece should be pretty easy with the help of [Slate](https://docs.slatejs.org). Slate is capable of handling some complex editing scenarios; it takes care of the nitty-gritty of working with [`contenteditable`](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) for you, and I assumed building components to render colors and tooltips would be simple enough. That’s mostly how it worked out. I give the Slate `Editor` a model that annotates spans of text with metadata (these annotated spans are called _Decorations_ in Slate), a function that renders a React component for a given span of text, and a simple `value` and `onChange` pair. In a greatly simplified version, this gist is:
 
+<!--@
+  name: InteractiveCodeBlock.tsx
+-->
 ```tsx
-function InteractiveCodeBlock(props) {
+function InteractiveCodeBlock(props: InteractiveCodeBlockProps) {
   const [value, setValue] = useState(props.initialValue);
   <Editor
     value={value}
@@ -65,11 +139,16 @@ If you’ve ever used the TypeScript compiler API, one of the first things you l
 
 This makes it simple to provide an in-memory file system to the compiler such that it has no trouble running in the browser.  “File system” is an overstatement for the code I wrote, as the crucial functions are basically just aliases for Map methods:
 
+<!--@
+  name: createSystem.ts
+-->
 ```ts
-export function createSystem(initialFiles: Map<string, string>): ts.System {
+function createSystem(initialFiles: Map<string, string>): ts.System {
   const files = new Map(initialFiles);
   return {
-	  ...otherStuffNotImportantToExample,
+    ...otherStuffNotImportantToExample,
+    getCurrentDirectory: () => '/',
+    readDirectory: () => Array.from(files.keys()),
     fileExists: fileName => files.has(fileName),
     readFile: fileName => files.get(fileName),
     writeFile: (fileName, contents) => {
@@ -82,9 +161,13 @@ export function createSystem(initialFiles: Map<string, string>): ts.System {
 ### Linked Code, Library Code, and Imaginary Code
 The “source files” you see in the code blocks simply get pulled from Markdown source files. There’s a lot of code you _don’t_ see, though, like the default library typings, as well as typings for other libraries I want to reference, like React. In the browser, an async import with Webpack’s raw loader does the trick, and ensures the lib files don’t get downloaded until they’re needed:
 
+<!--@
+  name: getReactTypings.ts
+-->
 ```ts
 async function getReactTypings(): Promise<string> {
-	return import('!raw-loader!@types/react/index.d.ts').default;
+  const typings = await import('!raw-loader!@types/react/index.d.ts');
+  return typings.default;
 }
 ```
 

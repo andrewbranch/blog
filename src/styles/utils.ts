@@ -43,6 +43,7 @@ const mono: ObjectInterpolation<any> = {
   fontFamily: monoFamily.join(', '),
   fontVariantLigatures: 'none',
   fontFeatureSettings: 'normal',
+  fontSize: '0.75rem',
 };
 
 export const type = { grotesk, mono };
