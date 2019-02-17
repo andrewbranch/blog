@@ -118,7 +118,7 @@ exports.createPages = async ({ graphql, actions }) => {
         return entry;
       }));
 
-      const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib, lib);
+      const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib || [], lib);
       const system = createSystem(new Map([
         ...Array.from(sourceFiles.entries()),
         ...Array.from(lib.core.entries()),

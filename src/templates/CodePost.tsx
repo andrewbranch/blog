@@ -95,6 +95,10 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
   const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = props.children[0];
   const id = codeChild.props.id!;
   const codeBlock = mutableCodeBlocks[id];
+  if (!codeBlock) {
+    return <CheapCodeBlock>{props.children}</CheapCodeBlock>;
+  }
+
   const { tokens: initialTokens, quickInfo, text, fileName } = codeBlock!;
   const [shouldInitialize, setShouldInitialize] = useState(false);
   const isInitialized = initializedFiles[fileName];
