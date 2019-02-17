@@ -13,9 +13,9 @@ module.exports = {
     'gatsby-plugin-emotion',
     'gatsby-plugin-catch-links',
     {
-      resolve: `gatsby-plugin-typography`,
+      resolve: 'gatsby-plugin-typography',
       options: {
-        pathToConfigModule: `src/utils/typography`,
+        pathToConfigModule: 'src/utils/typography',
       },
     },
     'gatsby-transformer-sharp',
@@ -40,6 +40,13 @@ module.exports = {
         plugins: [
           `${__dirname}/gatsby-remark-annotate-code-blocks`,
           'gatsby-remark-katex',
+          {
+            resolve: 'gatsby-remark-images',
+            options: {
+              maxWidth: 760
+            }
+          },
+          'gatsby-remark-static-images'
         ]
       }
     },
