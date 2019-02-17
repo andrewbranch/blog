@@ -82,7 +82,7 @@ I talked a little already about [why I wanted to build a blog with interactive c
 
 My goals for the interactive code blocks were for them to be:
 
-- lighter weight and more native-feeling than Monaco Editor,
+- lighter weight and more native-feeling than Monaco Editor (e.g., no custom scrollbar),
 - perfectly syntax highlighted—no regex approximations,
 - able to inspect type information of identifiers and see compiler diagnostics,
 - able to be linked together so one can reference symbols defined in the previous,
@@ -200,6 +200,9 @@ Second, I never defined `imaginaryObject` in visible code since it’s not impor
 
 These techniques are signaled by HTML comments and YAML frontmatter in the Markdown source:
 
+<!--@
+  lang: md
+-->
     ---
     preambles:
       file: silly.ts
@@ -207,7 +210,7 @@ These techniques are signaled by HTML comments and YAML frontmatter in the Markd
         sendMessage: (message: string) => void;
       }'
     ---
-
+    
     <!--@
       name: silly.ts
     -->
@@ -216,9 +219,10 @@ These techniques are signaled by HTML comments and YAML frontmatter in the Markd
       return 'It is silly, isn’t it!';
     }
     ```
-
-    I might want to interrupt myself for a moment to set the stage before demonstrating how I might _use_ this function:
-
+    
+    I might want to interrupt myself for a moment to set the stage before
+    demonstrating how I might _use_ this function:
+    
     <!--@
       name: silly.ts
     -->

@@ -50,7 +50,12 @@ module.exports = {
         ]
       }
     },
-    'gatsby-plugin-webpack-bundle-analyzer',
+    {
+      resolve: 'gatsby-plugin-webpack-bundle-analyzer',
+      options: {
+        openAnalyzer: false
+      }
+    },
     {
       resolve: 'gatsby-plugin-google-analytics',
       options: {

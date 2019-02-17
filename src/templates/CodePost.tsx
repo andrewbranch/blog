@@ -15,6 +15,7 @@ import { PostFooter } from '../components/PostFooter';
 import 'katex/dist/katex.min.css';
 import { textColor } from '../styles/utils';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
+import { isTypeScriptFileName } from '../utils/typescript/utils';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -124,6 +125,7 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
         initialValue={originalText}
         tokenizer={tokenizer}
         readOnly={!isInitialized}
+        editable={isTypeScriptFileName(fileName)}
         onStartEditing={() => {
           setShouldInitialize(true);
           onStartEditing!(fileName);

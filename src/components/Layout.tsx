@@ -68,6 +68,11 @@ const Layout: React.FunctionComponent = ({ children }) => {
           hr: {
             background: 'var(--color-fg20)',
           },
+          img: [
+            margin(-0.5, Side.Horizontal),
+            { maxWidth: '100vw' },
+            minWidth(variables.sizes.plusPhone, [margin(0, Side.Horizontal), { maxWidth: '100%' }]),
+          ],
         }}
       />
       <div
