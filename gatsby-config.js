@@ -66,7 +66,24 @@ module.exports = {
         respectDNT: true,
       },
     },
-    'gatsby-plugin-favicon',
+    {
+      resolve: 'gatsby-plugin-favicon',
+      options: {
+        background: 'transparent',
+        icons: {
+          android: true,
+          appleIcon: true,
+          appleStartup: true,
+          coast: false,
+          favicons: true,
+          firefox: true,
+          opengraph: false,
+          twitter: true,
+          yandex: false,
+          windows: true
+        }
+      }
+    },
     {
       resolve: 'gatsby-plugin-feed',
       options: {}
