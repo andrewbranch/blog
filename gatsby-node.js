@@ -83,111 +83,116 @@ exports.createPages = async ({ graphql, actions }) => {
     throw new Error(result.errors.join('\n'));
   }
 
-  return result.data.allMarkdownRemark.edges.map(async ({ node }) => {
-    if (node.frontmatter.template === 'CodePost') {
-      const sourceFileContext = {};
-      const codeBlockContext = {};
-      visit(
-        node.htmlAst,
-        node => node.tagName === 'code' && ['ts', 'tsx', 'md'].includes(node.properties.dataLang),
-        code => {
-          const codeBlockId = code.properties.id;
-          const metaData = deserializeAttributes(code.properties);
-          const fileName = metaData.name || `/${codeBlockId}.${metaData.lang}`;
-          const text = code.children[0].value.trim();
-          const codeBlock = { text, fileName, id: codeBlockId, lang: code.properties.dataLang };
-          codeBlockContext[codeBlockId] = codeBlock;
-          const sourceFileFragment = { codeBlockId };
-          const existingSourceFile = sourceFileContext[fileName];
-          if (existingSourceFile) {
-            const { codeBlockId: prevCodeBlockId } = existingSourceFile.fragments[existingSourceFile.fragments.length - 1];
-            const prevCodeBlock = codeBlockContext[prevCodeBlockId];
-            codeBlock.start = prevCodeBlock.end + 1;
-            codeBlock.end = codeBlock.start + text.length;
-            existingSourceFile.fragments.push(sourceFileFragment);
-          } else {
-            const filePreamble = node.frontmatter.preambles.find(p => p.file === fileName);
-            const preamble = (node.frontmatter.globalPreamble || '') + (filePreamble ? filePreamble.text : '');
-            codeBlock.start = preamble.length;
-            codeBlock.end = codeBlock.start + text.length;
-            sourceFileContext[fileName] = {
-              fragments: [sourceFileFragment],
-              preamble,
-              lang: codeBlock.lang,
-            };
+  try {
+    return Promise.all(result.data.allMarkdownRemark.edges.map(async ({ node }) => {
+      if (node.frontmatter.template === 'CodePost') {
+        const sourceFileContext = {};
+        const codeBlockContext = {};
+        visit(
+          node.htmlAst,
+          node => node.tagName === 'code' && ['ts', 'tsx', 'md'].includes(node.properties.dataLang),
+          code => {
+            const codeBlockId = code.properties.id;
+            const metaData = deserializeAttributes(code.properties);
+            const fileName = metaData.name || `/${codeBlockId}.${metaData.lang}`;
+            const text = code.children[0].value.trim();
+            const codeBlock = { text, fileName, id: codeBlockId, lang: code.properties.dataLang };
+            codeBlockContext[codeBlockId] = codeBlock;
+            const sourceFileFragment = { codeBlockId };
+            const existingSourceFile = sourceFileContext[fileName];
+            if (existingSourceFile) {
+              const { codeBlockId: prevCodeBlockId } = existingSourceFile.fragments[existingSourceFile.fragments.length - 1];
+              const prevCodeBlock = codeBlockContext[prevCodeBlockId];
+              codeBlock.start = prevCodeBlock.end + 1;
+              codeBlock.end = codeBlock.start + text.length;
+              existingSourceFile.fragments.push(sourceFileFragment);
+            } else {
+              const filePreamble = node.frontmatter.preambles.find(p => p.file === fileName);
+              const preamble = (node.frontmatter.globalPreamble || '') + (filePreamble ? filePreamble.text : '');
+              codeBlock.start = preamble.length;
+              codeBlock.end = codeBlock.start + text.length;
+              sourceFileContext[fileName] = {
+                fragments: [sourceFileFragment],
+                preamble,
+                lang: codeBlock.lang,
+              };
+            }
           }
-        }
-      );
+        );
 
-      const sourceFiles = new Map(Object.keys(sourceFileContext)
-        .filter(fileName => isTypeScriptFileName(fileName))
-        .map(fileName => {
-          const context = sourceFileContext[fileName];
-          const fullText = context.preamble + context.fragments.map(f => codeBlockContext[f.codeBlockId].text).join('\n');
-          /** @type [string, string] */
-          const entry = [fileName, fullText];
-          return entry;
+        const sourceFiles = new Map(Object.keys(sourceFileContext)
+          .filter(fileName => isTypeScriptFileName(fileName))
+          .map(fileName => {
+            const context = sourceFileContext[fileName];
+            const fullText = context.preamble + context.fragments.map(f => codeBlockContext[f.codeBlockId].text).join('\n');
+            /** @type [string, string] */
+            const entry = [fileName, fullText];
+            return entry;
+          }));
+
+        const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib || [], lib);
+        const system = createSystem(new Map([
+          ...Array.from(sourceFiles.entries()),
+          ...Array.from(lib.core.entries()),
+          ...Array.from(extraLibFiles.entries()),
+        ]));
+        const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
+        await Promise.all(Object.keys(codeBlockContext).map(async codeBlockId => {
+          const codeBlock = codeBlockContext[codeBlockId];
+          const { fileName } = codeBlock;
+          const typeScriptTokenizer = isTypeScriptFileName(fileName) ? createTypeScriptTokenizer({
+            fileName,
+            languageService,
+            visibleSpan: { start: codeBlock.start, length: codeBlock.end - codeBlock.start },
+          }) : undefined;
+          const grammar = await getTmRegistry(ssrFileProvider).loadGrammar(toScopeName(codeBlock.lang));
+          const tmTokenizer = createTmGrammarTokenizer({ grammar });
+          const tokenizer = composeTokenizers(...compact([tmTokenizer, typeScriptTokenizer]));
+          codeBlock.tokens = tokenizer.tokenizeDocument(codeBlock.text);
+          if (isTypeScriptFileName(fileName)) {
+            codeBlock.quickInfo = {};
+            codeBlock.tokens.forEach(line => {
+              line.tokens.forEach(token => {
+                switch (token.type) {
+                  case TypeScriptTokenType.Identifier:
+                    codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
+                      fileName,
+                      token.sourcePosition
+                    );
+                }
+              });
+            });
+          }
         }));
 
-      const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib || [], lib);
-      const system = createSystem(new Map([
-        ...Array.from(sourceFiles.entries()),
-        ...Array.from(lib.core.entries()),
-        ...Array.from(extraLibFiles.entries()),
-      ]));
-      const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
-      await Promise.all(Object.keys(codeBlockContext).map(async codeBlockId => {
-        const codeBlock = codeBlockContext[codeBlockId];
-        const { fileName } = codeBlock;
-        const typeScriptTokenizer = isTypeScriptFileName(fileName) ? createTypeScriptTokenizer({
-          fileName,
-          languageService,
-          visibleSpan: { start: codeBlock.start, length: codeBlock.end - codeBlock.start },
-        }) : undefined;
-        const grammar = await getTmRegistry(ssrFileProvider).loadGrammar(toScopeName(codeBlock.lang));
-        const tmTokenizer = createTmGrammarTokenizer({ grammar });
-        const tokenizer = composeTokenizers(...compact([tmTokenizer, typeScriptTokenizer]));
-        codeBlock.tokens = tokenizer.tokenizeDocument(codeBlock.text);
-        if (isTypeScriptFileName(fileName)) {
-          codeBlock.quickInfo = {};
-          codeBlock.tokens.forEach(line => {
-            line.tokens.forEach(token => {
-              switch (token.type) {
-                case TypeScriptTokenType.Identifier:
-                  codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
-                    fileName,
-                    token.sourcePosition
-                  );
-              }
-            });
-          });
-        }
-      }));
-
-      actions.createPage({
-        path: node.fields.slug,
-        component: path.resolve(`./src/templates/CodePost.tsx`),
-        context: {
-          // Data passed to context is available
-          // in page queries as GraphQL variables.
-          slug: node.fields.slug,
-          codeBlocks: codeBlockContext,
-          sourceFiles: sourceFileContext,
-        },
-      });
-      languageService.dispose();
-    } else {
-      actions.createPage({
-        path: node.fields.slug,
-        component: path.resolve(`./src/templates/${node.frontmatter.template}.tsx`),
-        context: {
-          // Data passed to context is available
-          // in page queries as GraphQL variables.
-          slug: node.fields.slug,
-        },
-      });
-    }
-  });
+        actions.createPage({
+          path: node.fields.slug,
+          component: path.resolve(`./src/templates/CodePost.tsx`),
+          context: {
+            // Data passed to context is available
+            // in page queries as GraphQL variables.
+            slug: node.fields.slug,
+            codeBlocks: codeBlockContext,
+            sourceFiles: sourceFileContext,
+          },
+        });
+        languageService.dispose();
+      } else {
+        actions.createPage({
+          path: node.fields.slug,
+          component: path.resolve(`./src/templates/${node.frontmatter.template}.tsx`),
+          context: {
+            // Data passed to context is available
+            // in page queries as GraphQL variables.
+            slug: node.fields.slug,
+          },
+        });
+      }
+    }));
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 };
 
 exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
