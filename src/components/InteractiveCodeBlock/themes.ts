@@ -18,7 +18,6 @@ export enum SyntacticColors {
 }
 
 export const commonBlockStyles = css([type.mono, {
-  fontSize: '80%',
   borderRadius: 3,
   overflow: 'auto',
   whiteSpace: 'nowrap',

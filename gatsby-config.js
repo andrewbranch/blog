@@ -5,6 +5,7 @@ module.exports = {
     title: 'Andrew Branch',
     description: 'A blog about coding and maybe other stuff. Who knows?',
     author: '@atcb',
+    siteUrl: 'https://blog.andrewbran.ch',
   },
   plugins: [
     'gatsby-plugin-typescript',
@@ -13,9 +14,9 @@ module.exports = {
     'gatsby-plugin-emotion',
     'gatsby-plugin-catch-links',
     {
-      resolve: `gatsby-plugin-typography`,
+      resolve: 'gatsby-plugin-typography',
       options: {
-        pathToConfigModule: `src/utils/typography`,
+        pathToConfigModule: 'src/utils/typography',
       },
     },
     'gatsby-transformer-sharp',
@@ -40,10 +41,23 @@ module.exports = {
         plugins: [
           `${__dirname}/gatsby-remark-annotate-code-blocks`,
           'gatsby-remark-katex',
+          `${__dirname}/gatsby-remark-figure`,
+          {
+            resolve: 'gatsby-remark-images',
+            options: {
+              maxWidth: 760
+            }
+          },
+          'gatsby-remark-static-images',
         ]
       }
     },
-    'gatsby-plugin-webpack-bundle-analyzer',
+    {
+      resolve: 'gatsby-plugin-webpack-bundle-analyzer',
+      options: {
+        openAnalyzer: false
+      }
+    },
     {
       resolve: 'gatsby-plugin-google-analytics',
       options: {
@@ -53,18 +67,26 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-s3',
+      resolve: 'gatsby-plugin-favicon',
       options: {
-        bucketName: 'blog.andrewbran.ch',
-        region: 'us-west-1',
-        protocol: 'https',
-        hostname: 'beta.blog.andrewbran.ch',
-        removeNonexistentObjects: true,
-      },
+        background: 'transparent',
+        icons: {
+          android: true,
+          appleIcon: true,
+          appleStartup: true,
+          coast: false,
+          favicons: true,
+          firefox: true,
+          opengraph: false,
+          twitter: true,
+          yandex: false,
+          windows: true
+        }
+      }
     },
-    'gatsby-plugin-favicon',
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.app/offline
-    // 'gatsby-plugin-offline',
+    {
+      resolve: 'gatsby-plugin-feed',
+      options: {}
+    }
   ],
 }

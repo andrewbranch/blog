@@ -6,7 +6,7 @@ const defaultCompilerOptions = {
   strict: true,
   target: ts.ScriptTarget.ES2015,
   esModuleInterop: true,
-  module: ts.ModuleKind.ES2015,
+  module: ts.ModuleKind.ESNext,
   suppressOutputPathCheck: true,
   skipLibCheck: true,
   skipDefaultLibCheck: true,

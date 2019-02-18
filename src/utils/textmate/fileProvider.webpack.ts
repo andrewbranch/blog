@@ -1,5 +1,4 @@
 import { FileProvider, LanguageFile } from './getTmRegistry';
-import { assertUnreachable } from '../assertions';
 
 export const webpackFileProvider: FileProvider = {
   readLanguageFile: async languageFile => {
@@ -8,7 +7,7 @@ export const webpackFileProvider: FileProvider = {
         // tslint:disable-next-line:no-implicit-dependencies
         return (await import('!raw-loader!./TypeScriptReact.tmLanguage')).default;
       default:
-        return assertUnreachable(languageFile);
+        throw new Error(`${languageFile} should not be used in the browser.`);
     }
   },
   readOnigasmFile: async () => (await import('onigasm/lib/onigasm.wasm')).default,

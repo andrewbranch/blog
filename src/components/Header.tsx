@@ -42,6 +42,7 @@ function Nav(props: React.HTMLAttributes<HTMLElement>) {
       )}</ClassNames>
       <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="https://github.com/andrewbranch">GitHub</OutboundLink>
       <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="https://twitter.com/atcb">Twitter</OutboundLink>
+      <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="/rss.xml">Subscribe</OutboundLink>
     </Spacer>
   );
 }
@@ -56,7 +57,7 @@ function Header() {
         </Spacer>
         <Spacer space={0.5}>
           <DarkModeSwitch />
-          <OutboundLink href="https://github.com/andrewbranch" css={hiddenWhileTiny}>
+          <OutboundLink href="https://github.com/andrewbranch/blog" css={hiddenWhileTiny}>
             <Icon
               alt="GitHub profile"
               src={require('./icons/github-icon.svg')}
@@ -65,6 +66,14 @@ function Header() {
           </OutboundLink>
           <OutboundLink href="https://twitter.com/atcb" css={hiddenWhileTiny}>
             <Icon alt="Twitter profile" src={require('./icons/twitter-icon.svg')} size={26} />
+          </OutboundLink>
+          <OutboundLink href="/rss.xml" css={hiddenWhileTiny}>
+            <Icon
+              alt="Subscribe"
+              src={require('./icons/feed.svg')}
+              css={darkMode({ filter: 'invert(100%)' })}
+              size={26}
+            />
           </OutboundLink>
         </Spacer>
       </div>

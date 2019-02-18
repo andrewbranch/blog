@@ -5,6 +5,7 @@ import { isSSR } from '../utils/ssr';
 import { resets } from '../styles/utils';
 import { Icon } from './Icon';
 import { ClassNames, css } from '@emotion/core';
+import { safeGA } from '../utils/safeGA';
 
 const buttonStyles = css([
   resets.unbutton,
@@ -32,12 +33,12 @@ export function DarkModeSwitch(props: HTMLAttributes<HTMLElement>) {
     if (!isSSR) {
       if (prefersDark) {
         if (prevPrefersDark.current !== prefersDark) {
-          ga('send', 'event', 'theme', 'change', 'dark');
+          safeGA('send', 'event', 'theme', 'change', 'dark');
         }
         document.documentElement.setAttribute('data-prefers-dark', 'true');
       } else {
         if (prevPrefersDark.current !== prefersDark) {
-          ga('send', 'event', 'theme', 'change', 'light');
+          safeGA('send', 'event', 'theme', 'change', 'light');
         }
         document.documentElement.removeAttribute('data-prefers-dark');
       }

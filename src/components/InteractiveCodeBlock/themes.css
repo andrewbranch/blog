@@ -139,6 +139,12 @@ html[data-prefers-dark] {
 .tm-theme .variable.other.object.property,
 .tm-theme .support.variable.property { color: var(--property); }
 
+.tm-theme .markdown.italic { font-style: italic; }
+.tm-theme .markdown.punctuation { color: var(--comment); }
+.tm-theme .markdown.fenced_code { color: var(--inlineCodeText); }
+.tm-theme .markdown.fenced_code.definition { color: var(--text); }
+.tm-theme .markdown.fenced_code.language { color: var(--types); }
+
 .keyword.control,
 .keyword.declaration,
 .keyword.expressions-and-types,

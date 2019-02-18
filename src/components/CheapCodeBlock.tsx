@@ -10,6 +10,11 @@ const styles = css([
     whiteSpace: 'pre',
     padding: `${rhythm(0.5)} ${rhythm(0)}`,
     ...minWidth(variables.sizes.bigEnough, padding(1, Side.Horizontal)),
+    code: {
+      fontSize: 'inherit',
+      background: 'transparent',
+      lineHeight: 'inherit',
+    },
   },
 ]);
 

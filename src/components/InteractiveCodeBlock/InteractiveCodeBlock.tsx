@@ -115,22 +115,6 @@ interface InjectedTokenProps {
   children: React.ReactNode;
 }
 
-export interface InteractiveCodeBlockProps<
-  TokenTypeT extends string,
-  ScopeNameT extends string,
-  TokenT extends Token<TokenTypeT, ScopeNameT>
-> {
-  tokenizer: Tokenizer<TokenT>;
-  renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
-  initialValue: string;
-  onChange?: (value: string, operations: List<Operation>) => void;
-  className?: string;
-  readOnly?: boolean;
-  isLoading: boolean;
-  onStartEditing: () => void;
-  css?: React.DOMAttributes<any>['css'];
-}
-
 const iconStyles = css({
   opacity: 0.6,
   ...darkMode({ filter: 'invert(100%)' }),
@@ -147,7 +131,6 @@ const containerStyles = css([
   margin(-0.5, Side.Horizontal),
   {
     position: 'relative',
-    fontSize: '1rem',
     ':focus-within': {
       background: 'var(--background-alt)',
     },
@@ -174,6 +157,23 @@ const editorStyles = css([
     },
   },
 ]);
+
+export interface InteractiveCodeBlockProps<
+  TokenTypeT extends string,
+  ScopeNameT extends string,
+  TokenT extends Token<TokenTypeT, ScopeNameT>
+> {
+  tokenizer: Tokenizer<TokenT>;
+  renderToken: (token: TokenT, props: InjectedTokenProps) => JSX.Element;
+  initialValue: string;
+  onChange?: (value: string, operations: List<Operation>) => void;
+  className?: string;
+  readOnly?: boolean;
+  editable?: boolean;
+  isLoading: boolean;
+  onStartEditing: () => void;
+  css?: React.DOMAttributes<any>['css'];
+}
 
 export function InteractiveCodeBlock<
   TokenTypeT extends string,
@@ -253,7 +253,7 @@ export function InteractiveCodeBlock<
           style={{ wordWrap: 'normal', whiteSpace: 'pre' }}
         />
       </pre>
-      {buttonIcon ? (
+      {props.editable && buttonIcon ? (
         <Button
           css={{ opacity: buttonIcon === resetIcon ? 1 : 0, 'html:not([data-hide-outlines]) &': { opacity: 1 } }}
           disabled={props.isLoading}

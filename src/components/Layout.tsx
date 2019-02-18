@@ -21,8 +21,8 @@ const Layout: React.FunctionComponent = ({ children }) => {
           'html[data-hide-outlines] :focus': {
             outline: 'none',
           },
-          'body, body > *, body > * > *': {
-            height: '100%',
+          'body, #___gatsby, #___gatsby > *': {
+            minHeight: '100%',
           },
           '.katex': {
             fontSize: '0.9rem',
@@ -56,9 +56,7 @@ const Layout: React.FunctionComponent = ({ children }) => {
           },
           code: [type.mono, {
             fontSize: '0.8rem',
-            background: 'var(--color-fg05)',
-            color: 'var(--highContrastText)',
-            padding: '0 3px',
+            color: 'var(--inlineCodeText)',
             borderRadius: 3,
           }],
           '.footnote-backref': {
@@ -70,6 +68,17 @@ const Layout: React.FunctionComponent = ({ children }) => {
           hr: {
             background: 'var(--color-fg20)',
           },
+          img: [
+            margin(-0.5, Side.Horizontal),
+            { maxWidth: '100vw' },
+            minWidth(variables.sizes.plusPhone, [margin(0, Side.Horizontal), { maxWidth: '100%' }]),
+          ],
+          figcaption: [
+            type.grotesk,
+            textColor.secondary,
+            margin(0.4, Side.Top),
+            { fontSize: '0.8rem', textAlign: 'center' },
+          ],
         }}
       />
       <div
@@ -78,7 +87,7 @@ const Layout: React.FunctionComponent = ({ children }) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           height: '100%',
-          maxWidth: 720,
+          maxWidth: 760,
           padding: `0 ${rhythm(0.5)}`,
           margin: '0 auto',
         }}

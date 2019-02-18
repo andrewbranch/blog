@@ -9,6 +9,10 @@ export const ssrFileProvider: FileProvider = {
     switch (languageFile) {
       case LanguageFile.TypeScriptReact:
         return fs.readFileSync(path.resolve(__dirname, 'TypeScriptReact.tmLanguage'), 'utf8');
+      case LanguageFile.Markdown:
+        return fs.readFileSync(path.resolve(__dirname, 'Markdown.tmLanguage'), 'utf8');
+      case LanguageFile.YAML:
+        return fs.readFileSync(path.resolve(__dirname, 'YAML.tmLanguage'), 'utf8');
       default:
         return assertUnreachable(languageFile);
     }

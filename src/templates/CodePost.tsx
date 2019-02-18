@@ -15,6 +15,8 @@ import { PostFooter } from '../components/PostFooter';
 import 'katex/dist/katex.min.css';
 import { textColor } from '../styles/utils';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
+import { isTypeScriptFileName } from '../utils/typescript/utils';
+import { safeGA } from '../utils/safeGA';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -95,6 +97,10 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
   const codeChild: React.ReactElement<HTMLAttributes<HTMLElement>> = props.children[0];
   const id = codeChild.props.id!;
   const codeBlock = mutableCodeBlocks[id];
+  if (!codeBlock) {
+    return <CheapCodeBlock>{props.children}</CheapCodeBlock>;
+  }
+
   const { tokens: initialTokens, quickInfo, text, fileName } = codeBlock!;
   const [shouldInitialize, setShouldInitialize] = useState(false);
   const isInitialized = initializedFiles[fileName];
@@ -120,6 +126,7 @@ function ProgressiveCodeBlock(props: { children: [React.ReactElement<HTMLAttribu
         initialValue={originalText}
         tokenizer={tokenizer}
         readOnly={!isInitialized}
+        editable={isTypeScriptFileName(fileName)}
         onStartEditing={() => {
           setShouldInitialize(true);
           onStartEditing!(fileName);
@@ -215,7 +222,7 @@ function CodePost({ data, pageContext }: CodePostProps) {
       sourceFiles: pageContext.sourceFiles,
       onStartEditing: async fileName => {
         if (!initializedFiles[fileName]) {
-          ga('send', 'event', 'code', 'edit', fileName);
+          safeGA('send', 'event', 'code', 'edit', fileName);
           let initializedTsEnv = tsEnv;
           if (!initializedTsEnv) {
             const [

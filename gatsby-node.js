@@ -20,7 +20,7 @@ const { createTypeScriptTokenizer } = require('./src/components/InteractiveCodeB
 const { composeTokenizers } = require('./src/components/InteractiveCodeBlock/tokenizers/composeTokenizers');
 const { createSystem } = require('./src/utils/typescript/sys');
 const { createVirtualTypeScriptEnvironment } = require('./src/utils/typescript/services');
-const { getExtraLibFiles } = require('./src/utils/typescript/utils');
+const { getExtraLibFiles, isTypeScriptFileName: isTypeScriptFileName } = require('./src/utils/typescript/utils');
 const { lib } = require('./src/utils/typescript/lib.ssr');
 const { deserializeAttributes } = require('./gatsby-remark-annotate-code-blocks');
 const visit = require('unist-util-visit');
@@ -31,6 +31,16 @@ const visit = require('unist-util-visit');
  */
 function compact(arr) {
   return arr.filter(elem => elem != null);
+}
+
+function toScopeName(lang) {
+  switch (lang) {
+    case 'ts':
+    case 'tsx':
+      return 'source.tsx'
+    case 'md':
+      return 'text.html.markdown';
+  }
 }
 
 exports.onCreateNode = async ({ node, actions }) => {
@@ -69,8 +79,6 @@ exports.createPages = async ({ graphql, actions }) => {
     }
   `);
 
-  const grammar = await getTmRegistry(ssrFileProvider).loadGrammar('source.tsx');
-  const tmTokenizer = createTmGrammarTokenizer({ grammar });
   if (result.errors) {
     throw new Error(result.errors.join('\n'));
   }
@@ -81,13 +89,13 @@ exports.createPages = async ({ graphql, actions }) => {
       const codeBlockContext = {};
       visit(
         node.htmlAst,
-        node => node.tagName === 'code' && ['ts', 'tsx'].includes(node.properties.dataLang),
+        node => node.tagName === 'code' && ['ts', 'tsx', 'md'].includes(node.properties.dataLang),
         code => {
           const codeBlockId = code.properties.id;
           const metaData = deserializeAttributes(code.properties);
           const fileName = metaData.name || `/${codeBlockId}.${metaData.lang}`;
           const text = code.children[0].value.trim();
-          const codeBlock = { text, fileName, id: codeBlockId };
+          const codeBlock = { text, fileName, id: codeBlockId, lang: code.properties.dataLang };
           codeBlockContext[codeBlockId] = codeBlock;
           const sourceFileFragment = { codeBlockId };
           const existingSourceFile = sourceFileContext[fileName];
@@ -105,49 +113,56 @@ exports.createPages = async ({ graphql, actions }) => {
             sourceFileContext[fileName] = {
               fragments: [sourceFileFragment],
               preamble,
+              lang: codeBlock.lang,
             };
           }
         }
       );
 
-      const sourceFiles = new Map(Object.keys(sourceFileContext).map(fileName => {
-        const context = sourceFileContext[fileName];
-        const fullText = context.preamble + context.fragments.map(f => codeBlockContext[f.codeBlockId].text).join('\n');
-        /** @type [string, string] */
-        const entry = [fileName, fullText];
-        return entry;
-      }));
+      const sourceFiles = new Map(Object.keys(sourceFileContext)
+        .filter(fileName => isTypeScriptFileName(fileName))
+        .map(fileName => {
+          const context = sourceFileContext[fileName];
+          const fullText = context.preamble + context.fragments.map(f => codeBlockContext[f.codeBlockId].text).join('\n');
+          /** @type [string, string] */
+          const entry = [fileName, fullText];
+          return entry;
+        }));
 
-      const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib, lib);
+      const extraLibFiles = await getExtraLibFiles(node.frontmatter.lib || [], lib);
       const system = createSystem(new Map([
         ...Array.from(sourceFiles.entries()),
         ...Array.from(lib.core.entries()),
         ...Array.from(extraLibFiles.entries()),
       ]));
       const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
-      Object.keys(codeBlockContext).forEach(codeBlockId => {
+      await Promise.all(Object.keys(codeBlockContext).map(async codeBlockId => {
         const codeBlock = codeBlockContext[codeBlockId];
         const { fileName } = codeBlock;
-        const typeScriptTokenizer = createTypeScriptTokenizer({
+        const typeScriptTokenizer = isTypeScriptFileName(fileName) ? createTypeScriptTokenizer({
           fileName,
           languageService,
           visibleSpan: { start: codeBlock.start, length: codeBlock.end - codeBlock.start },
-        });
-        const tokenizer = composeTokenizers(tmTokenizer, typeScriptTokenizer);
+        }) : undefined;
+        const grammar = await getTmRegistry(ssrFileProvider).loadGrammar(toScopeName(codeBlock.lang));
+        const tmTokenizer = createTmGrammarTokenizer({ grammar });
+        const tokenizer = composeTokenizers(...compact([tmTokenizer, typeScriptTokenizer]));
         codeBlock.tokens = tokenizer.tokenizeDocument(codeBlock.text);
-        codeBlock.quickInfo = {};
-        codeBlock.tokens.forEach(line => {
-          line.tokens.forEach(token => {
-            switch (token.type) {
-              case TypeScriptTokenType.Identifier:
-                codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
-                  fileName,
-                  token.sourcePosition
-                );
-            }
+        if (isTypeScriptFileName(fileName)) {
+          codeBlock.quickInfo = {};
+          codeBlock.tokens.forEach(line => {
+            line.tokens.forEach(token => {
+              switch (token.type) {
+                case TypeScriptTokenType.Identifier:
+                  codeBlock.quickInfo[token.sourcePosition] = languageService.getQuickInfoAtPosition(
+                    fileName,
+                    token.sourcePosition
+                  );
+              }
+            });
           });
-        });
-      });
+        }
+      }));
 
       actions.createPage({
         path: node.fields.slug,

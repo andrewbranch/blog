@@ -7,7 +7,7 @@ module.exports = ({ markdownAST }) => {
   visit(markdownAST, 'code', node => {
     const index = markdownAST.children.indexOf(node);
     if (index > -1) {
-      let metaAttrs;
+      let metaAttrs = {};
       const commentNode = markdownAST.children[index - 1];
       if (commentNode && commentNode.type === 'html' && metaYamlPattern.test(commentNode.value)) {
         const yamlString = commentNode.value.match(metaYamlPattern)[1];
@@ -20,7 +20,7 @@ module.exports = ({ markdownAST }) => {
           ...metaAttrs,
           ...(node.data && node.data.hProperties),
           id: `code-${id++}`,
-          'data-lang': node.lang,
+          'data-lang': metaAttrs['data-lang'] || node.lang,
         }
       };
       node.value = node.value.trim();

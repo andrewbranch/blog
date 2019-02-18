@@ -1,6 +1,6 @@
 ---
-title: "Overengineering A Blog, Prologue: An Ode To Red Squigglies"
-date: "2019-02-07"
+title: "Overengineering a Blog, Prologue: An Ode to Red Squigglies"
+date: 2019-02-07
 template: PlainPost
 ---
 

@@ -2,7 +2,13 @@ import { Registry, parseRawGrammar, IOnigLib } from 'vscode-textmate';
 import { loadWASM, OnigScanner, OnigString } from 'onigasm';
 
 export enum LanguageFile {
-  TypeScriptReact,
+  TypeScriptReact = 'source.tsx',
+  Markdown = 'text.html.markdown',
+  YAML = 'source.yaml',
+}
+
+function isLanguageFileScopeName(scopeName: string): scopeName is LanguageFile {
+  return Object.values(LanguageFile).includes(scopeName);
 }
 
 export interface FileProvider {
@@ -18,13 +24,10 @@ export function getTmRegistry(fileProvider: FileProvider) {
 
   registry = new Registry({
     loadGrammar: async scopeName => {
-      switch (scopeName) {
-        case 'source.tsx':
-          const content = await fileProvider.readLanguageFile(LanguageFile.TypeScriptReact);
-          return parseRawGrammar(content, '');
-        default:
-          return null;
+      if (isLanguageFileScopeName(scopeName)) {
+        return parseRawGrammar(await fileProvider.readLanguageFile(scopeName), '');
       }
+      return null;
     },
     getOnigLib: async () => {
       const wasmBin = await fileProvider.readOnigasmFile();
