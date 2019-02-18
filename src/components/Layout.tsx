@@ -73,6 +73,12 @@ const Layout: React.FunctionComponent = ({ children }) => {
             { maxWidth: '100vw' },
             minWidth(variables.sizes.plusPhone, [margin(0, Side.Horizontal), { maxWidth: '100%' }]),
           ],
+          figcaption: [
+            type.grotesk,
+            textColor.secondary,
+            margin(0.4, Side.Top),
+            { fontSize: '0.8rem', textAlign: 'center' },
+          ],
         }}
       />
       <div

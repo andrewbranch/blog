@@ -40,13 +40,14 @@ module.exports = {
         plugins: [
           `${__dirname}/gatsby-remark-annotate-code-blocks`,
           'gatsby-remark-katex',
+          `${__dirname}/gatsby-remark-figure`,
           {
             resolve: 'gatsby-remark-images',
             options: {
               maxWidth: 760
             }
           },
-          'gatsby-remark-static-images'
+          'gatsby-remark-static-images',
         ]
       }
     },
@@ -75,8 +76,5 @@ module.exports = {
       },
     },
     'gatsby-plugin-favicon',
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.app/offline
-    // 'gatsby-plugin-offline',
   ],
 }
