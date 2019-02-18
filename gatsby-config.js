@@ -5,6 +5,7 @@ module.exports = {
     title: 'Andrew Branch',
     description: 'A blog about coding and maybe other stuff. Who knows?',
     author: '@atcb',
+    siteUrl: 'https://blog.andrewbran.ch',
   },
   plugins: [
     'gatsby-plugin-typescript',
@@ -65,16 +66,10 @@ module.exports = {
         respectDNT: true,
       },
     },
-    {
-      resolve: 'gatsby-plugin-s3',
-      options: {
-        bucketName: 'blog.andrewbran.ch',
-        region: 'us-west-1',
-        protocol: 'https',
-        hostname: 'beta.blog.andrewbran.ch',
-        removeNonexistentObjects: true,
-      },
-    },
     'gatsby-plugin-favicon',
+    {
+      resolve: 'gatsby-plugin-feed',
+      options: {}
+    }
   ],
 }

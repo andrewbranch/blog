@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import { css } from '@emotion/core';
-import { resets, flex, type, textColor, darkMode } from '../styles/utils';
+import { resets, flex, type, textColor, darkMode, minWidth, variables } from '../styles/utils';
 import { Icon } from './Icon';
 
 const iconSize = 1;
@@ -14,8 +14,11 @@ const containerStyles = css([
     paddingRight: `${iconSize + iconMargin}em`,
     position: 'relative',
     flexShrink: 0,
-    fontSize: '1rem', // Can be used to adjust scale of whole WordMark
+    fontSize: '0.8rem', // Can be used to adjust scale of whole WordMark
   },
+  minWidth(variables.sizes.bigEnough, {
+    fontSize: '1rem',
+  }),
 ]);
 
 const titleStyles = css([

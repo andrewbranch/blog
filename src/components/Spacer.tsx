@@ -14,7 +14,7 @@ export const Spacer = React.memo<SpacerProps>(({ space, vertical, ...props }) =>
       margin(-space / 2, vertical ? Side.Vertical : Side.Horizontal),
       {
         flexDirection: vertical ? 'column' : 'row',
-        '& > *': margin(space / 2, vertical ? Side.Vertical : Side.Horizontal),
+        '& > *': [margin(space / 2, vertical ? Side.Vertical : Side.Horizontal), { flexShrink: 0 }],
       },
     ]}
   />

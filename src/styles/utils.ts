@@ -4,7 +4,7 @@ import { ObjectInterpolation, Interpolation, keyframes } from '@emotion/core';
 export const variables = {
   sizes: {
     plusPhone: 414,
-    bigEnough: 540,
+    bigEnough: 550,
     tablet: 768,
   },
   colors: {
