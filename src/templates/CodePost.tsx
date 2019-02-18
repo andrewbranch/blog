@@ -16,6 +16,7 @@ import 'katex/dist/katex.min.css';
 import { textColor } from '../styles/utils';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { isTypeScriptFileName } from '../utils/typescript/utils';
+import { safeGA } from '../utils/safeGA';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -221,7 +222,7 @@ function CodePost({ data, pageContext }: CodePostProps) {
       sourceFiles: pageContext.sourceFiles,
       onStartEditing: async fileName => {
         if (!initializedFiles[fileName]) {
-          ga('send', 'event', 'code', 'edit', fileName);
+          safeGA('send', 'event', 'code', 'edit', fileName);
           let initializedTsEnv = tsEnv;
           if (!initializedTsEnv) {
             const [

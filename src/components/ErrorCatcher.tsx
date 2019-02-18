@@ -1,4 +1,5 @@
 import React, { ErrorInfo } from 'react';
+import { safeGA } from '../utils/safeGA';
 
 export interface ErrorCatcherProps {
   renderFallback: () => React.ReactNode;
@@ -9,7 +10,7 @@ export class ErrorCatcher extends React.Component<ErrorCatcherProps, { error: bo
 
   public componentDidCatch(error: Error, info: ErrorInfo) {
     try {
-      ga('send', 'event', 'error', {
+      safeGA('send', 'event', 'error', {
         message: error.message,
         componentStack: info.componentStack,
       });
