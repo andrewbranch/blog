@@ -1,5 +1,5 @@
 ---
-title: Overengineering A Blog
+title: Overengineering a Blog
 date: 2019-02-16
 template: CodePost
 lib:

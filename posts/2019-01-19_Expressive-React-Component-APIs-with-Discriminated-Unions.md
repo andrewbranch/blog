@@ -19,7 +19,7 @@ note: 'When I wrote this piece, I realized it would be much easier to explain if
 One of TypeScript’s most underrated features is _discriminated union types_. Borrowed primarily from functional programming (FP) languages, they match an elegant FP concept to a pattern people intuitively write in JavaScript. Discriminated unions also enable a useful pattern for typing complex React component props more safely and expressively. But first, we’ll review what discriminated unions look like independent of React.
 
 
-## Setting the stage
+## Setting the Stage
 A simple union type in TypeScript looks like this:
 
 ```ts
@@ -80,7 +80,7 @@ function addShape(shape: Triangle | Quadrilateral) {
 
 When we have a union (like `Triangle | Quadrilateral`) that can be narrowed by a literal member (like `numberOfSides`), that union is called a _discriminated union_ and that property is called the _discriminant property_.
 
-## The problem: Overly permissive props
+## The Problem: Overly Permissive Props
 You’re writing a Select component (i.e., a fancy replacement for an HTMLSelectElement) with React and TypeScript. You want it to support both single-selection and multiple-selection, just like a native select element. Perhaps you look at the [`SelectHTMLAttributes` interface](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/eda212cfd64119cf2edc2f4ab12e53c4654a9b87/types/react/index.d.ts#L1979-L1990) from [`@types/react`](https://www.npmjs.com/package/@types/react)  for inspiration, and notice that a native select element, in React, can have a `value` of type `string | string[] | number`. From TypeScript’s perspective, you can pass a single value or an array of values indiscriminately, but you know that an array of values is really only meaningful if the `multiple` prop is set. Nonetheless, you try this approach for your component:
 
 <!--@
@@ -135,7 +135,7 @@ name: select-1.tsx
 
 Sure, you could add some validation in your runtime code, like fancy custom `propTypes` validators, but wouldn’t it be nice if TypeScript could infer the correct types based on the component’s usage? After all, a type system isn’t just for catching bugs early, it should also guide developers unfamiliar with your API _as they type_, surfacing correct patterns and hiding invalid ones—a developer experience that runtime validation can’t provide.
 
-## Props unions to the rescue
+## Props Unions to the Rescue
 Since you care deeply about developer experience, you decide to iterate on your initial API by applying what you know about union types to these props. It occurs to you that where you initially wrote _multiple unions_ within a _single interface_, your intent is actually better expressed by _one union_ of _multiple interfaces_:
 
 <!--@
@@ -200,7 +200,7 @@ name: select-2.tsx
 
 Whoa, this is a bazillion times better! Nice work; consumers of your component will thank you for coaching them down the right path _before_ they run their code in a browser. 🎉
 
-## Going deeper with the distributive law of sets
+## Going Deeper with the Distributive Law of Sets
 Time goes by. Your Select component was a big hit with the other developers who were using it. But then, the design team shows you specs for a Select component with _groups_ of options, with customizable titles for each group. You start prototyping the props you’ll have to add in your head:
 
 ```ts
@@ -340,10 +340,10 @@ name: select-3.tsx
 />
 ```
 
-## Choosing the right tool for the job
+## Choosing the Right Tool for the Job
 Discriminated unions can be a powerful tool for writing better React component typings, but it’s not always the only way or the best way to write safe and expressive APIs. Swapping between `string` and `string[]` in multiple type positions, like we did with `multiple`, could be done with generics.  But more poignantly, building a component with tons of unions could be a sign that the component is getting bloated and should be split into multiple components that can be composed via render props, higher order components, or any other means of component composition.
 
-## Further reading
+## Further Reading
 - [Discriminated Unions · TypeScript Deep Dive](https://basarat.gitbooks.io/typescript/docs/types/discriminated-unions.html)
 - [Tagged union - Wikipedia](https://en.wikipedia.org/wiki/Tagged_union)
 
