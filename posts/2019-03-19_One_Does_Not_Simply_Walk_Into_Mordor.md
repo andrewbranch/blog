@@ -31,7 +31,7 @@ A few hours later, we’re on a short section of gravel cycle path bypassing a b
 
 Thus hubris brings me down. As soon as I think that I’m doing well to be going so fast down this trail, I hit a patch of sand. The bike excuses itself out from under me to the right while I continue, according to the laws of physics, straight ahead and down. Gravel and sand grind into my freshly sunburned forearm, tear through the shoulder of my shirt, and generally leave the right half of my body looking like something out of _The Walking Dead_.
 
-As I dig rocks out of my sunburned arm and Jeb helps wrap it with gauze, I’m so annoyed with myself. “Wow, you’re out of practice,” a friend had said on Instagram that morning in reply to a picture of my sunburn. She’s right. It’s day two, and I’m making stupid mistakes that I’m going to pay for during the rest of the trip. I grimly concede that this fall was actually really lucky. For every way it could have gone better, there are ten ways it could have ended my trip. So I try to regard my pain with some gratitude, put those darker hypotheticals out of my head, and pedal on.
+As I dig rocks out of my sunburned arm and Jeb helps wrap it with gauze, I’m so annoyed with myself. “Wow, you’re out of practice,” a friend had said on Instagram that morning in reply to a picture of my sunburn. She’s right. It’s day two, and I’m making stupid mistakes that I’m going to pay for throughout the rest of the trip. I grimly concede that this fall was actually really lucky. For every way it could have gone better, there are ten ways it could have ended my trip. So I try to regard my pain with some gratitude, put those darker hypotheticals out of my head, and pedal on.
 
 ⁂
 

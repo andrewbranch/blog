@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '../components/Layout';
+import { Link } from 'gatsby';
 
 export default function About() {
   return (
@@ -27,8 +28,8 @@ export default function About() {
         These days, I write a lot of <a href="https://www.typescriptlang.org">TypeScript</a>{' '}
         and <a href="https://reactjs.org">React</a>. Aside from that, I try to spend my time doing things
         outside. One time I walked <a href="https://appalachiantrail.org">really far</a>, and I’ve
-        biked across <a href="https://500px.com/atcb/galleries/scandinavian-bike-tour">a few small
-        countries</a>. Once a year or so I struggle to use up all 36 exposures on a roll of color
+        biked across <Link to="/one-does-not-simply-walk-into-mordor">a few small countries</Link>.
+        Once a year or so I struggle to use up all 36 exposures on a roll of color
         film. And very occasionally, I vastly underestimate the ambitiousness of a project like
         this blog and pour dozens of hours into it for dubious gain. This happens to be one of the
         few that I’ve finished, so, hope you enjoy. ❤️

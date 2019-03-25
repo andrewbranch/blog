@@ -7,6 +7,7 @@ import SEO from '../components/SEO';
 import { PostFooter } from '../components/PostFooter';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { type, textColor, variables, flex, padding, Side } from '../styles/utils';
+import { formatTitle } from '../utils/formatTitle';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -54,7 +55,7 @@ export default function FeaturePost({ data }: FeaturePostProps) {
   useScrollDepthTracking();
   return (
     <Layout>
-      <SEO title={post.frontmatter.title} />
+      <SEO title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)} />
       <div>
         <h1 css={{ fontWeight: 'normal', fontSize: '3rem', textAlign: 'center' }}>{post.frontmatter.title}</h1>
         <h2 css={subtitleStyle}>

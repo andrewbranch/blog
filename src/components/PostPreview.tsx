@@ -1,6 +1,7 @@
 import React from 'react';
 import { margin, Side, resets, textColor } from '../styles/utils';
 import { Link } from 'gatsby';
+import { formatTitle } from '../utils/formatTitle';
 
 export interface PostPreviewProps {
   slug: string;
@@ -15,10 +16,6 @@ const anchorImgTagPattern = /<\/?a[^>]*?>/ig;
 // Forgive me my sins
 function removeLinksAndImages(html: string) {
   return html.replace(anchorImgTagPattern, '');
-}
-
-function formatTitle(title: string, subtitle?: string) {
-  return title + (subtitle ? `: ${subtitle}` : '');
 }
 
 const MemoizedPostPreview = React.memo<PostPreviewProps>(function PostPreview({
