@@ -10,7 +10,7 @@ import { safeGA } from '../utils/safeGA';
 const buttonStyles = css([
   resets.unbutton,
   {
-    '@media (prfers-color-scheme: dark)': { display: 'none' },
+    '@media (prefers-color-scheme: dark)': { display: 'none' },
     boxSizing: 'content-box',
     position: 'relative',
     width: 30,
