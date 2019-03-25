@@ -62,7 +62,7 @@ const SEO = ({ description, lang, meta, keywords, title, image }: SEOProps) => {
               },
               {
                 name: 'twitter:creator',
-                content: data.site.siteMetadata.author,
+                content: '@atcb',
               },
               {
                 name: 'twitter:image',
@@ -106,6 +106,7 @@ const detailsQuery = graphql`
     site {
       siteMetadata {
         title
+        siteUrl
         description
         author
       }
