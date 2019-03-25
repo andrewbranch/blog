@@ -1,4 +1,4 @@
-import { rhythm as createRhythm, groteskSansFamily, textColors, monoFamily } from '../utils/typography';
+import { rhythm as createRhythm, groteskSansFamily, textColors, monoFamily, scriptFamily } from '../utils/typography';
 import { ObjectInterpolation, Interpolation, keyframes } from '@emotion/core';
 
 export const variables = {
@@ -46,7 +46,11 @@ const mono: ObjectInterpolation<any> = {
   fontSize: '0.75rem',
 };
 
-export const type = { grotesk, mono };
+const script: ObjectInterpolation<any> = {
+  fontFamily: scriptFamily.join(', '),
+};
+
+export const type = { grotesk, mono, script };
 
 export const textColor = {
   primary: { color: variables.colors.text.primary },

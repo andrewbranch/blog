@@ -14,6 +14,7 @@ export interface IndexPageProps {
           id: string;
           frontmatter: {
             title: string;
+            subtitle?: string;
             date: string;
           };
           fields: {
@@ -38,6 +39,7 @@ export const query = graphql`
           id
           frontmatter {
             title
+            subtitle
             date(formatString: "MMMM D, YYYY")
           }
           fields {
@@ -60,6 +62,7 @@ const IndexPage = React.memo<IndexPageProps>(({ data }) => {
             key={node.id}
             slug={node.fields.slug}
             title={node.frontmatter.title}
+            subtitle={node.frontmatter.subtitle}
             date={node.frontmatter.date}
             excerpt={node.excerpt}
           />

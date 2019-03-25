@@ -14,7 +14,7 @@ module.exports = ({ markdownAST }) => {
 
     const image = node.children[1];
     const leadingCaptionText = node.children[2];
-    const rest = node.children.slice(2) || [];
+    const rest = node.children.slice(3);
     node.data = { hName: 'figure' };
     node.type = 'figure';
 

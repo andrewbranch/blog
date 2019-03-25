@@ -39,6 +39,7 @@ module.exports = {
       resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
+          `${__dirname}/gatsby-remark-asterisms`,
           `${__dirname}/gatsby-remark-annotate-code-blocks`,
           'gatsby-remark-katex',
           `${__dirname}/gatsby-remark-figure`,

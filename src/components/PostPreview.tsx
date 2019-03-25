@@ -5,23 +5,34 @@ import { Link } from 'gatsby';
 export interface PostPreviewProps {
   slug: string;
   title: string;
+  subtitle?: string;
   date: string;
   excerpt: string;
 }
 
-const anchorTagPattern = /<\/?a[^>]*?>/ig;
+const anchorImgTagPattern = /<\/?a[^>]*?>/ig;
 
 // Forgive me my sins
-function removeLinks(html: string) {
-  return html.replace(anchorTagPattern, '');
+function removeLinksAndImages(html: string) {
+  return html.replace(anchorImgTagPattern, '');
 }
 
-const MemoizedPostPreview = React.memo<PostPreviewProps>(function PostPreview({ title, slug, date, excerpt }) {
+function formatTitle(title: string, subtitle?: string) {
+  return title + (subtitle ? `: ${subtitle}` : '');
+}
+
+const MemoizedPostPreview = React.memo<PostPreviewProps>(function PostPreview({
+  title,
+  subtitle,
+  slug,
+  date,
+  excerpt,
+}) {
   return (
-    <Link to={slug} css={resets.unanchor}>
+    <Link to={slug} css={[resets.unanchor, { '.gatsby-resp-image-wrapper': { display: 'none !important' } }]}>
       <div css={[textColor.secondary, { fontStyle: 'italic' }]}>{date}</div>
-      <h3 css={margin(0.25, Side.Vertical)}>{title}</h3>
-      <div css={{ '*': { margin: 0 } }} dangerouslySetInnerHTML={{ __html: removeLinks(excerpt) }} />
+      <h3 css={margin(0.25, Side.Vertical)}>{formatTitle(title, subtitle)}</h3>
+      <div css={{ '*': { margin: 0 } }} dangerouslySetInnerHTML={{ __html: removeLinksAndImages(excerpt) }} />
     </Link>
   );
 });

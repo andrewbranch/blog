@@ -79,6 +79,11 @@ const Layout: React.FunctionComponent = ({ children }) => {
             margin(0.4, Side.Top),
             { fontSize: '0.8rem', textAlign: 'center' },
           ],
+          '.asterism': [textColor.secondary, {
+            fontFamily: 'AppleGothic, serif',
+            fontSize: '1.5rem',
+            textAlign: 'center',
+          }],
         }}
       />
       <div
