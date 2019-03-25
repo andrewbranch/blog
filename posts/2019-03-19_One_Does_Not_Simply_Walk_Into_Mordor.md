@@ -4,7 +4,7 @@ subtitle: Cycling a Thousand Miles in New Zealand
 date: 2019-03-19
 slug: one-does-not-simply-walk-into-mordor
 template: FeaturePost
-image: './images/nz/crown-range-pass.jpg'
+metaImage: './images/nz/crown-range-pass.jpg'
 ---
 
 ![Loaded touring bike leaning against a rock overlooking a panoramic view of the New Zealand countryside with a road winding down the mountain in the distance.](./images/nz/crown-range-pass.jpg)

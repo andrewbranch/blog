@@ -16,10 +16,13 @@ const renderAst = new RehypeReact({
 export const query = graphql`
   query($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
-      htmlAst,
+      htmlAst
+      fields {
+        metaImage
+      }
       frontmatter {
-        title,
-        subtitle,
+        title
+        subtitle
         date(formatString: "MMMM DD, YYYY")
       }
     }
@@ -30,6 +33,9 @@ export interface FeaturePostProps {
   data: {
     markdownRemark: {
       htmlAst: any;
+      fields: {
+        metaImage?: string;
+      }
       frontmatter: {
         title: string;
         subtitle: string;
@@ -55,7 +61,7 @@ export default function FeaturePost({ data }: FeaturePostProps) {
   useScrollDepthTracking();
   return (
     <Layout>
-      <SEO title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)} />
+      <SEO title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)} image={post.fields.metaImage} />
       <div>
         <h1 css={{ fontWeight: 'normal', fontSize: '3rem', textAlign: 'center' }}>{post.frontmatter.title}</h1>
         <h2 css={subtitleStyle}>

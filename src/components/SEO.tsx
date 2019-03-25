@@ -1,6 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet';
 import { StaticQuery, graphql } from 'gatsby';
+import { isSSR } from '../utils/ssr';
 
 export interface SEOProps {
   description?: string;
@@ -8,13 +9,19 @@ export interface SEOProps {
   meta: { name: string, content: string }[];
   keywords: string[];
   title: string;
+  image?: string;
 }
 
-const SEO = ({ description, lang, meta, keywords, title }: SEOProps) => {
+const SEO = ({ description, lang, meta, keywords, title, image }: SEOProps) => {
   return (
     <StaticQuery
       query={detailsQuery}
       render={data => {
+        function absoluteURL(path: string | undefined) {
+          return path ?
+            (isSSR ? data.site.siteMetadata.siteUrl : location.origin) + path
+            : undefined;
+        }
         const metaDescription =
           description || data.site.siteMetadata.description;
         return (
@@ -34,6 +41,10 @@ const SEO = ({ description, lang, meta, keywords, title }: SEOProps) => {
                 content: `${title} ・ ${data.site.siteMetadata.title}`,
               },
               {
+                property: 'og:image',
+                content: absoluteURL(image),
+              },
+              {
                 property: 'og:description',
                 content: metaDescription,
               },
@@ -46,8 +57,16 @@ const SEO = ({ description, lang, meta, keywords, title }: SEOProps) => {
                 content: 'summary',
               },
               {
+                name: 'twitter:site',
+                content: '@atcb',
+              },
+              {
                 name: 'twitter:creator',
                 content: data.site.siteMetadata.author,
+              },
+              {
+                name: 'twitter:image',
+                content: absoluteURL(image),
               },
               {
                 name: 'twitter:title',
