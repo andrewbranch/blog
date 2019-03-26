@@ -38,7 +38,7 @@ const SEO = ({ description, lang, meta, keywords, title, image }: SEOProps) => {
               },
               {
                 property: 'og:title',
-                content: `${title} ・ ${data.site.siteMetadata.title}`,
+                content: title,
               },
               {
                 property: 'og:image',
@@ -70,7 +70,7 @@ const SEO = ({ description, lang, meta, keywords, title, image }: SEOProps) => {
               },
               {
                 name: 'twitter:title',
-                content: `${title} ・ ${data.site.siteMetadata.title}`,
+                content: title,
               },
               {
                 name: 'twitter:description',
