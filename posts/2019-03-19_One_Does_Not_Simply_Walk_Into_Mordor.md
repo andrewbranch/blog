@@ -39,7 +39,7 @@ Every day, without fail, someone asks me, “Where’d you start this morning?�
 
 Even if I could readily recall what my campsite looked like or what I ate for breakfast, I still wouldn’t be able to summon the name of the town. New Zealand’s largest cities have almost caricatural British names: Queenstown, Christchurch, Wellington; but nearly everything else is named in Māori, a language that shares its name with New Zealand’s earliest inhabitants, Polynesian settlers who arrived by canoe in the 13th century. The syllables jumble hopelessly in my linguistically Western-accustomed brain, and I have no idea how to pronounce anything. Was it Tokoroa, or Rotokawa? No wait, Rotorua? Turangi or Tauranga? How exactly does one pronounce Waiouru? Hatepe? Rerewhakaaitu? It turns out that if you can’t convincingly pronounce a place to yourself as you read it on a sign, you’re not going to remember it when someone asks you ten hours later, “Where’d you start this morning?”
 
-“Um. North. 70 miles north. Um. 100 kilometers.” I can’t remember a single detail that would help me identify my extremely recent location on earth, but I can still do fast mental math. My survival mechanisms have weird priorities.
+“Um. North. 70 miles north. Um. 110 kilometers.” I can’t remember a single detail that would help me identify my extremely recent location on earth, but I can still do fast mental math. My survival mechanisms have weird priorities.
 
 ⁂
 
