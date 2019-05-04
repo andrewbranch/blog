@@ -1,0 +1,13 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "gatsby-remark-annotate-code-blocks/package.json",
+        "gatsby-remark-asterisms/package.json",
+        "gatsby-remark-figure/package.json",
+        "gatsby-remark-meta-image/package.json",
+        "package.json"
+      ]
+    }
+  }
+}
