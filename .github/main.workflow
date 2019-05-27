@@ -5,25 +5,25 @@ workflow "Deploy staging" {
   resolves = ["deploy"]
 }
 
-action "filter branch master" {
-  uses = "actions/bin/filter@master"
-  args = "branch master"
-}
-
 action "install" {
-  needs = "filter branch master"
   uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
   args = "ci"
 }
 
 action "build" {
-  needs = ["install"]
+  needs = "install"
   uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
   args = "run build"
 }
 
+action "filter branch master" {
+  needs = "build"
+  uses = "actions/bin/filter@master"
+  args = "branch master"
+}
+
 action "deploy" {
-  needs = ["build"]
+  needs = "filter branch master"
   uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
   args = "run deploy:staging"
   secrets = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
