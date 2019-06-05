@@ -50,6 +50,7 @@ export interface CodePostProps {
         title: string;
         note?: string;
         lib: import('../utils/typescript/types').Extra[];
+        compilerOptions?: any;
         date: string;
       };
     };
@@ -73,6 +74,9 @@ export const query = graphql`
         note
         lib
         date(formatString: "MMMM DD, YYYY")
+        compilerOptions {
+          lib
+        }
       }
     }
   }
@@ -244,6 +248,7 @@ function CodePost({ data, pageContext }: CodePostProps) {
             initializedTsEnv = createVirtualTypeScriptEnvironment(
               createSystem(sysFiles),
               [],
+              post.frontmatter.compilerOptions,
             );
             setTsEnv(initializedTsEnv);
           }

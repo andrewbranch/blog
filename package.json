@@ -59,7 +59,7 @@
     "shallowequal": "^1.1.0",
     "slate": "^0.44.9",
     "slate-react": "^0.21.15",
-    "typescript": "^3.3.1",
+    "typescript": "^3.5.0-rc",
     "typography": "^0.16.18",
     "unist-util-visit": "^1.4.0",
     "vscode-textmate": "^4.0.1",

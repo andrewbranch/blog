@@ -60,18 +60,21 @@ exports.createPages = async ({ graphql, actions }) => {
       allMarkdownRemark {
         edges {
           node {
-            htmlAst,
+            htmlAst
             fields {
               slug
-            },
+            }
             frontmatter {
-              globalPreamble,
-              lib,
-              template,
+              globalPreamble
+              lib
+              template
+              compilerOptions {
+                lib
+              }
               preambles {
-                file,
+                file
                 text
-              },
+              }
             }
           }
         }
@@ -107,7 +110,7 @@ exports.createPages = async ({ graphql, actions }) => {
               codeBlock.end = codeBlock.start + text.length;
               existingSourceFile.fragments.push(sourceFileFragment);
             } else {
-              const filePreamble = node.frontmatter.preambles.find(p => p.file === fileName);
+              const filePreamble = node.frontmatter.preambles && node.frontmatter.preambles.find(p => p.file === fileName);
               const preamble = (node.frontmatter.globalPreamble || '') + (filePreamble ? filePreamble.text : '');
               codeBlock.start = preamble.length;
               codeBlock.end = codeBlock.start + text.length;
@@ -136,7 +139,7 @@ exports.createPages = async ({ graphql, actions }) => {
           ...Array.from(lib.core.entries()),
           ...Array.from(extraLibFiles.entries()),
         ]));
-        const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
+        const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()), node.frontmatter.compilerOptions);
         await Promise.all(Object.keys(codeBlockContext).map(async codeBlockId => {
           const codeBlock = codeBlockContext[codeBlockId];
           const { fileName } = codeBlock;
