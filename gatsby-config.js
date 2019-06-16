@@ -45,9 +45,10 @@ module.exports = {
           'gatsby-remark-katex',
           `${__dirname}/gatsby-remark-figure`,
           {
-            resolve: 'gatsby-remark-images',
+            resolve: `${__dirname}/gatsby-remark-images`,
             options: {
-              maxWidth: 760
+              maxWidth: 760,
+              sizeByPixelDensity: true,
             }
           },
           'gatsby-remark-static-images',

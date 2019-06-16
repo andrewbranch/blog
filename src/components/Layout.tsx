@@ -2,7 +2,7 @@ import React from 'react';
 import { Global } from '@emotion/core';
 import Header from './Header';
 import { rhythm } from '../utils/typography';
-import { padding, Side, type, textColor, variables, minWidth, masked, margin } from '../styles/utils';
+import { padding, Side, type, textColor, variables, minWidth, masked, margin, darkMode } from '../styles/utils';
 import '../styles/variables.css';
 import '../styles/fonts/fonts.css';
 import { useOutlineStatus } from '../hooks/useOutlineStatus';
@@ -84,6 +84,11 @@ const Layout: React.FunctionComponent = ({ children }) => {
             fontSize: '1.5rem',
             textAlign: 'center',
           }],
+          '.dark-only': {
+            display: 'none !important',
+            ...darkMode({ display: 'block !important' }),
+          },
+          '.light-only': darkMode({ display: 'none !important' }),
         }}
       />
       <div
