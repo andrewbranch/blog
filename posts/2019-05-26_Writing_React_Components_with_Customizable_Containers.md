@@ -19,7 +19,7 @@ preambles:
         [K in keyof UnionToIntersection<T[number]>]:
           K extends 'className' ? string :
           K extends 'style' ? UnionToIntersection<T[number]>[K] :
-          Extract<T[number], { [Q in K]: unknown; }>[K];"
+          Extract<T[number], { [Q in K]: unknown; }>[K]; }"
 lib:
   - react
   - dom
@@ -105,6 +105,22 @@ This makes it trivial for a consumer to use whatever tag or component they like 
 But, how do we type this correctly? Button’s props can no longer unconditionally extend `React.ButtonHTMLAttributes`, because the extra props might not be passed to a button.
 
 _Fair warning: I’m going to go down a serious rabbit hole to explain several reasons why this doesn’t work well. If you’d rather just take my word for it, feel free to [skip ahead](#an-alternative-approach) ._
+
+<!--@@
+  maxWidth: 307
+  linkImagesToOriginal: false
+  backgroundColor: transparent
+  wrapperClassName: light-only
+-->
+![ ](./images/rabbit-light.png)
+
+<!--@@
+  maxWidth: 307
+  linkImagesToOriginal: false
+  backgroundColor: transparent
+  wrapperClassName: dark-only
+-->
+![    ](./images/rabbit-dark.png)
 
 Let’s start with a slightly simpler case where we only need to allow `tagName` to be `'a'` or `'button'`. (I’ll also remove props and elements that aren’t relevant to the point for brevity.) This would be a reasonable attempt:
 
@@ -295,7 +311,7 @@ Let’s try it out:
 We completely defused the type bomb by getting rid of the 172-constituent union `keyof JSX.IntrinsicElements` while simultaneously allowing even more flexibility, _and_ we get perfect type safety. Mission accomplished. 🎉 
 
 ## The overwritten prop caveat
-There’s a small cost to an API design like this, which is that it’s fairly easy to make a mistake like this:
+There’s a small cost to an API design like this. It’s fairly easy to make a mistake like this:
 
 <!--@
   name: GoodButton.tsx
