@@ -13,8 +13,6 @@ const defaultCompilerOptions = {
   moduleResolution: ts.ModuleResolutionKind.NodeJs,
 };
 
-const defaultLibFileName = '/lib.es2015.d.ts';
-
 export function createVirtualCompilerHost(
   sys: ts.System,
   compilerOptions: ts.CompilerOptions,
@@ -32,7 +30,7 @@ export function createVirtualCompilerHost(
     compilerHost: {
       ...sys,
       getCanonicalFileName: fileName => fileName,
-      getDefaultLibFileName: () => defaultLibFileName,
+      getDefaultLibFileName: () => '/lib.es2015.d.ts',
       getDirectories: () => [],
       getNewLine: () => sys.newLine,
       getSourceFile: fileName => {
@@ -108,13 +106,7 @@ export function createVirtualTypeScriptEnvironment(
   rootFiles: string[],
   compilerOptions: ts.CompilerOptions = {},
 ): VirtualTypeScriptEnvironment {
-  const mergedCompilerOptions = {
-    ...defaultCompilerOptions,
-    ...compilerOptions,
-    lib: compilerOptions
-      && compilerOptions.lib
-      && compilerOptions.lib.map(lib => `/lib.${lib}.d.ts`).concat(defaultLibFileName),
-  };
+  const mergedCompilerOptions = { ...defaultCompilerOptions, ...compilerOptions };
   const { languageServiceHost, updateFile } = createVirtualLanguageServiceHost(
     sys,
     rootFiles,
