@@ -5,6 +5,9 @@ template: FeaturePost
 metaImage: images/piano.jpeg
 ---
 
+<!--@@
+  maxWidth: 520
+-->
 ![An artsy close-up of the action of an upright piano](images/piano.jpeg)
 
 There was a brief period in my life, toward the end of my high school years and continuing on through most of college, during which some of my friends would have characterized me as a “music snob,” and I wouldn’t have argued. To be regarded as such by my peers was, in my estimation, an acknowledgment of my discerning taste and sophistication in the aural domain. Yes, they may defend their preference for simple, easily digested chord structures, and yes, predictable and repetitive rhythms may appeal to their evolutionarily acquired dopamine reward for pattern recognition. But deep down, we really both know that my music is better. One is not labeled a music snob for liking _bad music_.

@@ -48,7 +48,6 @@ module.exports = {
             resolve: `${__dirname}/gatsby-remark-images`,
             options: {
               maxWidth: 760,
-              sizeByPixelDensity: true,
             }
           },
           'gatsby-remark-static-images',
