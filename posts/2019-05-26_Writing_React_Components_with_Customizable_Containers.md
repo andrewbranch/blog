@@ -104,7 +104,7 @@ This makes it trivial for a consumer to use whatever tag or component they like 
 
 But, how do we type this correctly? Button’s props can no longer unconditionally extend `React.ButtonHTMLAttributes`, because the extra props might not be passed to a button.
 
-_Fair warning: I’m going to go down a serious rabbit hole to explain several reasons why this doesn’t work well. If you’d rather just take my word for it, feel free to [skip ahead](#an-alternative-approach) ._
+_Fair warning: I’m going to go down a serious rabbit hole to explain several reasons why this doesn’t work well. If you’d rather just take my word for it, feel free to [jump ahead](#an-alternative-approach)._
 
 <!--@@
   maxWidth: 307
@@ -133,9 +133,7 @@ interface ButtonProps {
 }
 
 function Button<P extends ButtonProps>({ tagName: TagName, ...props }: P & JSX.IntrinsicElements[P['tagName']]) {
-  return (
-    <TagName {...props} />
-  );
+  return <TagName {...props} />;
 }
 
 <Button tagName="a" href="/" />
@@ -154,49 +152,64 @@ However, a little more experimentation reveals that we’ve also effectively dis
   name: Button3.tsx
 -->
 ```tsx
-<button href="/" /> // correct error 👍
-<Button tagName="button" href="/" /> // no error 👎
+<button href="/" fakeProp={1} /> // correct errors 👍
+<Button tagName="button" href="/" fakeProp={1} /> // no errors 👎
 ```
 
 Every prop you put on Button will be inferred as a property of the type parameter `P`, which in turn becomes part of the props that are allowed. In other words, the set of allowed props always includes all the props you pass. The moment you add a prop, it becomes part of the very definition of what Button’s props should be. (In fact, you can witness this by hovering `Button` in the example above.) This is decidedly the opposite of how you intend to define React components.
 
 ### What’s the problem with `ref`?
-If you’re not yet convinced to abandon this approach, or if you’re just curious why the above doesn’t compile cleanly, let’s go deeper down the rabbit hole. And before you implement a clever workaround with `Omit<typeof props, 'ref'>`, spoiler alert: `ref` isn’t the only problem; it’s just the _first_ problem, and the compiler didn’t keep doing work to find all the rest of the problems. The rest of the problems are _every event handler prop_. You can discover this, if you want, by going into the React typings and commenting out [the `ref` property](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/86303f134e12cf701a3f3f5e24867c3559351ea2/types/react/index.d.ts#L97). The compiler error will remain, substituting `onCopy` where it previously said `ref`.
+If you’re not yet convinced to abandon this approach, or if you’re just curious why the above doesn’t compile cleanly, let’s go deeper down the rabbit hole. And before you implement a clever workaround with `Omit<typeof props, 'ref'>`, spoiler alert: `ref` isn’t the only problem; it’s just the _first_ problem. The rest of the problems are _every event handler prop_. (You can discover this, if you want, by going into the React typings and commenting out [the `ref` property](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/86303f134e12cf701a3f3f5e24867c3559351ea2/types/react/index.d.ts#L97). The compiler error will remain, substituting `onCopy` where it previously said `ref`.)
 
-So what do `ref` and `onCopy` have in common? They both have the general form `(param: T) => void` where `T` mentions the instance type of the DOM element rendered: `HTMLButtonElement` for buttons and `HTMLAnchorElement` for anchors, for example. With `--strictFunctionTypes` enabled, function signatures are _contravariant_ in the parameter position, which has this property of transforming unions to intersections (and vice versa) that is easier to show than to say:
+So what do `ref` and `onCopy` have in common? They both have the general form `(param: T) => void` where `T` mentions the instance type of the DOM element rendered: `HTMLButtonElement` for buttons and `HTMLAnchorElement` for anchors, for example. If you want to call a _union_ of call signatures, you have to pass the _intersection_ of their parameter types to ensure that regardless of which function gets called at runtime, it receives a subtype of what it expects for its parameter. Easier shown than said:
 
 <!--@
-  name: contravariance.ts
+  name: union-signatures.ts
 -->
 ```ts
-// Super simplified props definitions
-type ButtonProps = { type?: string, ref: (instance: HTMLButtonElement) => void };
-type AnchorProps = { href?: string, ref: (instance: HTMLAnchorElement) => void };
+function addOneToA(obj: { a: number }) {
+  obj.a++;
+}
 
-// Imagine JSX tags are just function calls
-declare function a(props: AnchorProps): any;
-declare function button(props: AnchorProps): any;
+function addOneToB(obj: { b: number }) {
+  obj.b++;
+}
 
-// You’ve got some props that might be either one
-declare const props: ButtonProps | AnchorProps;
+// Let’s say we have a function that could be either
+// of the ones declared above
+declare var fn: typeof addOneToA | typeof addOneToB;
 
-// And a TagName that might be either one
-declare const TagName: typeof a | typeof button;
-
-// You can see that props.ref wants HTMLButtonElement & HTMLAnchorElement
-props.ref(document.createElement('button'))
-
-// Which is why it won’t work as the props of TagName
-TagName(props);
-
-// In fact, it won’t work as the props of `a` or `button` either.
-// This actually feels like less of a surprise, and should make
-// the error on `TagName(props)` less surprising.
-a(props);
-button(props);
+// The function might access a property 'a' or 'b'
+// of whatever we pass, so intuitively, the object
+// needs to define both those properties.
+fn({ a: 0 });
+fn({ b: 0 });
+fn({ a: 0, b: 0 });
 ```
 
-Since `keyof IntrinsicElements` is a union, `Props` is a union, and thus `Props['ref']` is a union of two signatures. So far, one union type has distributed into additional unions. But when calling `props.ref`, the logic inverts: rather than requiring the union of the parameter types, `HTMLAnchorElement | HTMLButtonElement`, it requires the _intersection_: `HTMLAnchorElement & HTMLButtonElement`—a theoretically possible type, but not one that will occur in the wild of the DOM. And we know intuitively that if we have a React element that’s either an anchor or a button, the value passed to `ref` will be either be an `HTMLAnchorElement` or an `HTMLButtonElement`, so the function we provide for `ref` must accept an `HTMLAnchorElement | HTMLButtonElement`. Ergo, back to our original component, we can see that `JSX.IntrinsicElements[P['tagName']]` legitimately allows unsafe types for callbacks when `P['tagName']` is a union, and that’s what the compiler is complaining about. The manifest example of an unsafe operation that could occur by ignoring this type error:
+In this example, it should be easy to recognize that we have to pass `fn` an object with the type `{ a: number, b: number }`, which is the _intersection_ of `{ a: number }` and `{ b: number }`. The same thing is happening with `ref` and all the event handlers:
+
+```ts
+type Props1 = JSX.IntrinsicElements['a' | 'button'];
+
+// Simplifies to...
+type Props2 =
+  | JSX.IntrinsicElements['a']
+  | JSX.IntrinsicElements['button'];
+
+// Which means ref is...
+type Ref =
+  | JSX.IntrinsicElements['a']['ref']
+  | JSX.IntrinsicElements['button']['ref'];
+
+// Which is a union of functions!
+declare var ref: Ref;
+// So it wants `HTMLButtonElement & HTMLAnchorElement`
+ref(new HTMLButtonElement());
+ref(new HTMLAnchorElement());
+```
+
+So now we can see why, rather than requiring the _union_ of the parameter types, `HTMLAnchorElement | HTMLButtonElement`, `ref` requires the _intersection_: `HTMLAnchorElement & HTMLButtonElement`—a theoretically possible type, but not one that will occur in the wild of the DOM. And we know intuitively that if we have a React element that’s either an anchor or a button, the value passed to `ref` will be either be an `HTMLAnchorElement` or an `HTMLButtonElement`, so the function we provide for `ref` _should_ accept an `HTMLAnchorElement | HTMLButtonElement`. Ergo, back to our original component, we can see that `JSX.IntrinsicElements[P['tagName']]` legitimately allows unsafe types for callbacks when `P['tagName']` is a union, and that’s what the compiler is complaining about. The manifest example of an unsafe operation that could occur by ignoring this type error:
 
 <!--@
   name: Button3.tsx
@@ -208,7 +221,61 @@ Since `keyof IntrinsicElements` is a union, `Props` is a union, and thus `Props[
 />
 ```
 
-This type checks because `HTMLAnchorElement` is assignable from `HTMLAnchorElement & HTMLButtonElement`, when the thing we _should_ have been checking is whether `HTMLAnchorElement` is assignable from `HTMLAnchorElement | HTMLButtonElement`. This will error at runtime since buttons don’t have an `href` property.
+### Let’s make props an intersection, then!
+
+I think what makes this problem unintuitive is that you always expect `tagName` to instantiate as exactly one string literal type, not a union. And in that case, `JSX.IntrinsicElements[P['tagName']]` is sound. Nevertheless, inside the component function, `TagName` looks like a union, so the props need to be typed as an intersection. As it turns out, it this [is possible](https://stackoverflow.com/questions/50374908/transform-union-type-to-intersection-type), but it’s a bit of a hack. So much so, I’m not going even going to put `UnionToIntersection` down in writing here. Don’t try this at home:
+
+<!--
+  name: Button4.tsx
+-->
+```tsx
+function Button<P extends ButtonProps>({
+  tagName: TagName,
+  ...props
+}: P & UnionToIntersection<JSX.IntrinsicElements[P['tagName']]>) {
+  return <TagName {...props} />;
+}
+
+<Button tagName="button" type="foo" /> // Correct error! 🎉
+```
+
+How about when `tagName` is a union?
+
+<!--
+  name: Button4.tsx
+-->
+```tsx
+<Button
+  tagName={'button' as 'a' | 'button'}
+  ref={(x: HTMLAnchorElement) => x.href.toLowerCase()} // 🎉
+/>
+```
+
+Let’s not celebrate prematurely, though: we haven’t solved our effective lack of excess property checking, which is an unacceptable tradeoff.
+
+### Getting excess property checking back
+
+As we discovered earlier, the problem with excess property checking is that all of our props become part of the type parameter `P`. We need a type parameter in order to infer `tagName` as a string literal unit type instead of a large union, but maybe the rest of our props don’t need to be generic at all:
+
+<!--
+  name: Button5.tsx
+-->
+```tsx
+interface ButtonProps<T extends 'a' | 'button'> {
+  tagName: T;
+}
+
+function Button<T extends 'a' | 'button'>({
+  tagName: TagName,
+  ...props
+}: ButtonProps<T> & UnionToIntersection<JSX.IntrinsicElements[T]>) {
+  return <TagName {...props} />;
+}
+```
+
+Uh-oh. What is this new and unusual error?
+
+It comes from the combination of the generic `TagName` and React’s definition for [JSX.LibraryManagedAttributes]() as a [distributive conditional type](). 
 
 ### Variance shmariance, I’m gonna make it work
 Ok, fine. Let’s say you work out a way to transform callback prop signatures to the proper variance, and you’re ready to replace `tagName: 'a' | 'button'` with `tagName: keyof JSX.IntrinsicElements`.
