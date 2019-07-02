@@ -275,7 +275,39 @@ function Button<T extends 'a' | 'button'>({
 
 Uh-oh. What is this new and unusual error?
 
-It comes from the combination of the generic `TagName` and React’s definition for [JSX.LibraryManagedAttributes]() as a [distributive conditional type](). 
+It comes from the combination of the generic `TagName` and React’s definition for [JSX.LibraryManagedAttributes](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/e4a0d4f532b177fc800e8ade7f1b39e9879d4b3c/types/react/index.d.ts#L2817-L2821) as a [distributive conditional type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types). TypeScript currently doesn’t allow _anything_ to be assigned to conditional type whose “checked type” (the bit before the `?`) is generic:
+
+<!--
+  name: genericConditional1.ts
+-->
+```ts
+type AlwaysNumber<T> = T extends unknown ? number : number;
+
+function fn<T>() {
+  let x: AlwaysNumber<T> = 3;
+}
+```
+
+Clearly, the declared type of `x` will always be `number`, and yet `3` isn’t assignable to it. The rationale is a conservative simplification guarding against cases where distributivity might change the resulting type:
+
+<!--
+  name: distributiveConditional.ts
+-->
+```ts
+// These types appear the same, since all `T` extend `unknown`...
+type Keys<T> = keyof T;
+type KeysConditional<T> = T extends unknown ? keyof T : never;
+
+// They’re the same here...
+type X1 = Keys<{ x: any, y: any }>;
+type X2 = KeysConditional<{ x: any, y: any }>;
+
+// But not here!
+type Y1 = Keys<{ x: any } | { y: any }>;
+type Y2 = KeysConditional<{ x: any } | { y: any }>;
+```
+
+Because of the distributivity demonstrated here, it’s often unsafe to assume anything about a generic conditional type before it’s instantiated.
 
 ### Variance shmariance, I’m gonna make it work
 Ok, fine. Let’s say you work out a way to transform callback prop signatures to the proper variance, and you’re ready to replace `tagName: 'a' | 'button'` with `tagName: keyof JSX.IntrinsicElements`.
