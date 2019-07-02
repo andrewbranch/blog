@@ -32,11 +32,17 @@ action "deploy" {
 # PR
 
 workflow "Deploy PR" {
-  on = "issue_comment"
+  on = "pull_request"
   resolves = "deploy-pr"
 }
 
+action "filter-pr" {
+  uses = "actions/bin/filter@master"
+  args = "label deploy"
+}
+
 action "install-pr" {
+  needs = "filter-pr"
   uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
   args = "ci"
 }
@@ -47,14 +53,8 @@ action "build-pr" {
   args = "run build"
 }
 
-action "filter PR comment" {
-  needs = "build-pr"
-  uses = "actions/bin/filter@master"
-  args = "issue_comment 'deploy this'"
-}
-
 action "deploy-pr" {
-  needs = "filter PR comment"
+  needs = "filter-pr"
   uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
   args = "run deploy:staging"
   secrets = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
