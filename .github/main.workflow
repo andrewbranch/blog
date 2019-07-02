@@ -50,7 +50,7 @@ action "build-pr" {
 action "filter PR comment" {
   needs = "build-pr"
   uses = "actions/bin/filter@master"
-  args = "issue_comment deploy this"
+  args = "issue_comment 'deploy this'"
 }
 
 action "deploy-pr" {
