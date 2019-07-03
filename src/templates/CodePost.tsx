@@ -269,10 +269,16 @@ function CodePost({ data, pageContext }: CodePostProps) {
       <div>
         <h1>{post.frontmatter.title}</h1>
         {post.frontmatter.note
-          ? <><p
-            css={[textColor.secondary, { fontStyle: 'italic' }]}
-            dangerouslySetInnerHTML={{ __html: post.frontmatter.note }}
-          /><hr /></> : null}
+          ? <>
+            {post.frontmatter.note.split('\n\n').map((paragraph, i) =>
+              <p
+                key={i}
+                css={[textColor.secondary, { fontStyle: 'italic' }]}
+                dangerouslySetInnerHTML={{ __html: paragraph }}
+              />)}
+            <hr />
+          </>
+          : null}
         <EditableContext.Provider value={context}>
           <div>{renderAst(data.markdownRemark.htmlAst)}</div>
         </EditableContext.Provider>
