@@ -1,6 +1,6 @@
 ---
 title: Music Snob
-date: 2019-07-01
+date: 2019-07-02
 template: FeaturePost
 metaImage: images/piano.jpeg
 ---
