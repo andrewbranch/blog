@@ -38,7 +38,7 @@ export interface FeaturePostProps {
       }
       frontmatter: {
         title: string;
-        subtitle: string;
+        subtitle?: string;
         date: string;
       };
     };
@@ -64,9 +64,9 @@ export default function FeaturePost({ data }: FeaturePostProps) {
       <SEO title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)} image={post.fields.metaImage} />
       <div>
         <h1 css={{ fontWeight: 'normal', fontSize: '3rem', textAlign: 'center' }}>{post.frontmatter.title}</h1>
-        <h2 css={subtitleStyle}>
+        {post.frontmatter.subtitle && <h2 css={subtitleStyle}>
           {post.frontmatter.subtitle}
-        </h2>
+        </h2>}
         <div>{renderAst(data.markdownRemark.htmlAst)}</div>
       </div>
       <PostFooter date={post.frontmatter.date} />
