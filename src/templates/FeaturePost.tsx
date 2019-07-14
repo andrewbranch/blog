@@ -17,13 +17,17 @@ export const query = graphql`
   query($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
       htmlAst
-      fields {
-        metaImage
-      }
       frontmatter {
         title
         subtitle
         date(formatString: "MMMM DD, YYYY")
+        metaImage {
+          childImageSharp {
+            fluid(maxWidth: 1600) {
+              src
+            }
+          }
+        }
       }
     }
   }
@@ -33,13 +37,17 @@ export interface FeaturePostProps {
   data: {
     markdownRemark: {
       htmlAst: any;
-      fields: {
-        metaImage?: string;
-      }
       frontmatter: {
         title: string;
         subtitle: string;
         date: string;
+        metaImage: {
+          childImageSharp: {
+            fluid: {
+              src: string;
+            };
+          };
+        };
       };
     };
   };
@@ -61,7 +69,10 @@ export default function FeaturePost({ data }: FeaturePostProps) {
   useScrollDepthTracking();
   return (
     <Layout>
-      <SEO title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)} image={post.fields.metaImage} />
+      <SEO
+        title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)}
+        image={post.frontmatter.metaImage.childImageSharp.fluid.src}
+      />
       <div>
         <h1 css={{ fontWeight: 'normal', fontSize: '3rem', textAlign: 'center' }}>{post.frontmatter.title}</h1>
         <h2 css={subtitleStyle}>

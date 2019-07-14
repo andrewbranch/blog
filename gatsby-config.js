@@ -40,15 +40,13 @@ module.exports = {
       options: {
         plugins: [
           `${__dirname}/gatsby-remark-asterisms`,
-          `${__dirname}/gatsby-remark-meta-image`,
           `${__dirname}/gatsby-remark-annotate-code-blocks`,
           'gatsby-remark-katex',
           `${__dirname}/gatsby-remark-figure`,
           {
             resolve: `${__dirname}/gatsby-remark-images`,
             options: {
-              maxWidth: 760,
-              sizeByPixelDensity: true,
+              maxWidth: 760
             }
           },
           'gatsby-remark-static-images',
