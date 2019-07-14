@@ -10,16 +10,18 @@ globalPreamble: "
   declare function FlexContainer(props: any): JSX.Element;
   declare function getClassName(color: ColorName | undefined, ...others: (string | undefined)[]): string;
   declare enum ColorName { Blue = 'blue' };
-  declare enum IconName {};"
+  declare enum IconName {};
+  type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;\n
+  "
 preambles:
   - file: GoodButton.tsx
     text: "
-      declare type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
-      declare default function mergeProps<T extends {}[]>(...props: T): {
+      declare function mergeProps<T extends {}[]>(...props: T): {
         [K in keyof UnionToIntersection<T[number]>]:
           K extends 'className' ? string :
           K extends 'style' ? UnionToIntersection<T[number]>[K] :
-          Extract<T[number], { [Q in K]: unknown; }>[K]; }"
+          Extract<T[number], { [Q in K]: unknown; }>[K]; }\n
+      "
 lib:
   - react
   - dom
@@ -204,9 +206,12 @@ type Ref =
 
 // Which is a union of functions!
 declare var ref: Ref;
-// So it wants `HTMLButtonElement & HTMLAnchorElement`
-ref(new HTMLButtonElement());
-ref(new HTMLAnchorElement());
+// (Let’s ignore string refs)
+if (typeof ref === 'function') {
+  // So it wants `HTMLButtonElement & HTMLAnchorElement`
+  ref!(new HTMLButtonElement());
+  ref!(new HTMLAnchorElement());
+}
 ```
 
 So now we can see why, rather than requiring the _union_ of the parameter types, `HTMLAnchorElement | HTMLButtonElement`, `ref` requires the _intersection_: `HTMLAnchorElement & HTMLButtonElement`—a theoretically possible type, but not one that will occur in the wild of the DOM. And we know intuitively that if we have a React element that’s either an anchor or a button, the value passed to `ref` will be either be an `HTMLAnchorElement` or an `HTMLButtonElement`, so the function we provide for `ref` _should_ accept an `HTMLAnchorElement | HTMLButtonElement`. Ergo, back to our original component, we can see that `JSX.IntrinsicElements[P['tagName']]` legitimately allows unsafe types for callbacks when `P['tagName']` is a union, and that’s what the compiler is complaining about. The manifest example of an unsafe operation that could occur by ignoring this type error:
@@ -225,10 +230,14 @@ So now we can see why, rather than requiring the _union_ of the parameter types,
 
 I think what makes this problem unintuitive is that you always expect `tagName` to instantiate as exactly one string literal type, not a union. And in that case, `JSX.IntrinsicElements[P['tagName']]` is sound. Nevertheless, inside the component function, `TagName` looks like a union, so the props need to be typed as an intersection. As it turns out, it this [is possible](https://stackoverflow.com/questions/50374908/transform-union-type-to-intersection-type), but it’s a bit of a hack. So much so, I’m not going even going to put `UnionToIntersection` down in writing here. Don’t try this at home:
 
-<!--
+<!--@
   name: Button4.tsx
 -->
 ```tsx
+interface ButtonProps {
+  tagName: 'a' | 'button';
+}
+
 function Button<P extends ButtonProps>({
   tagName: TagName,
   ...props
@@ -241,7 +250,7 @@ function Button<P extends ButtonProps>({
 
 How about when `tagName` is a union?
 
-<!--
+<!--@
   name: Button4.tsx
 -->
 ```tsx
@@ -257,9 +266,6 @@ Let’s not celebrate prematurely, though: we haven’t solved our effective lac
 
 As we discovered earlier, the problem with excess property checking is that all of our props become part of the type parameter `P`. We need a type parameter in order to infer `tagName` as a string literal unit type instead of a large union, but maybe the rest of our props don’t need to be generic at all:
 
-<!--
-  name: Button5.tsx
--->
 ```tsx
 interface ButtonProps<T extends 'a' | 'button'> {
   tagName: T;
@@ -277,9 +283,6 @@ Uh-oh. What is this new and unusual error?
 
 It comes from the combination of the generic `TagName` and React’s definition for [JSX.LibraryManagedAttributes](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/e4a0d4f532b177fc800e8ade7f1b39e9879d4b3c/types/react/index.d.ts#L2817-L2821) as a [distributive conditional type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types). TypeScript currently doesn’t allow _anything_ to be assigned to conditional type whose “checked type” (the bit before the `?`) is generic:
 
-<!--
-  name: genericConditional1.ts
--->
 ```ts
 type AlwaysNumber<T> = T extends unknown ? number : number;
 
@@ -290,9 +293,6 @@ function fn<T>() {
 
 Clearly, the declared type of `x` will always be `number`, and yet `3` isn’t assignable to it. The rationale is a conservative simplification guarding against cases where distributivity might change the resulting type:
 
-<!--
-  name: distributiveConditional.ts
--->
 ```ts
 // These types appear the same, since all `T` extend `unknown`...
 type Keys<T> = keyof T;
@@ -309,32 +309,28 @@ type Y2 = KeysConditional<{ x: any } | { y: any }>;
 
 Because of the distributivity demonstrated here, it’s often unsafe to assume anything about a generic conditional type before it’s instantiated.
 
-### Variance shmariance, I’m gonna make it work
-Ok, fine. Let’s say you work out a way to transform callback prop signatures to the proper variance, and you’re ready to replace `tagName: 'a' | 'button'` with `tagName: keyof JSX.IntrinsicElements`.
+### Distributivity schmistributivity, I’m gonna make it work
+Ok, fine. Let’s say you work out a way around that assignability error, and you’re ready to replace `'a' | 'button'` with all `keyof JSX.IntrinsicElements`.
 
-<!--@
-  name: Button4.tsx
--->
 ```tsx
-interface ButtonProps {
-  tagName: keyof JSX.IntrinsicElements;
+interface ButtonProps<T extends keyof JSX.IntrinsicElements> {
+  tagName: T;
 }
 
-function Button<P extends ButtonProps>({ tagName: TagName, ...props }: P & JSX.IntrinsicElements[P['tagName']]) {
-  return (
-    // @ts-ignore YOLO
-    <TagName {...props} />
-  );
+function Button<T extends keyof JSX.IntrinsicElements>({
+  tagName: TagName,
+  ...props
+}: ButtonProps<T> & UnionToIntersection<JSX.IntrinsicElements[T]>) {
+  // @ts-ignore YOLO
+  return <TagName {...props} />;
 }
-
-Button.defaultProps = { tagName: 'button' };
 
 <Button tagName="a" href="/" />
 ``` 
 
-…and, congratulations, you’ve crashed TypeScript 3.4! The union distributes over the intersection with `P`, adding `defaultProps` results in instantiations of multiple levels of nested distributive conditional types, and you’ve just invented a button that cannot be reasoned about within Node’s default heap size. And we never even got around to supporting `<Button tagName={Link} />`!
+…and, congratulations, you’ve crashed TypeScript 3.4! The constraint type `keyof JSX.IntrinsicElements` of `T` is a union type of 173 keys, and the type checker will instantiate generics with their constraints to ensure all possible instantiations are safe. So that means `ButtonProps<T>` is a union of 173 object types, and suffic it to say that `UnionToIntersection<...>` is a nested conditional type wrapped in a conditional type, one of which distributes into another union of 173 types upon which type inference is then invoked. Long story short, you’ve just invented a button that cannot be reasoned about within Node’s default heap size. And we never even got around to supporting `<Button tagName={Link} />`!
 
-TypeScript 3.5 _does_ handle it without crashing by deferring a lot of the work that was happening to simplify conditional types, but do you _really_ want to write components that are just waiting for the right moment to explode?
+TypeScript 3.5 _does_ handle this without crashing by deferring a lot of the work that was happening to simplify conditional types, but do you _really_ want to write components that are just waiting for the right moment to explode?
 
 ## An alternative approach
 As we go back to the drawing board, let’s refresh on what we’re actually trying to accomplish. Our Button component should:

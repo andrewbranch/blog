@@ -33,7 +33,7 @@ export function useHover({
         mouseOutTimer.current = setTimeout(() => setIsHovering(false), mouseOutTimer.current);
       };
       handlers.add(handler);
-      return () => handlers.delete(handler);
+      return () => { handlers.delete(handler); };
     }
   }, [isHovering]);
 
