@@ -52,6 +52,7 @@ module.exports = {
             }
           },
           'gatsby-remark-static-images',
+          'gatsby-remark-autolink-headers'
         ]
       }
     },

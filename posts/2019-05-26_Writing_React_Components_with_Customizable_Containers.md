@@ -71,13 +71,20 @@ Awesome: we can now pass extra props to the underlying `<button>` element, and i
 ## When passthrough isn’t enough
 Half an hour after you send Button v1 to the product engineering team, they come back to you with a question: how do we use Button as a Link? They need it to be able to render as an internal react-router `Link` _or_ as an external link, a plain `HTMLAnchorElement`.
 
-If we weren’t concerned about type safety, we could write this pretty easily:
+If we weren’t concerned about type safety, we could write this pretty easily in plain JavaScript:
 
 <!--@
   name: Button2.jsx
 -->
 ```tsx
-function Button({ color, icon, className, children, tagName: TagName, ...props }) {
+function Button({
+  color,
+  icon,
+  className,
+  children,
+  tagName: TagName,
+  ...props
+}) {
   return (
     <TagName
       {...props}
@@ -104,7 +111,7 @@ This makes it trivial for a consumer to use whatever tag or component they like 
 <Button tagName={Link} to="/about">About</Button>
 ```
 
-But, how do we type this correctly? Button’s props can no longer unconditionally extend `React.ButtonHTMLAttributes`, because the extra props might not be passed to a button.
+But, how do we type this correctly? Button’s props can no longer unconditionally extend `React.ButtonHTMLAttributes`, because the extra props might not be passed to a `<button>`.
 
 _Fair warning: I’m going to go down a serious rabbit hole to explain several reasons why this doesn’t work well. If you’d rather just take my word for it, feel free to [jump ahead](#an-alternative-approach)._
 
@@ -328,7 +335,7 @@ function Button<T extends keyof JSX.IntrinsicElements>({
 <Button tagName="a" href="/" />
 ``` 
 
-…and, congratulations, you’ve crashed TypeScript 3.4! The constraint type `keyof JSX.IntrinsicElements` of `T` is a union type of 173 keys, and the type checker will instantiate generics with their constraints to ensure all possible instantiations are safe. So that means `ButtonProps<T>` is a union of 173 object types, and suffic it to say that `UnionToIntersection<...>` is a nested conditional type wrapped in a conditional type, one of which distributes into another union of 173 types upon which type inference is then invoked. Long story short, you’ve just invented a button that cannot be reasoned about within Node’s default heap size. And we never even got around to supporting `<Button tagName={Link} />`!
+…and, congratulations, you’ve crashed TypeScript 3.4! The constraint type `keyof JSX.IntrinsicElements` is a union type of 173 keys, and the type checker will instantiate generics with their constraints to ensure all possible instantiations are safe. So that means `ButtonProps<T>` is a union of 173 object types, and, suffice it to say that `UnionToIntersection<...>` is a nested conditional type wrapped in a conditional type, one of which distributes into another union of 173 types upon which type inference is then invoked. Long story short, you’ve just invented a button that cannot be reasoned about within Node’s default heap size. And we never even got around to supporting `<Button tagName={Link} />`!
 
 TypeScript 3.5 _does_ handle this without crashing by deferring a lot of the work that was happening to simplify conditional types, but do you _really_ want to write components that are just waiting for the right moment to explode?
 
@@ -403,7 +410,7 @@ Let’s try it out:
 />
 ```
 
-We completely defused the type bomb by getting rid of the 172-constituent union `keyof JSX.IntrinsicElements` while simultaneously allowing even more flexibility, _and_ we get perfect type safety. Mission accomplished. 🎉 
+We completely defused the type bomb by getting rid of the 173-constituent union `keyof JSX.IntrinsicElements` while simultaneously allowing even more flexibility, _and_ we get perfect type safety. Mission accomplished. 🎉 
 
 ## The overwritten prop caveat
 There’s a small cost to an API design like this. It’s fairly easy to make a mistake like this:
@@ -421,7 +428,7 @@ There’s a small cost to an API design like this. It’s fairly easy to make a 
 
 Oops. `{...props}` already included a  `className`, which was needed to make the Button look nice and be blue, and here we’ve completely overwritten that class with `my-custom-button`.
 
-On one hand, this provides the ultimate degree of customizability—the consumer has total control over what does and doesn’t go onto the container, allowing for fine-grained customizations that weren’t possible before. But on the other hand, you probably wanted to merge those classes 99% of the time, and it might not be obvious to the people using this component why it appears visually broken in this case.
+On one hand, this provides the ultimate degree of customizability—the consumer has total control over what does and doesn’t go onto the container, allowing for fine-grained customizations that weren’t possible before. But on the other hand, you probably wanted to merge those classes 99% of the time, and it might not be obvious why it appears visually broken in this case.
 
 Depending on the complexity of the component, who your consumers are, and how solid your documentation is, this may or may not be a serious problem. When I started using patterns like this in my own work, I wrote a [small utility](https://github.com/andrewbranch/merge-props) to help with the ergonomics of merging injected and additional props:
 
