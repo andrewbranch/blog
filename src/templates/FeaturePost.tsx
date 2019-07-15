@@ -39,7 +39,7 @@ export interface FeaturePostProps {
       htmlAst: any;
       frontmatter: {
         title: string;
-        subtitle: string;
+        subtitle?: string;
         date: string;
         metaImage: {
           childImageSharp: {
@@ -75,9 +75,9 @@ export default function FeaturePost({ data }: FeaturePostProps) {
       />
       <div>
         <h1 css={{ fontWeight: 'normal', fontSize: '3rem', textAlign: 'center' }}>{post.frontmatter.title}</h1>
-        <h2 css={subtitleStyle}>
+        {post.frontmatter.subtitle && <h2 css={subtitleStyle}>
           {post.frontmatter.subtitle}
-        </h2>
+        </h2>}
         <div>{renderAst(data.markdownRemark.htmlAst)}</div>
       </div>
       <PostFooter date={post.frontmatter.date} />

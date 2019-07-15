@@ -29,6 +29,37 @@ action "deploy" {
   secrets = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
 }
 
+# PR
+
+workflow "Deploy PR" {
+  on = "pull_request"
+  resolves = "deploy-pr"
+}
+
+action "filter-pr" {
+  uses = "actions/bin/filter@master"
+  args = "label deploy"
+}
+
+action "install-pr" {
+  needs = "filter-pr"
+  uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
+  args = "ci"
+}
+
+action "build-pr" {
+  needs = "install-pr"
+  uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
+  args = "run build"
+}
+
+action "deploy-pr" {
+  needs = "filter-pr"
+  uses = "actions/npm@3c8332795d5443adc712d30fa147db61fd520b5a"
+  args = "run deploy:staging"
+  secrets = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
+}
+
 # Production
 
 workflow "Deploy production" {
