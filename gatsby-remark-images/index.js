@@ -1,4 +1,5 @@
 const {
+  DEFAULT_OPTIONS,
   imageClass,
   imageBackgroundClass,
   imageWrapperClass,
@@ -25,17 +26,6 @@ module.exports = (
   { files, markdownNode, markdownAST, pathPrefix, getNode, reporter, cache },
   pluginOptions
 ) => {
-  const defaults = {
-    maxWidth: 650,
-    wrapperStyle: ``,
-    backgroundColor: `white`,
-    linkImagesToOriginal: true,
-    showCaptions: false,
-    pathPrefix,
-    withWebp: false,
-    tracedSVG: false,
-  }
-
 
   const findParentLinks = ({ children }) =>
     children.some(
@@ -69,7 +59,7 @@ module.exports = (
     }
   )
 
-  const globalOptions = _.defaults(pluginOptions, defaults)
+  const globalOptions = _.defaults(pluginOptions, { pathPrefix }, DEFAULT_OPTIONS)
 
   const getImageInfo = uri => {
     const { url, query } = queryString.parseUrl(uri)
@@ -188,7 +178,7 @@ module.exports = (
           // override options if it's an object, otherwise just pass through defaults
           options.withWebp === true ? {} : options.withWebp,
           pluginOptions,
-          defaults
+          DEFAULT_OPTIONS
         ),
         reporter,
       })

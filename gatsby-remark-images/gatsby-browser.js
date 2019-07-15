@@ -1,35 +1,25 @@
 const {
+  DEFAULT_OPTIONS,
   imageClass,
   imageBackgroundClass,
-  imageWrapperClass,
-} = require(`./constants`)
+} = require("./constants");
 
-exports.onRouteUpdate = () => {
-  const imageWrappers = document.querySelectorAll(`.${imageWrapperClass}`)
+exports.onInitialClientRender = function onInitialClientRender({ pluginOptions }) {
+  const options = Object.assign({}, DEFAULT_OPTIONS, pluginOptions);
+  document.addEventListener('load', event => {
+    if (event.target instanceof HTMLImageElement && event.target.classList.contains(imageClass)) {
+      const imageElement = event.target;
+      const backgroundElement = event.target.previousElementSibling;
+      imageElement.style.opacity = 0;
+      imageElement.style.transition = "opacity 0.5s";
+      if (backgroundElement && backgroundElement.classList.contains(imageBackgroundClass)) {
+        backgroundElement.style.transition = "opacity 0.5s 0.5s";
+        backgroundElement.style.opacity = 0;
+      }
 
-  // https://css-tricks.com/snippets/javascript/loop-queryselectorall-matches/
-  // for cross-browser looping through NodeList without polyfills
-  for (let i = 0; i < imageWrappers.length; i++) {
-    const imageWrapper = imageWrappers[i]
-
-    const backgroundElement = imageWrapper.querySelector(
-      `.${imageBackgroundClass}`
-    )
-    const imageElement = imageWrapper.querySelector(`.${imageClass}`)
-
-    const onImageLoad = () => {
-      backgroundElement.style.transition = `opacity 0.5s 0.5s`
-      backgroundElement.style.opacity = 0
-      imageElement.style.transition = `opacity 0.5s`
-      imageElement.style.opacity = 1
-      imageElement.removeEventListener(`load`, onImageLoad)
+      imageElement.style.opacity = 1;
+      imageElement.style.color = "inherit";
+      imageElement.style.boxShadow = "inset 0px 0px 0px 400px " + options.backgroundColor;
     }
-
-    if (imageElement.complete) {
-      backgroundElement.style.opacity = 0
-    } else {
-      imageElement.style.opacity = 0
-      imageElement.addEventListener(`load`, onImageLoad)
-    }
-  }
+  }, true);
 }
