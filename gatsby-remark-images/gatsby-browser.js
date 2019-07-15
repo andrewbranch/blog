@@ -19,7 +19,6 @@ exports.onInitialClientRender = function onInitialClientRender({ pluginOptions }
 
       imageElement.style.opacity = 1;
       imageElement.style.color = "inherit";
-      imageElement.style.boxShadow = "inset 0px 0px 0px 400px " + options.backgroundColor;
     }
   }, true);
 }

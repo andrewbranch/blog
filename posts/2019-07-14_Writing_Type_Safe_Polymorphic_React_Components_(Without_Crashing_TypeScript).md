@@ -31,9 +31,9 @@ compilerOptions:
     - dom
 ---
 
-When designing a React component for reusability, you often quickly run into the need to pass different arbitrary DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. Maybe at first, you just need to allow a custom `className` to be merged in, but eventually you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
+When designing a React component for reusability, you often quickly run into the need to pass different arbitrary DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
 
-It’s impossible for Button to predict and to handle every special context where it might be used, so there’s a reasonable argument for allowing arbitrary extra props to be passed to Button, and letting it pass extra ones it doesn’t understand through. (This consume-what-I-need-and-pass-the-rest-through pattern is quite common and well-understood, but isn’t the focus of this article.)
+It’s impossible for Button to predict and to handle every special context where it might be used, so there’s a reasonable argument for allowing arbitrary extra props to be passed to Button, and letting it pass extra ones it doesn’t understand through.
 
 <!--@
   name: Button1.tsx
@@ -70,7 +70,7 @@ Awesome: we can now pass extra props to the underlying `<button>` element, and i
 ```
 
 ## When passthrough isn’t enough
-Half an hour after you send Button v1 to the product engineering team, they come back to you with a question: how do we use Button as a Link? They need it to be able to render as an internal react-router `Link` _or_ as an external link, a plain `HTMLAnchorElement`.
+Half an hour after you send Button v1 to the product engineering team, they come back to you with a question: how do we use Button as a Link? They need it to be able to render as a react-router `Link` _or_ as a plain `HTMLAnchorElement`.
 
 If we weren’t concerned about type safety, we could write this pretty easily in plain JavaScript:
 
@@ -130,7 +130,7 @@ _Fair warning: I’m going to go down a serious rabbit hole to explain several r
   backgroundColor: transparent
   wrapperClassName: dark-only
 -->
-![    ](./images/rabbit-dark.png)
+![ ](./images/rabbit-dark.png)
 
 Let’s start with a slightly simpler case where we only need to allow `tagName` to be `'a'` or `'button'`. (I’ll also remove props and elements that aren’t relevant to the point for brevity.) This would be a reasonable attempt:
 
@@ -234,7 +234,7 @@ So now we can see why, rather than requiring the _union_ of the parameter types,
 />
 ```
 
-### Let’s make props an intersection, then!
+### Writing a better type for `props`
 
 I think what makes this problem unintuitive is that you always expect `tagName` to instantiate as exactly one string literal type, not a union. And in that case, `JSX.IntrinsicElements[P['tagName']]` is sound. Nevertheless, inside the component function, `TagName` looks like a union, so the props need to be typed as an intersection. As it turns out, it this [is possible](https://stackoverflow.com/questions/50374908/transform-union-type-to-intersection-type), but it’s a bit of a hack. So much so, I’m not going even going to put `UnionToIntersection` down in writing here. Don’t try this at home:
 
