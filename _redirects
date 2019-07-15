@@ -1,0 +1,5 @@
+# Redirect domain aliases to primary domain
+https://andrewbran.ch/* https://blog.andrewbran.ch/:splat 301!
+
+# Optional: Redirect default Netlify subdomain to primary domain
+https://andrewbranch-blog.netlify.com/* https://blog.andrewbran.ch/:splat 301!
