@@ -1,7 +1,8 @@
 ---
-title: Writing React Components with Customizable Containers
+title: Writing Type-Safe Polymorphic React Components (Without Crashing TypeScript)
 date: 2019-05-26
 template: CodePost
+slug: polymorphic-react-components
 globalPreamble: "
   import * as React from 'react';
   interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> { to: string }
@@ -65,7 +66,7 @@ Awesome: we can now pass extra props to the underlying `<button>` element, and i
 -->
 ```tsx
 <Button onKeyDown={({ currentTarget }) => { /* do something */ }} />
-<Button foo="bar" /> // Correctly errors 👍🏽
+<Button foo="bar" /> // Correctly errors 👍
 ```
 
 ## When passthrough isn’t enough
