@@ -53,7 +53,8 @@ jspm_packages/
 
 # gatsby files
 .cache/
-public
+public/*
+!public/_redirects
 
 # Mac files
 .DS_Store
