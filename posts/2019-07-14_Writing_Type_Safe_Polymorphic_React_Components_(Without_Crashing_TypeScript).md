@@ -31,7 +31,7 @@ compilerOptions:
     - dom
 ---
 
-When designing a React component for reusability, you often quickly run into the need to pass different arbitrary DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
+When designing a React component for reusability, you often need to be able to pass different DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
 
 It’s impossible for Button to predict and to handle every special context where it might be used, so there’s a reasonable argument for allowing arbitrary extra props to be passed to Button, and letting it pass extra ones it doesn’t understand through.
 
@@ -70,7 +70,7 @@ Awesome: we can now pass extra props to the underlying `<button>` element, and i
 ```
 
 ## When passthrough isn’t enough
-Half an hour after you send Button v1 to the product engineering team, they come back to you with a question: how do we use Button as a Link? They need it to be able to render as a react-router `Link` _or_ as a plain `HTMLAnchorElement`.
+Half an hour after you send Button v1 to the product engineering team, they come back to you with a question: how do we use Button as a react-router Link? How about as an HTMLAnchorElement, a link to an external site? The component you sent them _only_ renders as an HTMLButtonElement.
 
 If we weren’t concerned about type safety, we could write this pretty easily in plain JavaScript:
 
@@ -114,7 +114,7 @@ This makes it trivial for a consumer to use whatever tag or component they like 
 
 But, how do we type this correctly? Button’s props can no longer unconditionally extend `React.ButtonHTMLAttributes`, because the extra props might not be passed to a `<button>`.
 
-_Fair warning: I’m going to go down a serious rabbit hole to explain several reasons why this doesn’t work well. If you’d rather just take my word for it, feel free to [jump ahead](#an-alternative-approach)._
+_Fair warning: I’m going to go down a serious rabbit hole to explain several reasons why this doesn’t work well. If you’d rather just take my word for it, feel free to [jump ahead](#an-alternative-approach) to a better solution._
 
 <!--@@
   maxWidth: 307
@@ -149,6 +149,8 @@ function Button<P extends ButtonProps>({ tagName: TagName, ...props }: P & JSX.I
 <Button tagName="a" href="/" />
 ```
 
+_N.B. To make sense of this, a basic knowledge of [JSX.IntrinsicElements](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/0bb210867d16170c4a08d9ce5d132817651a0f80/types/react/index.d.ts#L2829) is required. Here’s a [great deep dive on JSX in TypeScript](https://dev.to/ferdaber/typescript-and-jsx-part-ii---what-can-create-jsx-22h6) by one of the maintainers of the React type definitions._
+
 The two immediate observations that arise are
 
 1. It doesn’t compile—it tells us, in so many words, that the type of `props.ref` is not correct for the type of `TagName`.
@@ -169,9 +171,9 @@ However, a little more experimentation reveals that we’ve also effectively dis
 Every prop you put on Button will be inferred as a property of the type parameter `P`, which in turn becomes part of the props that are allowed. In other words, the set of allowed props always includes all the props you pass. The moment you add a prop, it becomes part of the very definition of what Button’s props should be. (In fact, you can witness this by hovering `Button` in the example above.) This is decidedly the opposite of how you intend to define React components.
 
 ### What’s the problem with `ref`?
-If you’re not yet convinced to abandon this approach, or if you’re just curious why the above doesn’t compile cleanly, let’s go deeper down the rabbit hole. And before you implement a clever workaround with `Omit<typeof props, 'ref'>`, spoiler alert: `ref` isn’t the only problem; it’s just the _first_ problem. The rest of the problems are _every event handler prop_. (You can discover this, if you want, by going into the React typings and commenting out [the `ref` property](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/86303f134e12cf701a3f3f5e24867c3559351ea2/types/react/index.d.ts#L97). The compiler error will remain, substituting `onCopy` where it previously said `ref`.)
+If you’re not yet convinced to abandon this approach, or if you’re just curious why the above snippet doesn’t compile cleanly, let’s go deeper down the rabbit hole. And before you implement a clever workaround with `Omit<typeof props, 'ref'>`, spoiler alert: `ref` isn’t the only problem; it’s just the _first_ problem. The rest of the problems are _every event handler prop_.[^1]
 
-So what do `ref` and `onCopy` have in common? They both have the general form `(param: T) => void` where `T` mentions the instance type of the DOM element rendered: `HTMLButtonElement` for buttons and `HTMLAnchorElement` for anchors, for example. If you want to call a _union_ of call signatures, you have to pass the _intersection_ of their parameter types to ensure that regardless of which function gets called at runtime, it receives a subtype of what it expects for its parameter. Easier shown than said:
+So what do `ref` and `onCopy` have in common? They both have the general form `(param: T) => void` where `T` mentions the instance type of the DOM element rendered: `HTMLButtonElement` for buttons and `HTMLAnchorElement` for anchors, for example. If you want to call a _union_ of call signatures, you have to pass the _intersection_ of their parameter types to ensure that regardless of which function gets called at runtime, it receives a subtype of what it expects for its parameter.[^2] Easier shown than said:
 
 <!--@
   name: union-signatures.ts
@@ -217,8 +219,8 @@ declare var ref: Ref;
 // (Let’s ignore string refs)
 if (typeof ref === 'function') {
   // So it wants `HTMLButtonElement & HTMLAnchorElement`
-  ref!(new HTMLButtonElement());
-  ref!(new HTMLAnchorElement());
+  ref(new HTMLButtonElement());
+  ref(new HTMLAnchorElement());
 }
 ```
 
@@ -299,7 +301,7 @@ function fn<T>() {
 }
 ```
 
-Clearly, the declared type of `x` will always be `number`, and yet `3` isn’t assignable to it. The rationale is a conservative simplification guarding against cases where distributivity might change the resulting type:
+Clearly, the declared type of `x` will always be `number`, and yet `3` isn’t assignable to it. What you’re seeing is a conservative simplification guarding against cases where distributivity might change the resulting type:
 
 ```ts
 // These types appear the same, since all `T` extend `unknown`...
@@ -336,7 +338,7 @@ function Button<T extends keyof JSX.IntrinsicElements>({
 <Button tagName="a" href="/" />
 ``` 
 
-…and, congratulations, you’ve crashed TypeScript 3.4! The constraint type `keyof JSX.IntrinsicElements` is a union type of 173 keys, and the type checker will instantiate generics with their constraints to ensure all possible instantiations are safe. So that means `ButtonProps<T>` is a union of 173 object types, and, suffice it to say that `UnionToIntersection<...>` is a nested conditional type wrapped in a conditional type, one of which distributes into another union of 173 types upon which type inference is then invoked. Long story short, you’ve just invented a button that cannot be reasoned about within Node’s default heap size. And we never even got around to supporting `<Button tagName={Link} />`!
+…and, congratulations, you’ve crashed TypeScript 3.4! The constraint type `keyof JSX.IntrinsicElements` is a union type of 173 keys, and the type checker will instantiate generics with their constraints to ensure all possible instantiations are safe. So that means `ButtonProps<T>` is a union of 173 object types, and, suffice it to say that `UnionToIntersection<...>` is one conditional type wrapped in another, one of which distributes into another union of 173 types upon which type inference is invoked. Long story short, you’ve just invented a button that cannot be reasoned about within Node’s default heap size. And we never even got around to supporting `<Button tagName={Link} />`!
 
 TypeScript 3.5 _does_ handle this without crashing by deferring a lot of the work that was happening to simplify conditional types, but do you _really_ want to write components that are just waiting for the right moment to explode?
 
@@ -429,7 +431,7 @@ Let’s try it out:
 />
 ```
 
-We completely defused the type bomb by getting rid of the 173-constituent union `keyof JSX.IntrinsicElements` while simultaneously allowing even more flexibility, _and_ we get perfect type safety. Mission accomplished. 🎉 
+We completely defused the type bomb by getting rid of the 173-constituent union `keyof JSX.IntrinsicElements` while simultaneously allowing even more flexibility, _and_ it’s perfectly type-safe. Mission accomplished. 🎉 
 
 ## The overwritten prop caveat
 There’s a small cost to an API design like this. It’s fairly easy to make a mistake like this:
@@ -466,3 +468,8 @@ Depending on the complexity of the component, who your consumers are, and how so
 ```
 
 This ensures the class names are merged correctly, and if `ButtonInjectedProps` ever expands its definition to inject its own `onKeyDown`, both the injected one and the console-logging one provided here will be run.
+
+[^1]:
+  You can discover this, if you want, by going into the React typings and commenting out [the `ref` property](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/86303f134e12cf701a3f3f5e24867c3559351ea2/types/react/index.d.ts#L97). The compiler error will remain, substituting `onCopy` where it previously said `ref`.
+[^2]:
+  I attempt to explain this relationship intuitively, but it arises from the fact that parameters are _contravariant_ positions within function signatures. There are several [good](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-6.html) [explanations](https://www.stephanboyer.com/post/132/what-are-covariance-and-contravariance) of this topic.
