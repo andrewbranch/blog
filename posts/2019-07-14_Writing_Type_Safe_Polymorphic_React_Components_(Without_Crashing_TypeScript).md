@@ -5,6 +5,7 @@ template: CodePost
 slug: polymorphic-react-components
 globalPreamble: "
   import * as React from 'react';
+  declare var console: { log: (...args: any[]) => void };
   interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> { to: string }
   declare function Link(props: LinkProps): JSX.Element;
   declare function Icon(props: any): JSX.Element;
@@ -149,7 +150,7 @@ function Button<P extends ButtonProps>({ tagName: TagName, ...props }: P & JSX.I
 <Button tagName="a" href="/" />
 ```
 
-_N.B. To make sense of this, a basic knowledge of [JSX.IntrinsicElements](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/0bb210867d16170c4a08d9ce5d132817651a0f80/types/react/index.d.ts#L2829) is required. Here’s a [great deep dive on JSX in TypeScript](https://dev.to/ferdaber/typescript-and-jsx-part-ii---what-can-create-jsx-22h6) by one of the maintainers of the React type definitions._
+_N.B. To make sense of this, a basic knowledge of [JSX.IntrinsicElements](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/0bb210867d16170c4a08d9ce5d132817651a0f80/types/react/index.d.ts#L2829) is required. Here’s a [great deep dive on JSX in TypeScript](https://dev.to/ferdaber/typescript-and-jsx-part-iii---typing-the-props-for-a-component-1pg2) by one of the maintainers of the React type definitions._
 
 The two immediate observations that arise are
 
