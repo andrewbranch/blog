@@ -340,6 +340,24 @@ function Button<T extends keyof JSX.IntrinsicElements>({
 
 TypeScript 3.5 _does_ handle this without crashing by deferring a lot of the work that was happening to simplify conditional types, but do you _really_ want to write components that are just waiting for the right moment to explode?
 
+_If you followed me this far down the rabbit hole, I’m duly impressed. I spent weeks getting here, and it only took you ten minutes!_
+
+<!--@@
+  maxWidth: 255
+  linkImagesToOriginal: false
+  backgroundColor: transparent
+  wrapperClassName: light-only
+-->
+![ ](./images/rabbit-head-light.png)
+
+<!--@@
+  maxWidth: 255
+  linkImagesToOriginal: false
+  backgroundColor: transparent
+  wrapperClassName: dark-only
+-->
+![ ](./images/rabbit-head-dark.png)
+
 ## An alternative approach
 As we go back to the drawing board, let’s refresh on what we’re actually trying to accomplish. Our Button component should:
 
