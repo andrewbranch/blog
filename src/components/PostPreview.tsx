@@ -48,7 +48,10 @@ const MemoizedPostPreview = React.memo<PostPreviewProps>(function PostPreview({
     <Link to={slug} css={styles}>
       <div css={dateStyles}>{date}</div>
       <h3 css={headerstyles}>{formatTitle(title, subtitle)}</h3>
-      <div css={{ '*': { margin: 0 } }} dangerouslySetInnerHTML={{ __html: removeLinksAndImages(excerpt) }} />
+      <div
+        css={{ '*': { margin: 0, fontSize: '0.9rem' } }}
+        dangerouslySetInnerHTML={{ __html: removeLinksAndImages(excerpt) }}
+      />
     </Link>
   );
 });

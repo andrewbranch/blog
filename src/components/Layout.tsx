@@ -58,6 +58,7 @@ const globalStyles = css({
   }],
   '.footnotes p': {
     display: 'inline',
+    fontSize: '0.9rem',
   },
   '.footnote-backref': {
     // display: 'none',
@@ -78,6 +79,11 @@ const globalStyles = css({
       fontSize: '1.2rem',
       marginBottom: rhythm(0.25),
       ...type.features.addSwashes,
+      code: {
+        fontSize: '0.8em',
+        fontVariant: 'normal',
+        fontWeight: 'bold',
+      },
     },
   },
   hr: {
