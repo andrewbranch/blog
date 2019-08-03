@@ -32,7 +32,7 @@ compilerOptions:
     - dom
 ---
 
-When designing a React component for reusability, you often need to be able to pass different DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
+<small-caps>When designing a React component for reusability</small-caps>, you often need to be able to pass different DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
 
 It’s impossible for Button to predict and to handle every special context where it might be used, so there’s a reasonable argument for allowing arbitrary extra props to be passed to Button, and letting it pass extra ones it doesn’t understand through.
 
@@ -122,6 +122,7 @@ _Fair warning: I’m going to go down a serious rabbit hole to explain several r
   linkImagesToOriginal: false
   backgroundColor: transparent
   wrapperClassName: light-only
+  tracedSVG: true
 -->
 ![ ](./images/rabbit-light.png)
 
@@ -130,6 +131,7 @@ _Fair warning: I’m going to go down a serious rabbit hole to explain several r
   linkImagesToOriginal: false
   backgroundColor: transparent
   wrapperClassName: dark-only
+  tracedSVG: true
 -->
 ![ ](./images/rabbit-dark.png)
 
@@ -350,6 +352,7 @@ _If you followed me this far down the rabbit hole, I’m duly impressed. I spent
   linkImagesToOriginal: false
   backgroundColor: transparent
   wrapperClassName: light-only
+  tracedSVG: true
 -->
 ![ ](./images/rabbit-head-light.png)
 
@@ -358,6 +361,7 @@ _If you followed me this far down the rabbit hole, I’m duly impressed. I spent
   linkImagesToOriginal: false
   backgroundColor: transparent
   wrapperClassName: dark-only
+  tracedSVG: true
 -->
 ![ ](./images/rabbit-head-dark.png)
 

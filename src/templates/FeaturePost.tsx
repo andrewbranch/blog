@@ -8,9 +8,11 @@ import { PostFooter } from '../components/PostFooter';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { type, textColor, variables, flex, padding, Side } from '../styles/utils';
 import { formatTitle } from '../utils/formatTitle';
+import { SmallCaps } from '../components/IntroCaps';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
+  components: { 'small-caps': SmallCaps },
 }).Compiler;
 
 export const query = graphql`
@@ -53,8 +55,12 @@ export interface FeaturePostProps {
   };
 }
 
-const subtitleStyle = css([type.script, textColor.secondary, flex.verticallyCenter, {
+const titleStyle = css([{ fontWeight: 400, fontSize: '3rem', textAlign: 'center' }]);
+const subtitleStyle = css([type.serif, textColor.secondary, flex.verticallyCenter, {
   textAlign: 'center',
+  fontStyle: 'italic',
+  fontSize: '1.2rem',
+  '-webkit-font-smoothing': 'antialiased',
   justifyContent: 'center',
   '::before, ::after': {
     content: '"~"',
@@ -74,11 +80,11 @@ export default function FeaturePost({ data }: FeaturePostProps) {
         image={post.frontmatter.metaImage.childImageSharp.fluid.src}
       />
       <div>
-        <h1 css={{ fontWeight: 'normal', fontSize: '3rem', textAlign: 'center' }}>{post.frontmatter.title}</h1>
+        <h1 css={titleStyle}>{post.frontmatter.title}</h1>
         {post.frontmatter.subtitle && <h2 css={subtitleStyle}>
           {post.frontmatter.subtitle}
         </h2>}
-        <div>{renderAst(data.markdownRemark.htmlAst)}</div>
+        <div className="post-body">{renderAst(data.markdownRemark.htmlAst)}</div>
       </div>
       <PostFooter date={post.frontmatter.date} />
     </Layout>

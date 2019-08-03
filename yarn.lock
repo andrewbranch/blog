@@ -6055,10 +6055,9 @@ gatsby-remark-katex@^3.1.2:
     remark-math "^1.0.3"
     unist-util-visit "^1.3.0"
 
-gatsby-remark-static-images@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/gatsby-remark-static-images/-/gatsby-remark-static-images-1.1.0.tgz#cbfaf4d18c1fba09410e9cd1af6b6b49d9851292"
-  integrity sha512-xc3FxW67X/zKbsi/mfTPcyG+YBaCb+Xwq9z+hLFkxQ8rpCD8g+83lDQKMpx9TeqY4ZPoQ6FDuUSVLuRuyeSLhg==
+gatsby-remark-static-images@andrewbranch/gatsby-remark-static-images#dist:
+  version "1.0.0"
+  resolved "https://codeload.github.com/andrewbranch/gatsby-remark-static-images/tar.gz/52fd81de0dbb19e5e9eec82e9b650002eaf4e91a"
   dependencies:
     himalaya "^1.1.0"
     is-relative-url "^2.0.0"

@@ -1,37 +1,21 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import { css, ClassNames } from '@emotion/core';
-import { OutboundLink } from 'gatsby-plugin-google-analytics';
-import { flex, padding, Side, darkMode, minWidth, variables, type, textColor, margin } from '../styles/utils';
+import { flex, padding, Side, minWidth, variables, type, textColor, margin } from '../styles/utils';
 import { Spacer } from './Spacer';
-import { Icon } from './Icon';
-import { WordMark } from './WordMark';
 import { DarkModeSwitch } from './DarkModeSwitch';
+import { rhythm } from '../utils/typography';
 
-const hiddenWhileTiny = css([
-  { display: 'none' },
-  minWidth(variables.sizes.plusPhone, { display: 'flex' }),
-]);
-
-const hiddenAfterTiny = css([
-  { display: 'flex' },
-  minWidth(variables.sizes.plusPhone, { display: 'none' }),
-]);
-
-const hiddenUntilBigEnough = css([
-  { display: 'none' },
-  minWidth(variables.sizes.bigEnough, { display: 'flex' }),
-]);
-
-const hiddenAfterBigEnough = css([
-  { display: 'flex' },
-  minWidth(variables.sizes.bigEnough, { display: 'none' }),
+const styles = css([
+  flex.verticallyCenter,
+  padding(1, Side.Vertical),
+  minWidth(variables.sizes.tablet, padding(2, Side.Bottom)),
 ]);
 
 const navLinkStyles = css([
   type.grotesk,
   textColor.secondary,
-  { textTransform: 'lowercase' },
+  { textTransform: 'lowercase', fontWeight: 500 },
 ]);
 
 function Nav(props: React.HTMLAttributes<HTMLElement>) {
@@ -40,45 +24,21 @@ function Nav(props: React.HTMLAttributes<HTMLElement>) {
       <ClassNames>{({ css: cn }) => (
         <Link activeClassName={cn({ textDecoration: 'underline' })} css={navLinkStyles} to="/about">About</Link>
       )}</ClassNames>
-      <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="https://github.com/andrewbranch">GitHub</OutboundLink>
-      <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="https://twitter.com/atcb">Twitter</OutboundLink>
-      <OutboundLink css={[navLinkStyles, hiddenAfterTiny]} href="/rss.xml">Subscribe</OutboundLink>
     </Spacer>
   );
 }
 
 function Header() {
   return (
-    <div css={[padding(1, Side.Vertical), minWidth(variables.sizes.tablet, padding(2, Side.Bottom))]}>
-      <div css={[flex.stretch, { alignItems: 'flex-start' }]}>
-        <Spacer role="navigation" space={2} css={flex.alignBaselines}>
-          <WordMark />
-          <Nav css={hiddenUntilBigEnough} />
-        </Spacer>
-        <Spacer space={0.5}>
-          <DarkModeSwitch />
-          <OutboundLink href="https://github.com/andrewbranch/blog" css={hiddenWhileTiny}>
-            <Icon
-              alt="GitHub profile"
-              src={require('./icons/github-icon.svg')}
-              css={darkMode({ filter: 'invert(100%)' })}
-            />
-          </OutboundLink>
-          <OutboundLink href="https://twitter.com/atcb" css={hiddenWhileTiny}>
-            <Icon alt="Twitter profile" src={require('./icons/twitter-icon.svg')} size={26} />
-          </OutboundLink>
-          <OutboundLink href="/rss.xml" css={hiddenWhileTiny}>
-            <Icon
-              alt="Subscribe"
-              src={require('./icons/feed.svg')}
-              css={darkMode({ filter: 'invert(100%)' })}
-              size={26}
-            />
-          </OutboundLink>
-        </Spacer>
+    <Spacer role="navigation" space={2} css={styles}>
+      <a href="/" css={{ fontSize: 0 }}>
+        <img src={require('../images/logo.svg')} css={margin(0)} alt="Andrew Branch" width={96} height={96} />
+      </a>
+      <div css={[flex.stretch, { flexGrow: 1, paddingTop: rhythm(1.5) }]}>
+        <Nav />
+        <DarkModeSwitch />
       </div>
-      <Nav css={[hiddenAfterBigEnough, margin(0.5, Side.Top)]} />
-    </div>
+    </Spacer>
   );
 }
 
