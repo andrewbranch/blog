@@ -30,11 +30,11 @@ function Nav(props: React.HTMLAttributes<HTMLElement>) {
 
 function Header() {
   return (
-    <Spacer role="navigation" space={2} css={styles}>
+    <Spacer role="navigation" space={1.5} css={styles}>
       <a href="/" css={{ fontSize: 0 }}>
-        <img src={require('../images/logo.svg')} css={margin(0)} alt="Andrew Branch" width={96} height={96} />
+        <img src={require('../images/logo.svg')} css={margin(0)} alt="Andrew Branch" width={64} height={64} />
       </a>
-      <div css={[flex.stretch, { flexGrow: 1, paddingTop: rhythm(1.5) }]}>
+      <div css={[flex.stretch, { flexGrow: 1, paddingTop: rhythm(1) }]}>
         <Nav />
         <DarkModeSwitch />
       </div>
