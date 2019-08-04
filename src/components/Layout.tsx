@@ -13,7 +13,7 @@ const globalStyles = css({
     height: '100%',
     minHeight: '100%',
     backgroundColor: 'var(--background)',
-    '-webkit-font-smoothing': 'antialiased',
+    WebkitFontSmoothing: 'antialiased',
   },
   'html[data-hide-outlines] :focus': {
     outline: 'none',
@@ -68,7 +68,7 @@ const globalStyles = css({
   }),
   h1: [type.display, type.features.addSwashes],
   'h2, h3, h4, h5, h6': {
-    '-webkit-font-smoothing': 'auto',
+    WebkitFontSmoothing: 'auto',
     ...type.features.addSwashes,
   },
   '.post-body': {

@@ -43,7 +43,7 @@ export interface FeaturePostProps {
         title: string;
         subtitle?: string;
         date: string;
-        metaImage: {
+        metaImage?: {
           childImageSharp: {
             fluid: {
               src: string;
@@ -55,12 +55,12 @@ export interface FeaturePostProps {
   };
 }
 
-const titleStyle = css([{ fontWeight: 400, fontSize: '3rem', textAlign: 'center' }]);
+const titleStyle = css([{ fontWeight: 400, fontSize: '3.4rem', textAlign: 'center' }]);
 const subtitleStyle = css([type.serif, textColor.secondary, flex.verticallyCenter, {
   textAlign: 'center',
   fontStyle: 'italic',
   fontSize: '1.2rem',
-  '-webkit-font-smoothing': 'antialiased',
+  WebkitFontSmoothing: 'antialiased',
   justifyContent: 'center',
   '::before, ::after': {
     content: '"~"',
@@ -77,7 +77,7 @@ export default function FeaturePost({ data }: FeaturePostProps) {
     <Layout>
       <SEO
         title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)}
-        image={post.frontmatter.metaImage.childImageSharp.fluid.src}
+        image={post.frontmatter.metaImage && post.frontmatter.metaImage.childImageSharp.fluid.src}
       />
       <div>
         <h1 css={titleStyle}>{post.frontmatter.title}</h1>

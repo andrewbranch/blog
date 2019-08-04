@@ -21,7 +21,7 @@ export const textColors = {
 const typography = new Typography({
   bodyColor: textColors.primary,
   headerColor: textColors.highContrast,
-  baseFontSize: '20px',
+  baseFontSize: '18px',
   baseLineHeight: 1.6,
   scaleRatio: 2.4,
   bodyWeight: 300,

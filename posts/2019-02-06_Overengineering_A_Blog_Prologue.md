@@ -1,7 +1,9 @@
 ---
-title: "Overengineering a Blog, Prologue: An Ode to Red Squigglies"
+title: Overengineering a Blog, Prologue
+subtitle: An Ode to Red Squigglies
+slug: overengineering-a-blog-prologue-an-ode-to-red-squigglies
 date: 2019-02-07
-template: PlainPost
+template: FeaturePost
 ---
 
 <small-caps>It’s all about the red squigglies.</small-caps> Red squigglies in Microsoft products have been saving me from looking stupid since the second grade, and now they save me from writing stupid code on a minutely basis. Well, significantly less stupid code. You know the red squigglies I’m talking about? The red squigglies that tell you that no, it’s not spelled “bureauacracy,” and, more frequently for me lately, that object is possibly `undefined`.
