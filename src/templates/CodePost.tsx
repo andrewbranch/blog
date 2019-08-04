@@ -21,7 +21,7 @@ import { SmallCaps } from '../components/IntroCaps';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
-  components: { pre: ProgressiveCodeBlock, 'small-caps': SmallCaps, },
+  components: { pre: ProgressiveCodeBlock, 'small-caps': SmallCaps },
 }).Compiler;
 
 export interface CodeBlockContext {

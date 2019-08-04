@@ -5,7 +5,6 @@ template: CodePost
 slug: polymorphic-react-components
 globalPreamble: "
   import * as React from 'react';
-  declare var console: { log: (...args: any[]) => void };
   interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> { to: string }
   declare function Link(props: LinkProps): JSX.Element;
   declare function Icon(props: any): JSX.Element;
@@ -29,7 +28,8 @@ lib:
   - dom
 compilerOptions:
   lib:
-    - dom
+    - /lib.es2015.d.ts
+    - /lib.dom.d.ts
 ---
 
 <small-caps>When designing a React component for reusability</small-caps>, you often need to be able to pass different DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.

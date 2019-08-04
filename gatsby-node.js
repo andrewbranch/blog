@@ -68,6 +68,7 @@ exports.createPages = async ({ graphql, actions }) => {
               globalPreamble,
               lib,
               template,
+              compilerOptions,
               preambles {
                 file,
                 text
@@ -136,7 +137,11 @@ exports.createPages = async ({ graphql, actions }) => {
           ...Array.from(lib.core.entries()),
           ...Array.from(extraLibFiles.entries()),
         ]));
-        const { languageService } = createVirtualTypeScriptEnvironment(system, Array.from(sourceFiles.keys()));
+        const { languageService } = createVirtualTypeScriptEnvironment(
+          system,
+          Array.from(sourceFiles.keys()),
+          node.frontmatter.compilerOptions,
+        );
         await Promise.all(Object.keys(codeBlockContext).map(async codeBlockId => {
           const codeBlock = codeBlockContext[codeBlockId];
           const { fileName } = codeBlock;
@@ -222,3 +227,16 @@ exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
 
   actions.replaceWebpackConfig(config);
 };
+
+exports.createSchemaCustomization = ({ actions }) => {
+  const { createTypes } = actions
+  const typeDefs = `
+    type MarkdownRemark implements Node {
+      frontmatter: Frontmatter
+    }
+    type Frontmatter {
+      compilerOptions: JSON
+    }
+  `
+  createTypes(typeDefs)
+}
