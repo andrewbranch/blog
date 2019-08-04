@@ -61,7 +61,14 @@ const globalStyles = css({
     fontSize: '0.9rem',
   },
   '.footnote-backref': {
-    // display: 'none',
+    fontSize: 0,
+    position: 'relative',
+    '&::after': {
+      content: '"↩\\fe0e"',
+      fontSize: '1rem',
+      position: 'absolute',
+      left: 0,
+    },
   },
   'ol, ul': minWidth(variables.sizes.bigEnough, {
     marginLeft: rhythm(2),
