@@ -5,7 +5,7 @@ declare class RehypeReact {
       props: React.HTMLAttributes<HTMLElement>,
       children: React.ReactChildren,
     ) => React.ReactElement<any>,
-    components?: { [K in keyof React.ReactHTML]?: React.ComponentType<any> },
+    components?: { [key: string]: React.ComponentType<any> },
   });
   public Compiler: (htmlAst: any) => React.ReactElement<any>;
 }

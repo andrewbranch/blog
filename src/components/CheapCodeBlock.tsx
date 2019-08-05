@@ -8,6 +8,7 @@ const styles = css([
   commonBlockStyles,
   {
     whiteSpace: 'pre',
+    wordWrap: 'normal',
     padding: `${rhythm(0.5)} ${rhythm(0)}`,
     ...minWidth(variables.sizes.bigEnough, padding(1, Side.Horizontal)),
     code: {

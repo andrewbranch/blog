@@ -132,7 +132,6 @@ html[data-prefers-dark] {
 .tm-theme .entity.other.inherited-class.tsx { color: var(--types); }
 .tm-theme .constant.language.undefined.tsx { color: var(--primitive); }
 .tm-theme .variable.language.arguments.tsx { color: var(--variablename); }
-.tm-theme .support.type.object { color: var(--variablename); }
 .tm-theme .entity.name.tag { color: var(--types); }
 .tm-theme .entity.other.attribute-name { color: var(--property); }
 .tm-theme .variable.other.property,

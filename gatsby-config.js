@@ -40,7 +40,6 @@ module.exports = {
       options: {
         plugins: [
           `${__dirname}/gatsby-remark-asterisms`,
-          `${__dirname}/gatsby-remark-meta-image`,
           `${__dirname}/gatsby-remark-annotate-code-blocks`,
           'gatsby-remark-katex',
           `${__dirname}/gatsby-remark-figure`,
@@ -51,6 +50,7 @@ module.exports = {
             }
           },
           'gatsby-remark-static-images',
+          'gatsby-remark-autolink-headers'
         ]
       }
     },

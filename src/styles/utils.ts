@@ -1,4 +1,11 @@
-import { rhythm as createRhythm, groteskSansFamily, textColors, monoFamily, scriptFamily } from '../utils/typography';
+import {
+  rhythm as createRhythm,
+  groteskSansFamily,
+  textColors,
+  monoFamily,
+  serifFamily,
+  displayFamily,
+} from '../utils/typography';
 import { ObjectInterpolation, Interpolation, keyframes } from '@emotion/core';
 
 export const variables = {
@@ -27,10 +34,16 @@ const alignBaselines: ObjectInterpolation<any> = {
   alignItems: 'baseline',
 };
 
+const alignEnds: ObjectInterpolation<any> = {
+  display: 'flex',
+  alignItems: 'flex-end',
+};
+
 export const flex = {
   stretch,
   verticallyCenter,
   alignBaselines,
+  alignEnds,
 };
 
 const grotesk: ObjectInterpolation<any> = {
@@ -46,14 +59,40 @@ const mono: ObjectInterpolation<any> = {
   fontSize: '0.75rem',
 };
 
-const script: ObjectInterpolation<any> = {
-  fontFamily: scriptFamily.join(', '),
+const serif: ObjectInterpolation<any> = {
+  fontFamily: serifFamily.join(', '),
+  fontWeight: 'normal',
 };
 
-export const type = { grotesk, mono, script };
+const display: ObjectInterpolation<any> = {
+  fontFamily: displayFamily.join(', '),
+};
+
+const features: Record<'standard' | 'addDlig' | 'addSwashes', ObjectInterpolation<any>> = {
+  get standard() {
+    return { fontFeatureSettings: '"kern","liga","clig","calt"' };
+  },
+  get addDlig() {
+    return { fontFeatureSettings: this.standard.fontFeatureSettings + ',"dlig"' };
+  },
+  get addSwashes() {
+    return {
+      fontFeatureSettings: this.standard.fontFeatureSettings + ',"ss04","ss05","ss06","ss07","ss08","ss09","ss10"',
+    };
+  },
+};
+
+const variant: Record<'smallCaps', ObjectInterpolation<any>> = {
+  smallCaps: {
+    fontVariant: 'small-caps',
+  },
+};
+
+export const type = { grotesk, mono, serif, display, features, variant };
 
 export const textColor = {
   primary: { color: variables.colors.text.primary },
+  muted: { color: variables.colors.text.muted },
   secondary: { color: variables.colors.text.secondary },
   disabled: { color: variables.colors.text.disabled },
 };

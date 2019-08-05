@@ -5,9 +5,12 @@ import RehypeReact from 'rehype-react';
 import SEO from '../components/SEO';
 import { PostFooter } from '../components/PostFooter';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
+import { type, textColor } from '../styles/utils';
+import { SmallCaps } from '../components/IntroCaps';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
+  components: { 'small-caps': SmallCaps },
 }).Compiler;
 
 export const query = graphql`
@@ -42,7 +45,8 @@ export default function PlainPost({ data }: PlainPostProps) {
       <SEO title={post.frontmatter.title} />
       <div>
         <h1>{post.frontmatter.title}</h1>
-        <div>{renderAst(data.markdownRemark.htmlAst)}</div>
+        <p css={[type.grotesk, textColor.muted, { fontWeight: 500 }]}>{post.frontmatter.date}</p>
+        <div className="post-body">{renderAst(data.markdownRemark.htmlAst)}</div>
       </div>
       <PostFooter date={post.frontmatter.date} />
     </Layout>

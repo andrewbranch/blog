@@ -23,16 +23,20 @@
   --color-bg90: rgba(255, 255, 255, 0.9);
   --color-bg100: rgba(255, 255, 255, 1);
 
-  --blue: #107c9c;
+  --red: #ff7f7f;
+  --red-dark: #b55a5a;
+  --red-light: #ffc0c0;
+  --blue: #0070ae;
 
   --background: var(--color-bg100);
   --background-alt: #fafafa;
   --highContrastText: var(--color-fg100);
   --primaryText: var(--color-fg85);
+  --mutedText: var(--color-fg70);
   --secondaryText: var(--color-fg54);
   --disabledText: var(--color-fg32);
   --linkText: var(--blue);
-  --inlineCodeText: var(--string);
+  --inlineCodeText: var(--red-dark);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -65,7 +69,7 @@
     --background-alt: var(--color-bg100);
 
     --linkText: #2ca7cc;
-    --inlineCodeText: var(--controlflow);
+    --inlineCodeText: var(--red-light);
   }
 }
 
@@ -98,5 +102,5 @@ html[data-prefers-dark] {
   --background-alt: var(--color-bg100);
 
   --linkText: #2ca7cc;
-  --inlineCodeText: var(--controlflow);
+  --inlineCodeText: var(--red-light);
 }

@@ -13,14 +13,15 @@ import SEO from '../components/SEO';
 import { ErrorCatcher } from '../components/ErrorCatcher';
 import { PostFooter } from '../components/PostFooter';
 import 'katex/dist/katex.min.css';
-import { textColor } from '../styles/utils';
+import { textColor, type } from '../styles/utils';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { isTypeScriptFileName } from '../utils/typescript/utils';
 import { safeGA } from '../utils/safeGA';
+import { SmallCaps } from '../components/IntroCaps';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
-  components: { pre: ProgressiveCodeBlock },
+  components: { pre: ProgressiveCodeBlock, 'small-caps': SmallCaps },
 }).Compiler;
 
 export interface CodeBlockContext {
@@ -279,8 +280,9 @@ function CodePost({ data, pageContext }: CodePostProps) {
             <hr />
           </>
           : null}
+          <p css={[type.grotesk, textColor.muted, { fontWeight: 500 }]}>{post.frontmatter.date}</p>
         <EditableContext.Provider value={context}>
-          <div>{renderAst(data.markdownRemark.htmlAst)}</div>
+          <div className="post-body">{renderAst(data.markdownRemark.htmlAst)}</div>
         </EditableContext.Provider>
         <PostFooter date={post.frontmatter.date} />
       </div>

@@ -1,35 +1,33 @@
 const {
+  DEFAULT_OPTIONS,
   imageClass,
   imageBackgroundClass,
-  imageWrapperClass,
-} = require(`./constants`)
+} = require("./constants");
 
-exports.onRouteUpdate = () => {
-  const imageWrappers = document.querySelectorAll(`.${imageWrapperClass}`)
-
-  // https://css-tricks.com/snippets/javascript/loop-queryselectorall-matches/
-  // for cross-browser looping through NodeList without polyfills
-  for (let i = 0; i < imageWrappers.length; i++) {
-    const imageWrapper = imageWrappers[i]
-
-    const backgroundElement = imageWrapper.querySelector(
-      `.${imageBackgroundClass}`
-    )
-    const imageElement = imageWrapper.querySelector(`.${imageClass}`)
-
-    const onImageLoad = () => {
-      backgroundElement.style.transition = `opacity 0.5s 0.5s`
-      backgroundElement.style.opacity = 0
-      imageElement.style.transition = `opacity 0.5s`
-      imageElement.style.opacity = 1
-      imageElement.removeEventListener(`load`, onImageLoad)
+exports.onInitialClientRender = function onInitialClientRender(apiCallbackContext, pluginOptions) {
+  const options = Object.assign({}, DEFAULT_OPTIONS, pluginOptions);
+  document.addEventListener('load', event => {
+    if (event.target instanceof HTMLImageElement && event.target.classList.contains(imageClass)) {
+      fadeOutBackground(event.target);
     }
+  }, true);
 
-    if (imageElement.complete) {
-      backgroundElement.style.opacity = 0
-    } else {
-      imageElement.style.opacity = 0
-      imageElement.addEventListener(`load`, onImageLoad)
+  document.querySelectorAll(`img.${imageClass}`).forEach(img => {
+    if (img.complete) {
+      fadeOutBackground(img);
     }
+  });
+}
+
+function fadeOutBackground(imageElement) {
+  const backgroundElement = imageElement.previousElementSibling;
+  imageElement.style.opacity = 0;
+  imageElement.style.transition = "opacity 0.5s";
+  if (backgroundElement && backgroundElement.classList.contains(imageBackgroundClass)) {
+    backgroundElement.style.transition = "opacity 0.5s 0.5s";
+    backgroundElement.style.opacity = 0;
   }
+
+  imageElement.style.opacity = 1;
+  imageElement.style.color = "inherit";
 }
