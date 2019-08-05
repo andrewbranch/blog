@@ -1,6 +1,6 @@
 ---
 title: Writing Type-Safe Polymorphic React Components (Without Crashing TypeScript)
-date: 2019-07-14
+date: 2019-08-05
 template: CodePost
 slug: polymorphic-react-components
 globalPreamble: "
