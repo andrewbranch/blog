@@ -3,6 +3,7 @@ title: Writing Type-Safe Polymorphic React Components (Without Crashing TypeScri
 date: 2019-08-05
 template: CodePost
 slug: polymorphic-react-components
+metaImage: images/rabbit-light.png
 globalPreamble: "
   import * as React from 'react';
   interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> { to: string }

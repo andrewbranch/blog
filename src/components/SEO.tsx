@@ -42,7 +42,7 @@ const SEO = ({ description, lang, meta, keywords, title, image }: SEOProps) => {
               },
               {
                 property: 'og:image',
-                content: absoluteURL(image),
+                content: absoluteURL(image || data.file.childImageSharp.fixed.src),
               },
               {
                 property: 'og:description',
@@ -109,6 +109,13 @@ const detailsQuery = graphql`
         siteUrl
         description
         author
+      }
+    }
+    file(relativePath: { eq: "logo.png" }) {
+      childImageSharp {
+        fixed(width: 1200) {
+          src
+        }
       }
     }
   }

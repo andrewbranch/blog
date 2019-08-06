@@ -18,6 +18,7 @@ import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { isTypeScriptFileName } from '../utils/typescript/utils';
 import { safeGA } from '../utils/safeGA';
 import { SmallCaps } from '../components/IntroCaps';
+import { formatTitle } from '../utils/formatTitle';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -49,9 +50,18 @@ export interface CodePostProps {
       htmlAst: any;
       frontmatter: {
         title: string;
+        subtitle?: string;
         note?: string;
         lib: import('../utils/typescript/types').Extra[];
         date: string;
+        compilerOptions?: import('typescript').CompilerOptions;
+        metaImage?: {
+          childImageSharp: {
+            fluid: {
+              src: string;
+            };
+          };
+        };
       };
     };
   };
@@ -71,9 +81,18 @@ export const query = graphql`
       htmlAst
       frontmatter {
         title
+        subtitle
         note
         lib
         date(formatString: "MMMM DD, YYYY")
+        compilerOptions
+        metaImage {
+          childImageSharp {
+            fluid(maxWidth: 1600) {
+              src
+            }
+          }
+        }
       }
     }
   }
@@ -245,6 +264,7 @@ function CodePost({ data, pageContext }: CodePostProps) {
             initializedTsEnv = createVirtualTypeScriptEnvironment(
               createSystem(sysFiles),
               [],
+              post.frontmatter.compilerOptions,
             );
             setTsEnv(initializedTsEnv);
           }
@@ -266,7 +286,10 @@ function CodePost({ data, pageContext }: CodePostProps) {
 
   return (
     <Layout>
-      <SEO title={post.frontmatter.title} />
+      <SEO
+        title={formatTitle(post.frontmatter.title, post.frontmatter.subtitle)}
+        image={post.frontmatter.metaImage && post.frontmatter.metaImage.childImageSharp.fluid.src}
+      />
       <div>
         <h1>{post.frontmatter.title}</h1>
         {post.frontmatter.note
