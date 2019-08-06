@@ -6,7 +6,7 @@ import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import { PostFooter } from '../components/PostFooter';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
-import { type, textColor, variables, flex, padding, Side } from '../styles/utils';
+import { type, textColor, variables, flex, padding, Side, minWidth } from '../styles/utils';
 import { formatTitle } from '../utils/formatTitle';
 import { SmallCaps } from '../components/IntroCaps';
 
@@ -55,7 +55,14 @@ export interface FeaturePostProps {
   };
 }
 
-const titleStyle = css([{ fontWeight: 400, fontSize: '3.4rem', textAlign: 'center' }]);
+const titleStyle = css([{
+  fontWeight: 400,
+  fontSize: '2.8rem',
+  textAlign: 'center',
+}, minWidth(variables.sizes.bigEnough, {
+  fontSize: '3.4rem',
+})]);
+
 const subtitleStyle = css([type.serif, textColor.secondary, flex.verticallyCenter, {
   textAlign: 'center',
   fontStyle: 'italic',
