@@ -75,7 +75,7 @@
     "@types/prop-types": "^15.7.1",
     "@types/react": "^16.8.23",
     "@types/react-dom": "^16.8.4",
-    "@types/react-helmet": "^5.0.8",
+    "@types/react-helmet": "^5.0.9",
     "@types/react-transition-group": "^2.9.2",
     "@types/shallowequal": "^1.1.1",
     "@types/slate-react": "0.20",
