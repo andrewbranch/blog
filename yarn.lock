@@ -11913,10 +11913,10 @@ slate-react@^0.21.15:
     tiny-invariant "^1.0.1"
     tiny-warning "^0.0.3"
 
-slate@^0.44.9:
-  version "0.44.13"
-  resolved "https://registry.yarnpkg.com/slate/-/slate-0.44.13.tgz#9c87d0769fd7bacc3ce649f4e3c9fd3a2e705245"
-  integrity sha512-GcDon/8iN6Mmonl7FucSDGs9KYDB7S9gs+fnnJDny5HFsHGGDTDwfBnRXMyKDC307sRZ+yhauqKSulHkoBdB9A==
+slate@^0.47.6:
+  version "0.47.6"
+  resolved "https://registry.yarnpkg.com/slate/-/slate-0.47.6.tgz#8ef115211cf0dd5f14be9261db90426bc8ec5c0a"
+  integrity sha512-FwUcASrSLohFrCY5MN7UYAjq40DSr4nYsGoh2lZAPxo97OGs9JqDRxaOe0DQNezZoYY8FUSHXMtxIgFIw9nfHA==
   dependencies:
     debug "^3.1.0"
     direction "^0.1.5"
