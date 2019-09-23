@@ -12,7 +12,7 @@
   "dependencies": {
     "@emotion/babel-preset-css-prop": "^10.0.14",
     "@emotion/core": "^10.0.14",
-    "gatsby": "^2.13.21",
+    "gatsby": "^2.15.21",
     "gatsby-image": "^2.2.6",
     "gatsby-plugin-catch-links": "^2.1.2",
     "gatsby-plugin-emotion": "^4.1.2",
