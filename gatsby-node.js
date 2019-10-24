@@ -37,9 +37,13 @@ function toScopeName(lang) {
   switch (lang) {
     case 'ts':
     case 'tsx':
-      return 'source.tsx'
+      return 'source.tsx';
     case 'md':
       return 'text.html.markdown';
+    case 'json':
+      return 'source.json.comments';
+    case 'shell':
+      return 'source.shell';
   }
 }
 
@@ -91,7 +95,7 @@ exports.createPages = async ({ graphql, actions }) => {
         const codeBlockContext = {};
         visit(
           node.htmlAst,
-          node => node.tagName === 'code' && ['ts', 'tsx', 'md'].includes(node.properties.dataLang),
+          node => node.tagName === 'code' && ['ts', 'tsx', 'md', 'shell', 'json'].includes(node.properties.dataLang),
           code => {
             const codeBlockId = code.properties.id;
             const metaData = deserializeAttributes(code.properties);
@@ -150,10 +154,12 @@ exports.createPages = async ({ graphql, actions }) => {
             languageService,
             visibleSpan: { start: codeBlock.start, length: codeBlock.end - codeBlock.start },
           }) : undefined;
-          const grammar = await getTmRegistry(ssrFileProvider).loadGrammar(toScopeName(codeBlock.lang));
-          const tmTokenizer = createTmGrammarTokenizer({ grammar });
-          const tokenizer = composeTokenizers(...compact([tmTokenizer, typeScriptTokenizer]));
-          codeBlock.tokens = tokenizer.tokenizeDocument(codeBlock.text);
+          if (codeBlock.lang) {
+            const grammar = await getTmRegistry(ssrFileProvider).loadGrammar(toScopeName(codeBlock.lang));
+            const tmTokenizer = createTmGrammarTokenizer({ grammar });
+            const tokenizer = composeTokenizers(...compact([tmTokenizer, typeScriptTokenizer]));
+            codeBlock.tokens = tokenizer.tokenizeDocument(codeBlock.text);
+          }
           if (isTypeScriptFileName(fileName)) {
             codeBlock.quickInfo = {};
             codeBlock.tokens.forEach(line => {

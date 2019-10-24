@@ -7,13 +7,22 @@ import { assertUnreachable } from '../assertions';
 export const ssrFileProvider: FileProvider = {
   readLanguageFile: async languageFile => {
     switch (languageFile) {
-      case LanguageFile.TypeScriptReact:
-        return fs.readFileSync(path.resolve(__dirname, 'TypeScriptReact.tmLanguage'), 'utf8');
-      case LanguageFile.Markdown:
-        return fs.readFileSync(path.resolve(__dirname, 'Markdown.tmLanguage'), 'utf8');
-      case LanguageFile.YAML:
-        return fs.readFileSync(path.resolve(__dirname, 'YAML.tmLanguage'), 'utf8');
-      default:
+      case LanguageFile.TypeScriptReact: {
+        const fileName = path.resolve(__dirname, 'TypeScriptReact.tmLanguage');
+        return { contents: fs.readFileSync(fileName, 'utf8'), fileName };
+      } case LanguageFile.Markdown: {
+        const fileName = path.resolve(__dirname, 'Markdown.tmLanguage');
+        return { contents: fs.readFileSync(fileName, 'utf8'), fileName };
+      } case LanguageFile.YAML: {
+        const fileName = path.resolve(__dirname, 'YAML.tmLanguage');
+        return { contents: fs.readFileSync(fileName, 'utf8'), fileName };
+      } case LanguageFile.Shell: {
+        const fileName = path.resolve(__dirname, 'shell-unix-bash.tmLanguage.json');
+        return { contents: fs.readFileSync(fileName, 'utf8'), fileName };
+      } case LanguageFile.JSON: {
+        const fileName = path.resolve(__dirname, 'JSONC.tmLanguage.json');
+        return { contents: fs.readFileSync(fileName, 'utf8'), fileName };
+      } default:
         return assertUnreachable(languageFile);
     }
   },

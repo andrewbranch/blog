@@ -4,8 +4,11 @@ export const webpackFileProvider: FileProvider = {
   readLanguageFile: async languageFile => {
     switch (languageFile) {
       case LanguageFile.TypeScriptReact:
-        // tslint:disable-next-line:no-implicit-dependencies
-        return (await import('!raw-loader!./TypeScriptReact.tmLanguage')).default;
+        return {
+          fileName: 'TypeScriptReact.tmLanguage',
+          // tslint:disable-next-line:no-implicit-dependencies
+          contents: (await import('!raw-loader!./TypeScriptReact.tmLanguage')).default,
+        };
       default:
         throw new Error(`${languageFile} should not be used in the browser.`);
     }

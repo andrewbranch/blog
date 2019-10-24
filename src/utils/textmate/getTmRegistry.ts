@@ -5,6 +5,8 @@ export enum LanguageFile {
   TypeScriptReact = 'source.tsx',
   Markdown = 'text.html.markdown',
   YAML = 'source.yaml',
+  Shell = 'source.shell',
+  JSON = 'source.json.comments',
 }
 
 function isLanguageFileScopeName(scopeName: string): scopeName is LanguageFile {
@@ -12,7 +14,7 @@ function isLanguageFileScopeName(scopeName: string): scopeName is LanguageFile {
 }
 
 export interface FileProvider {
-  readLanguageFile: (fileName: LanguageFile) => Promise<string>;
+  readLanguageFile: (fileName: LanguageFile) => Promise<{ fileName: string, contents: string }>;
   readOnigasmFile: () => Promise<ArrayBuffer>;
 }
 
@@ -25,7 +27,8 @@ export function getTmRegistry(fileProvider: FileProvider) {
   registry = new Registry({
     loadGrammar: async scopeName => {
       if (isLanguageFileScopeName(scopeName)) {
-        return parseRawGrammar(await fileProvider.readLanguageFile(scopeName), '');
+        const { fileName, contents } = await fileProvider.readLanguageFile(scopeName);
+        return parseRawGrammar(contents, fileName);
       }
       return null;
     },

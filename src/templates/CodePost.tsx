@@ -222,6 +222,7 @@ function getFullText(sourceFileContext: SourceFileContext, codeBlocks: Record<st
 
 function CodePost({ data, pageContext }: CodePostProps) {
   const post = data.markdownRemark;
+  Object.assign(window, { pageContext });
 
   // Clone code blocks from page context to provide via context.
   // Values will be mutated on change, but changes don’t need to cause
