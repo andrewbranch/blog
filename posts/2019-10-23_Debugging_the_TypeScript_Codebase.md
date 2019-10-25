@@ -72,7 +72,7 @@ If you haven’t already, open the TypeScript codebase in VS Code. Open the comm
 
 ![A screenshot of VS Code with the command palette open, searching “debug.” A list of results is shown with “Debug: Attach to Node Process” focused.](images/attach-to-node-process.png)
 
-VS Code will open tsc.js and show that the debugger is paused on the first line. From here, you can continue or step the debugger and hit breakpoints in the TypeScript source files. (I’m not sure why it starts in the built tsc.js file instead of the source tsc.ts file, but once you step into a different file, the debugger will bring up the TypeScript source instead of the built JavaScript.)
+VS Code will open tsc.js and show that the debugger is paused on the first line. From here, you can continue or step the debugger and hit breakpoints in the TypeScript source files.[^1]
 
 ### Debugging from TS Server
 If you need to debug a language service feature (like a refactor, a code fix, the formatter, or code completion), debugging VS Code’s TS Server instance is often the most convenient approach. Again, you’ll need the TypeScript codebase cloned, built, and opened in one VS Code window. You’ll also need _another_ VS Code window opened to a project of your choice. (I have a dedicated project filled with nonsense TypeScript and JavaScript files for this purpose.) We’ll use the former VS Code window to debug the latter. (Impressively, a single VS Code instance _can_ debug its own TS Server process, but TypeScript-powered editor features like go-to-definition don’t work while the process is paused, so it’s much easier to use two windows.)
@@ -130,7 +130,7 @@ Both `tsc` and the language service use the [Program](https://github.com/microso
   wrapperClassName: dark-only
 -->
 ! ![A rough, hand-drawn architecture diagram of the TypeScript codebase](images/ts-diagram-dark.png)
-! Whiteboarding the compiler structure. Not scientific. Not complete. <br/> Don’t @ me. Get out of here with your diagramming prowess.
+! Whiteboarding the compiler structure. Not scientific. Not complete. Don’t @ me. Get out of here with your diagram nitpicking.
 
 
 ### Know Your Nodes!
@@ -187,3 +187,6 @@ If this has made contributing to TypeScript feel less daunting, peruse through t
 
 * VS Code’s [docs on debugging](https://code.visualstudio.com/docs/editor/debugging) are good if you’re not familiar with it.
 * Orta’s [typescript-notes](https://github.com/orta/typescript-notes) serve well as a first-time contributer’s guide.
+
+[^1]:
+  I’m not sure why it starts in the built tsc.js file instead of the source tsc.ts file, but once you step into a different file, the debugger will bring up the TypeScript source instead of the built JavaScript.
