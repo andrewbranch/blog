@@ -84,7 +84,7 @@ const globalStyles = css({
       fontVariant: 'small-caps',
       textTransform: 'lowercase',
       letterSpacing: '3px',
-      fontWeight: 'bold',
+      fontWeight: 500,
       fontSize: '1rem',
       marginBottom: rhythm(0.25),
       ...type.features.addSwashes,
