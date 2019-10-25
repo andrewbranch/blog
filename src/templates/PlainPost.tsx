@@ -6,7 +6,7 @@ import SEO from '../components/SEO';
 import { PostFooter } from '../components/PostFooter';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { type, textColor } from '../styles/utils';
-import { SmallCaps } from '../components/IntroCaps';
+import { SmallCaps } from '../components/SmallCaps';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,

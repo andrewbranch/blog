@@ -85,6 +85,7 @@ const features: Record<'standard' | 'addDlig' | 'addSwashes', ObjectInterpolatio
 const variant: Record<'smallCaps', ObjectInterpolation<any>> = {
   smallCaps: {
     fontVariant: 'small-caps',
+    letterSpacing: '0.3px',
   },
 };
 
