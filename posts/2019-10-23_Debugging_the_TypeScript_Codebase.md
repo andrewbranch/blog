@@ -66,13 +66,13 @@ Debugger listening on ws://127.0.0.1:9229/60b1b25a-f29d-4568-8619-b5e29b6dee25
 For help, see: https://nodejs.org/en/docs/inspector
 ```
 
-Node is paused at the beginning of tsc.js and waiting for you to attach the debugger of your choice. I’ll be demonstrating use of VS Code’s built-in debugger, but any Node debugger that can attach to a listening debug port will work.
+Node is paused at the beginning of tsc.js and waiting for you to attach the debugger of your choice. I’ll be demonstrating use of VS Code’s built-in debugger[^1], but any Node debugger that can attach to a listening debug port will work.
 
 If you haven’t already, open the TypeScript codebase in VS Code. Open the command palette and select “Debug: Attach to Node Process,” then select the process you just started (on port 9229 by default).
 
 ![A screenshot of VS Code with the command palette open, searching “debug.” A list of results is shown with “Debug: Attach to Node Process” focused.](images/attach-to-node-process.png)
 
-VS Code will open tsc.js and show that the debugger is paused on the first line. From here, you can continue or step the debugger and hit breakpoints in the TypeScript source files.[^1]
+VS Code will open tsc.js and show that the debugger is paused on the first line. From here, you can continue or step the debugger and hit breakpoints in the TypeScript source files.[^2]
 
 ### Debugging from TS Server
 If you need to debug a language service feature (like a refactor, a code fix, the formatter, or code completion), debugging VS Code’s TS Server instance is often the most convenient approach. Again, you’ll need the TypeScript codebase cloned, built, and opened in one VS Code window. You’ll also need _another_ VS Code window opened to a project of your choice. (I have a dedicated project filled with nonsense TypeScript and JavaScript files for this purpose.) We’ll use the former VS Code window to debug the latter. (Impressively, a single VS Code instance _can_ debug its own TS Server process, but TypeScript-powered editor features like go-to-definition don’t work while the process is paused, so it’s much easier to use two windows.)
@@ -162,7 +162,7 @@ The reason you want to be familiar with proper names for syntax is that the pars
 This is very frequently the strategy I use to start debugging a problem. We should issue an error on `x.badProperty` but we don’t? Look for a function in checker.ts called `checkPropertyAccessExpression`. An expando property assignment fails to create a declaration on its container? Assignment is a form of binary expression, and there are only eight references to `SyntaxKind.BinaryExpression` in the binder, so one of them should be near the culprit.
 
 ### Setting Breakpoints by Diagnostic Message
-If you have a test case that emits a diagnostic message (read: red squiggly error) you don’t understand, finding the place to set a breakpoint is _really_ easy. Simply run a find-all inside the `src` directory for a few words of the error message, with spaces replaced by underscores. For example, if you want to find out why you got the message “JSX element ‘a’ has no corresponding closing tag,” try searching for `has_no_corresponding_closing` and you’ll [find it](https://github.com/microsoft/TypeScript/blob/8cf13249eab1562de81bc4c426aa8aa8a979b6fb/src/compiler/parser.ts#L4412). Set a breakpoint and work backwards by inspecting up the call stack if necessary.
+If you have a test case that emits a diagnostic message (read: red squiggly error) you don’t understand, finding the place to set a breakpoint is _really_ easy. Simply run a find-all inside the `src` directory for a few words of the error message, with spaces replaced by underscores. For example, if you want to find out why you got the message “JSX element 'a' has no corresponding closing tag,” try searching for `has_no_corresponding_closing` and you’ll [find it](https://github.com/microsoft/TypeScript/blob/8cf13249eab1562de81bc4c426aa8aa8a979b6fb/src/compiler/parser.ts#L4412). Set a breakpoint and work backwards by inspecting up the call stack if necessary.
 
 Be aware that substitutions like `'a'` in that error are represented as numerals in the diagnostic property (`Diagnostics.JSX_element_0_has_no_corresponding_closing_tag`), so you might want to avoid areas of the message that look dynamic or highly specific in your search terms.
 
@@ -179,14 +179,11 @@ Finally, now that you know where to pause the debugger, you’ll want to be able
 * You can access a function exported from the `ts` namespace in another file by writing its fully qualified name in the debug console. I feel like this is worth mentioning because at most places in the source code, you can drop the `ts` prefix and write functions like `isIdentifier(node)`, but in the debug console, you have to write `ts.isIdentifier(node)`.
 
 ## You’re an expert! Now what?
-If this has made contributing to TypeScript feel less daunting, peruse through the issues labeled “[good first issue](https://github.com/microsoft/TypeScript/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)” or “[help wanted](https://github.com/microsoft/TypeScript/issues?utf8=✓&q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22+).” Maybe you’ll find something that inspires you!
-
----
-
-## Further Reading
-
-* VS Code’s [docs on debugging](https://code.visualstudio.com/docs/editor/debugging) are good if you’re not familiar with it.
-* Orta’s [typescript-notes](https://github.com/orta/typescript-notes) serve well as a first-time contributer’s guide.
+If this has made contributing to TypeScript feel less daunting, peruse through the issues labeled “[good first issue](https://github.com/microsoft/TypeScript/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)” or “[help wanted](https://github.com/microsoft/TypeScript/issues?utf8=✓&q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22+).” Maybe you’ll find something that inspires you![^3]
 
 [^1]:
-  I’m not sure why it starts in the built tsc.js file instead of the source tsc.ts file, but once you step into a different file, the debugger will bring up the TypeScript source instead of the built JavaScript.
+  VS Code’s [docs on debugging](https://code.visualstudio.com/docs/editor/debugging) are good if you’re not familiar with it.
+[^2]:
+  I’m not sure why the debugger starts in the built tsc.js file instead of the source tsc.ts file, but once you step into a different file, the debugger will bring up the TypeScript source instead of the built JavaScript.
+[^3]:
+  Orta’s [typescript-notes](https://github.com/orta/typescript-notes) also serve well as a first-time contributer’s guide.
