@@ -5,7 +5,7 @@ const {
 } = require("./constants");
 
 exports.onInitialClientRender = function onInitialClientRender(apiCallbackContext, pluginOptions) {
-  const options = Object.assign({}, DEFAULT_OPTIONS, pluginOptions);
+  // const options = Object.assign({}, DEFAULT_OPTIONS, pluginOptions);
   document.addEventListener('load', event => {
     if (event.target instanceof HTMLImageElement && event.target.classList.contains(imageClass)) {
       fadeOutBackground(event.target);

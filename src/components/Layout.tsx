@@ -36,6 +36,14 @@ const globalStyles = css({
     ...masked(rhythm(0.2), rhythm(0.5)),
     '.katex-html .base:last-child': padding(0.5, Side.Right),
   },
+  pre: {
+    lineHeight: 1.6,
+  },
+  ':not(pre) > code': [type.mono, {
+    fontSize: '0.8rem',
+    color: 'var(--inlineCodeText)',
+    borderRadius: 3,
+  }],
   a: {
     color: variables.colors.text.link,
     textDecorationSkip: 'ink',
@@ -48,14 +56,6 @@ const globalStyles = css({
       color: 'inherit',
     },
   },
-  pre: {
-    lineHeight: 1.6,
-  },
-  code: [type.mono, {
-    fontSize: '0.8rem',
-    color: 'var(--inlineCodeText)',
-    borderRadius: 3,
-  }],
   '.footnotes p': {
     display: 'inline',
     fontSize: '0.9rem',
@@ -82,8 +82,10 @@ const globalStyles = css({
     '.intro-caps': [type.variant.smallCaps, type.features.addDlig],
     h3: {
       fontVariant: 'small-caps',
+      textTransform: 'lowercase',
+      letterSpacing: '3px',
       fontWeight: 500,
-      fontSize: '1.2rem',
+      fontSize: '1rem',
       marginBottom: rhythm(0.25),
       ...type.features.addSwashes,
       code: {
@@ -105,7 +107,7 @@ const globalStyles = css({
     type.grotesk,
     textColor.secondary,
     margin(0.4, Side.Top),
-    { fontSize: '0.8rem', fontWeight: 500, textAlign: 'center' },
+    { fontSize: '0.9rem', fontWeight: 500, textAlign: 'center' },
   ],
   '.asterism': [textColor.secondary, {
     fontFamily: 'AppleGothic, serif',

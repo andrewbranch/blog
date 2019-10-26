@@ -17,7 +17,7 @@ import { textColor, type } from '../styles/utils';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { isTypeScriptFileName } from '../utils/typescript/utils';
 import { safeGA } from '../utils/safeGA';
-import { SmallCaps } from '../components/IntroCaps';
+import { SmallCaps } from '../components/SmallCaps';
 import { formatTitle } from '../utils/formatTitle';
 
 const renderAst = new RehypeReact({

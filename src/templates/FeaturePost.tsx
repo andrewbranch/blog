@@ -8,7 +8,7 @@ import { PostFooter } from '../components/PostFooter';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
 import { type, textColor, variables, flex, padding, Side, minWidth } from '../styles/utils';
 import { formatTitle } from '../utils/formatTitle';
-import { SmallCaps } from '../components/IntroCaps';
+import { SmallCaps } from '../components/SmallCaps';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
