@@ -80,7 +80,7 @@
     "@types/shallowequal": "^1.1.1",
     "@types/slate-react": "0.20",
     "@types/typography": "^0.16.2",
-    "@types/webpack": "^4.4.35",
+    "@types/webpack": "^4.39.5",
     "@types/webpack-merge": "^4.1.5",
     "babel-plugin-prismjs": "^1.0.2",
     "babel-preset-gatsby": "^0.1.11",
