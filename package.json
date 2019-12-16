@@ -53,7 +53,7 @@
     "rehype-react": "^3.1.0",
     "requestidlecallback": "^0.3.0",
     "shallowequal": "^1.1.0",
-    "slate": "^0.44.9",
+    "slate": "^0.55.0",
     "slate-react": "^0.21.15",
     "typescript": "^3.5.3",
     "typography": "^0.16.19",
