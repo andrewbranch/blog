@@ -79,7 +79,7 @@ const globalStyles = css({
     ...type.features.addSwashes,
   },
   'h1 .anchor svg, h2 .anchor svg, h3 .anchor svg, h4 .anchor svg, h5 .anchor svg, h6 .anchor svg' : {
-    fill: variables.colors.text.link,
+    fill: variables.colors.text.primary,
   },
   '.post-body': {
     '.intro-caps': [type.variant.smallCaps, type.features.addDlig],
