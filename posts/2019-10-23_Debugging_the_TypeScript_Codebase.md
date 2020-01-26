@@ -84,6 +84,8 @@ cd example-project
 TSS_DEBUG=9559 code .
 ```
 
+_**January 2020 update:** I recently published a [VS Code extension](https://marketplace.visualstudio.com/items?itemName=andrewbranch.vscode-tsserver-debug) that can restart an open window’s TS Server process with a debug port listening. Could save you a step!_
+
 Next, you need to tell that VS Code window where to find the version of TypeScript that you built locally so it can be used for TS Server. Create or modify your example project’s `.vscode/settings.json` file with the following setting:
 
 ```json
