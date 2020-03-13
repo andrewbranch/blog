@@ -22,6 +22,9 @@ export const ssrFileProvider: FileProvider = {
       } case LanguageFile.JSON: {
         const fileName = path.resolve(__dirname, 'JSONC.tmLanguage.json');
         return { contents: fs.readFileSync(fileName, 'utf8'), fileName };
+      } case LanguageFile.CSS: {
+        const fileName = path.resolve(__dirname, 'css.tmLanguage.json');
+        return { contents: fs.readFileSync(fileName, 'utf8'), fileName };
       } default:
         return assertUnreachable(languageFile);
     }

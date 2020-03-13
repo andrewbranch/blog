@@ -1,5 +1,4 @@
 const {
-  DEFAULT_OPTIONS,
   imageClass,
   imageBackgroundClass,
 } = require("./constants");

@@ -7,10 +7,12 @@ export enum LanguageFile {
   YAML = 'source.yaml',
   Shell = 'source.shell',
   JSON = 'source.json.comments',
+  CSS = 'source.css',
 }
 
 function isLanguageFileScopeName(scopeName: string): scopeName is LanguageFile {
-  return Object.values(LanguageFile).includes(scopeName);
+  const values: string[] = Object.values(LanguageFile);
+  return values.includes(scopeName);
 }
 
 export interface FileProvider {
