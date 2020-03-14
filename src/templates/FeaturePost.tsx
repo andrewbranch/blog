@@ -6,7 +6,7 @@ import Layout from '../components/Layout';
 import SEO from '../components/SEO';
 import { PostFooter } from '../components/PostFooter';
 import { useScrollDepthTracking } from '../hooks/useScrollDepthTracking';
-import { type, textColor, variables, flex, padding, Side, minWidth } from '../styles/utils';
+import { type, variables, flex, padding, Side, minWidth } from '../styles/utils';
 import { formatTitle } from '../utils/formatTitle';
 import { SmallCaps } from '../components/SmallCaps';
 
@@ -63,12 +63,9 @@ const titleStyle = css([{
   fontSize: '3.4rem',
 })]);
 
-const subtitleStyle = css([type.serif, textColor.secondary, flex.verticallyCenter, {
-  textAlign: 'center',
-  fontStyle: 'italic',
-  fontSize: '1.2rem',
-  WebkitFontSmoothing: 'antialiased',
+const subtitleStyle = css([type.subtilte, flex.verticallyCenter, {
   justifyContent: 'center',
+  textAlign: 'center',
   '::before, ::after': {
     content: '"~"',
     color: variables.colors.text.disabled,

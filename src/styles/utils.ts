@@ -77,7 +77,8 @@ const features: Record<'standard' | 'addDlig' | 'addSwashes', ObjectInterpolatio
   },
   get addSwashes() {
     return {
-      fontFeatureSettings: this.standard.fontFeatureSettings + ',"ss04","ss05","ss06","ss07","ss08","ss09","ss10"',
+      fontFeatureSettings: this.standard.fontFeatureSettings
+        + ',"ss04","ss05","ss06","ss07","ss08","ss09","ss10","onum"',
     };
   },
 };
@@ -89,14 +90,24 @@ const variant: Record<'smallCaps', ObjectInterpolation<any>> = {
   },
 };
 
-export const type = { grotesk, mono, serif, display, features, variant };
-
 export const textColor = {
   primary: { color: variables.colors.text.primary },
   muted: { color: variables.colors.text.muted },
   secondary: { color: variables.colors.text.secondary },
   disabled: { color: variables.colors.text.disabled },
 };
+
+const subtilte: ObjectInterpolation<any>[] = [
+  serif,
+  textColor.secondary,
+  {
+    fontStyle: 'italic',
+    fontSize: '1.2rem',
+    WebkitFontSmoothing: 'antialiased',
+  },
+];
+
+export const type = { grotesk, mono, serif, display, features, variant, subtilte };
 
 const unanchor: ObjectInterpolation<any> = {
   color: 'unset',

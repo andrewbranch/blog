@@ -44,6 +44,8 @@ function toScopeName(lang) {
       return 'source.json.comments';
     case 'shell':
       return 'source.shell';
+    case 'css':
+      return 'source.css';
   }
 }
 
@@ -95,7 +97,7 @@ exports.createPages = async ({ graphql, actions }) => {
         const codeBlockContext = {};
         visit(
           node.htmlAst,
-          node => node.tagName === 'code' && ['ts', 'tsx', 'md', 'shell', 'json'].includes(node.properties.dataLang),
+          node => node.tagName === 'code' && ['ts', 'tsx', 'md', 'shell', 'json', 'css'].includes(node.properties.dataLang),
           code => {
             const codeBlockId = code.properties.id;
             const metaData = deserializeAttributes(code.properties);
@@ -112,7 +114,7 @@ exports.createPages = async ({ graphql, actions }) => {
               codeBlock.end = codeBlock.start + text.length;
               existingSourceFile.fragments.push(sourceFileFragment);
             } else {
-              const filePreamble = node.frontmatter.preambles.find(p => p.file === fileName);
+              const filePreamble = node.frontmatter.preambles && node.frontmatter.preambles.find(p => p.file === fileName);
               const preamble = (node.frontmatter.globalPreamble || '') + (filePreamble ? filePreamble.text : '');
               codeBlock.start = preamble.length;
               codeBlock.end = codeBlock.start + text.length;
@@ -228,7 +230,11 @@ exports.onCreateWebpackConfig = ({ getConfig, actions }) => {
         'process.env.TEST_PSEUDOMAP': 'this["_____"]'
       })
     ],
-    externals: ['fs']
+    externals: ['fs'],
+    node: {
+      fs: 'empty',
+      module: 'empty',
+    },
   });
 
   actions.replaceWebpackConfig(config);

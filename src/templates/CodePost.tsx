@@ -19,6 +19,8 @@ import { isTypeScriptFileName } from '../utils/typescript/utils';
 import { safeGA } from '../utils/safeGA';
 import { SmallCaps } from '../components/SmallCaps';
 import { formatTitle } from '../utils/formatTitle';
+import { css } from '@emotion/core';
+import { rhythm } from '../utils/typography';
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -220,6 +222,10 @@ function getFullText(sourceFileContext: SourceFileContext, codeBlocks: Record<st
   return sourceFileContext.preamble + sourceFileContext.fragments.map(f => codeBlocks[f.codeBlockId].text).join('\n');
 }
 
+const subtitleStyle = css([
+  type.subtilte,
+]);
+
 function CodePost({ data, pageContext }: CodePostProps) {
   const post = data.markdownRemark;
 
@@ -291,7 +297,10 @@ function CodePost({ data, pageContext }: CodePostProps) {
         image={post.frontmatter.metaImage && post.frontmatter.metaImage.childImageSharp.fluid.src}
       />
       <div>
-        <h1>{post.frontmatter.title}</h1>
+        <h1 css={post.frontmatter.subtitle ? { marginBottom: rhythm(0.5) } : undefined}>{post.frontmatter.title}</h1>
+        {post.frontmatter.subtitle
+          ? <h2 css={subtitleStyle}>{post.frontmatter.subtitle}</h2>
+          : null}
         {post.frontmatter.note
           ? <>
             {post.frontmatter.note.split('\n\n').map((paragraph, i) =>
