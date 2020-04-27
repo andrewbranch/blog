@@ -30,7 +30,7 @@
     "gatsby-remark-images": "^3.1.6",
     "gatsby-remark-katex": "^3.1.2",
     "gatsby-remark-static-images": "andrewbranch/gatsby-remark-static-images#dist",
-    "gatsby-source-filesystem": "^2.1.5",
+    "gatsby-source-filesystem": "^2.3.0",
     "gatsby-transformer-remark": "^2.6.5",
     "gatsby-transformer-sharp": "^2.2.3",
     "glob": "^7.1.4",
