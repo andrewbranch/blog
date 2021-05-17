@@ -57,7 +57,7 @@
     "slate-react": "^0.21.15",
     "typescript": "^3.5.3",
     "typography": "^0.16.19",
-    "unist-util-visit": "^1.4.1",
+    "unist-util-visit": "^3.1.0",
     "vscode-textmate": "^4.2.2",
     "worker-loader": "^2.0.0"
   },
