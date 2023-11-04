@@ -2,8 +2,8 @@
 title: Marketing Web Rules
 subtitle: A Tale of CSS Modules and Whimsy
 date: 2020-03-13
-tags: archive
-template: CodePost
+tags: post
+layout: post
 ---
 
 <small-caps>In early 2016</small-caps>, I was working as a web developer on the marketing team at Xamarin. We had just built the event site for the third Xamarin Evolve, the company’s developer conference, to be held in Orlando in the spring. The event afforded an opportunity to our designers to push the Xamarin brand and palette into more adventurous territory, so the site materialized at a larger-than-life scale, with massive all-caps headings, hundreds of pixels between sections, and neon SVG animations, all set atop a vertical gradient background rotating through every color of a Florida sunset.
@@ -32,7 +32,7 @@ This meant that for a class name `register-button` in a file `styles.css`, the e
 
 A wacky solution to a wacky problem—if you don’t want a random string to end in `Ad`, make sure it ends in something else:
 
-![A commit displayed in GitHub showing a one-line change to the Webpack config from Clay, with the commit message “Purify blocks class names that end in 'Ad'. The auto-generated class name for the conference button ended in 'Ad' :facepalm:. Now it ends in 'Adc'.”](images/commit.png)
+{% image "images/commit.png", "A commit displayed in GitHub showing a one-line change to the Webpack config from Clay, with the commit message “Purify blocks class names that end in 'Ad'. The auto-generated class name for the conference button ended in 'Ad' :facepalm:. Now it ends in 'Adc'.”" %}
 
 Clay appended the letter `c` to every generated class name. Problem solved.
 
@@ -44,17 +44,9 @@ A year later, I was writing the Webpack configuration for [App Center](https://a
 
 In those intervening years, App Center has moved repositories twice, gone through at least two major version upgrades of Webpack, formed an official core frontend team, and turned over the majority of that original team, myself included. So there was no way our little easter egg survived all that churn, I thought. It must have been lost, or someone must have removed it after noticing it in the source, in the browser developer tools, or in all the times it’s come up in Slack when someone pastes a Webpack error message originating from css-loader.
 
-<!--@@
-  wrapperClassName: light-only
--->
+{% image "images/app-center-light.png", "A screenshot of the App Center login page with Safari developer tools open, showing many search results in the elements panel for the string “mwr.”", "dark:hidden" %}
 
-![A screenshot of the App Center login page with Safari developer tools open, showing many search results in the elements panel for the string “mwr.”](images/app-center-light.png)
-
-<!--@@
-  wrapperClassName: dark-only
--->
-
-![A screenshot of the App Center login page with Safari developer tools open, showing many search results in the elements panel for the string “mwr.”](images/app-center-dark.png)
+{% image "images/app-center-dark.png", "A screenshot of the App Center login page with Safari developer tools open, showing many search results in the elements panel for the string “mwr.”", "light:hidden" %}
 
 Nope. To this day[^3], the string `mwr` appears 167 times in the DOM on the login page alone. Woops. I’m grateful for gzip.
 

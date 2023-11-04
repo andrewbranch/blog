@@ -3,7 +3,7 @@ title: Writing Type-Safe Polymorphic React Components (Without Crashing TypeScri
 date: 2019-08-05
 permalink: polymorphic-react-components
 tags: archive
-template: CodePost
+layout: post
 metaImage: images/rabbit-bg.png
 globalPreamble: "
   import * as React from 'react';
@@ -111,25 +111,9 @@ But, how do we type this correctly? Button’s props can no longer unconditional
 
 _Fair warning: I’m going to go down a serious rabbit hole to explain several reasons why this doesn’t work well. If you’d rather just take my word for it, feel free to [jump ahead](#an-alternative-approach) to a better solution._
 
-<!--@@
-  maxWidth: 307
-  linkImagesToOriginal: false
-  backgroundColor: transparent
-  wrapperClassName: light-only
-  tracedSVG: true
--->
+{% image "./images/rabbit-light.png", "", "dark:hidden", "307px" %}
 
-![ ](./images/rabbit-light.png)
-
-<!--@@
-  maxWidth: 307
-  linkImagesToOriginal: false
-  backgroundColor: transparent
-  wrapperClassName: dark-only
-  tracedSVG: true
--->
-
-![ ](./images/rabbit-dark.png)
+{% image "./images/rabbit-dark.png", "", "light:hidden", "307px" %}
 
 Let’s start with a slightly simpler case where we only need to allow `tagName` to be `'a'` or `'button'`. (I’ll also remove props and elements that aren’t relevant to the point for brevity.) This would be a reasonable attempt:
 
@@ -156,7 +140,7 @@ The two immediate observations that arise are
 1. It doesn’t compile—it tells us, in so many words, that the type of `props.ref` is not correct for the type of `TagName`.
 2. Despite that, it _does_ kind of produce the results we want when `tagName` is inferred as a string literal type. We even get completions from `AnchorHTMLAttributes`:
 
-![A screenshot of VS Code’s completion list in a JSX property position on the Button JSX tag from the previous example. The list includes href, hrefLang, inputMode, and other valid properties of anchor tags and button tags.](./images/jsx-prop-completions.png)
+{% image "./images/jsx-prop-completions.png", "A screenshot of VS Code’s completion list in a JSX property position on the Button JSX tag from the previous example. The list includes href, hrefLang, inputMode, and other valid properties of anchor tags and button tags." %}
 
 However, a little more experimentation reveals that we’ve also effectively disabled excess property checking:
 
@@ -344,25 +328,9 @@ TypeScript 3.5 _does_ handle this without crashing by deferring a lot of the wor
 
 _If you followed me this far down the rabbit hole, I’m duly impressed. I spent weeks getting here, and it only took you ten minutes!_
 
-<!--@@
-  maxWidth: 255
-  linkImagesToOriginal: false
-  backgroundColor: transparent
-  wrapperClassName: light-only
-  tracedSVG: true
--->
+{% image "./images/rabbit-head-light.png", "", "dark:hidden", "255px" %}
 
-![ ](./images/rabbit-head-light.png)
-
-<!--@@
-  maxWidth: 255
-  linkImagesToOriginal: false
-  backgroundColor: transparent
-  wrapperClassName: dark-only
-  tracedSVG: true
--->
-
-![ ](./images/rabbit-head-dark.png)
+{% image "./images/rabbit-head-dark.png", "", "light:hidden", "255px" %}
 
 ## An alternative approach
 

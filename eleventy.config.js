@@ -1,5 +1,7 @@
 // @ts-check
+const path = require("path");
 const bundlerPlugin = require("@11ty/eleventy-plugin-bundle");
+const eleventyImage = require("@11ty/eleventy-img");
 
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 module.exports = (eleventyConfig) => {
@@ -28,6 +30,28 @@ module.exports = (eleventyConfig) => {
 
 	eleventyConfig.addPlugin(bundlerPlugin);
 
+	// gitignored, so needs to be specified
+	eleventyConfig.addWatchTarget("./content/uno.css");
+
+	eleventyConfig.addAsyncShortcode("image", async function (src, alt, className, widths, sizes) {
+		// Full list of formats here: https://www.11ty.dev/docs/plugins/image/#output-formats
+		let formats = ["webp", "auto"];
+		let file = relativeToInputPath(this.page.inputPath, src);
+		let metadata = await eleventyImage(file, {
+			widths: Array.isArray(widths) ? widths : [widths || "auto"],
+			formats,
+			outputDir: "public/img",
+		});
+
+		return eleventyImage.generateHTML(metadata, {
+			alt,
+			class: className,
+			sizes,
+			loading: "lazy",
+			decoding: "async",
+		});
+	});
+
 	return {
 		dir: {
 			input: "content",
@@ -38,3 +62,14 @@ module.exports = (eleventyConfig) => {
 		},
 	};
 };
+
+/**
+ * @param {string} inputPath
+ * @param {string} relativeFilePath
+ */
+function relativeToInputPath(inputPath, relativeFilePath) {
+	let split = inputPath.split("/");
+	split.pop();
+
+	return path.resolve(split.join(path.sep), relativeFilePath);
+}

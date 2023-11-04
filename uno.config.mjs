@@ -9,5 +9,9 @@ export default defineConfig({
 			outFile: "content/uno.css",
 		},
 	},
-	presets: [presetUno()],
+	presets: [
+		presetUno({
+			dark: "media",
+		}),
+	],
 });

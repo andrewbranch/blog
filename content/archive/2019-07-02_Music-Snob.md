@@ -10,7 +10,7 @@ metaImage: images/piano.jpeg
   maxWidth: 520
 -->
 
-![An artsy close-up of the action of an upright piano](images/piano.jpeg)
+{% image "images/piano.jpeg", "An artsy close-up of the action of an upright piano" %}
 
 <small-caps>There was a brief period in my life</small-caps>, toward the end of my high school years and continuing on through most of college, during which some of my friends would have characterized me as a “music snob,” and I wouldn’t have argued. To be regarded as such by my peers was, in my estimation, an acknowledgment of my discerning taste and elevated sophistication in the aural domain. Yes, they may have defended their preference for simple, easily digested chord structures, and yes, predictable and repetitive rhythms may have triggered a dopamine reward mechanism evolved to encourage pattern recognition. But deep down, we really both knew that my music was better. One is not labeled a music snob for liking _bad music_.
 

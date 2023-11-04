@@ -3,7 +3,7 @@ title: Expressive React Component APIs with Discriminated Unions
 date: 2019-02-06
 permalink: expressive-react-component-apis-with-discriminated-unions
 tags: archive
-template: CodePost
+layout: post
 globalPreamble: "declare var onChange: () => void;declare var console: { log: Function };\n"
 preambles:
   - file: select-1.tsx

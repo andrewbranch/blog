@@ -132,8 +132,10 @@ The biggest factor that makes this example an oversimplification is this: becaus
 
 I’m telling this piece of the story a little out of order, because I think it’s important context for everything that follows. I didn’t initially plan for this, but as I began to realized how much library code would be necessary to achieve editable code blocks with language support (the TypeScript compiler is larger than the rest of my blog’s assets combined), I once again felt a moral imperative to respect your data usage. Generally speaking, people don’t expect to have to download a compiler in order to read a blog post.
 
-! ![A graphical representation of the blog’s assets by size, as provided by webpack-bundle-analyzer. TypeScript takes up the entire left half of the chart, plus some.](./images/bundle-analysis.png)
-! [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) shows TypeScript’s size relative to everything else.
+<figure>
+{% image "./images/bundle-analysis.png", "A graphical representation of the blog’s assets by size, as provided by webpack-bundle-analyzer. TypeScript takes up the entire left half of the chart, plus some." %}
+<figcaption>[webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) shows TypeScript’s size relative to everything else.</figcaption>
+</figure>
 
 I also realized that none of the really heavy pieces are necessary until the moment a reader starts _editing_ a code sample. I could analyze the initial code at build time, generate syntax highlighting information, type information, and compiler diagnostics as static data, inject it with GraphQL, and reference it during render, all for a fraction of the weight of the compiler and syntax highlighter itself.
 
@@ -267,7 +269,7 @@ The obvious choice for perfect syntax highlighting, I thought, was the TypeScrip
 
 However, one quirk of this approach was that referenced interface names and class names would only be colored as such if they actually existed. For instance:
 
-![GIF showing the effect of editing an interface declaration on line one on the second line’s reference to that interface name. When the names match, both are highlighted like type names. When the names don’t match, the reference to the unknown identifier is colored darker, like a variable name.](./images/semantic-highlighting.gif)
+{% image "./images/semantic-highlighting.gif", "GIF showing the effect of editing an interface declaration on line one on the second line’s reference to that interface name. When the names match, both are highlighted like type names. When the names don’t match, the reference to the unknown identifier is colored darker, like a variable name." %}
 
 `FirstInterface` in the second line becomes variable-colored when the identifier no longer exists. It was kind of interesting, but not necessarily desirable. A little distracting.
 

@@ -3,7 +3,7 @@ title: Debugging the TypeScript Codebase
 date: 2019-10-23
 permalink: debugging-the-typescript-codebase
 tags: post
-template: CodePost
+layout: post
 preambles:
   - file: parseTypeQuery.ts
     text: "
@@ -74,7 +74,7 @@ Node is paused at the beginning of tsc.js and waiting for you to attach the debu
 
 If you haven’t already, open the TypeScript codebase in VS Code. Open the command palette and select “Debug: Attach to Node Process,” then select the process you just started (on port 9229 by default).
 
-![A screenshot of VS Code with the command palette open, searching “debug.” A list of results is shown with “Debug: Attach to Node Process” focused.](images/attach-to-node-process.png)
+{% image "images/attach-to-node-process.png", "A screenshot of VS Code with the command palette open, searching “debug.” A list of results is shown with “Debug: Attach to Node Process” focused." %}
 
 VS Code will open tsc.js and show that the debugger is paused on the first line. From here, you can continue or step the debugger and hit breakpoints in the TypeScript source files.[^2]
 
@@ -103,7 +103,7 @@ Now, back in the window with the TypeScript codebase, open the command palette a
 
 This time, you’re connected to a long-running process that’s not paused. To pause on something useful, you’ll need to set a breakpoint in an interesting function and trigger that function from your example project window. A good place to start is [services.ts](https://github.com/microsoft/TypeScript/blob/10e3f11c0d88b991eaca600ff71d01a603a769a3/src/services/services.ts#L2121-L2176). As an example, to step through quick info generation, set a breakpoint in the function called `getQuickInfoAtPosition`, then in the example project window, hover a variable in a TypeScript or JavaScript file. The debugger in the other window should pause on that breakpoint.
 
-![A screen capture showing one VS Code window attach to another’s TS Server process by using the “Debug: Attach to Node Process command.”](images/attach-to-language-server.gif)
+{% image "images/attach-to-language-server.gif", "A screen capture showing one VS Code window attach to another’s TS Server process by using the “Debug: Attach to Node Process command.”" %}
 
 ### Debugging tests
 
@@ -130,20 +130,15 @@ Both `tsc` and the language service use the [Program](https://github.com/microso
 3. The [checker](https://github.com/microsoft/TypeScript/blob/master/src/compiler/checker.ts) gathers all the SourceFiles and walks their parse trees, creating [types](https://github.com/microsoft/TypeScript/blob/10e3f11c0d88b991eaca600ff71d01a603a769a3/src/compiler/types.ts#L4074) for symbols and ensuring that the relationships between them make sense.
 4. The [transformer](https://github.com/microsoft/TypeScript/blob/master/src/compiler/transformer.ts) transforms the TypeScript parse tree to a plain JavaScript syntax tree and/or a declaration file syntax tree (stripping away type annotations, converting fancy new syntax ES5-compatible syntax, etc.), and the [emitter](https://github.com/microsoft/TypeScript/blob/master/src/compiler/emitter.ts) writes those trees to text.
 
-<!--@@
-  backgroundColor: transparent
-  wrapperClassName: light-only
--->
+<figure>
+{% image "images/ts-diagram-light.png", "A rough, hand-drawn architecture diagram of the TypeScript codebase", "dark:hidden" %}
 
-![A rough, hand-drawn architecture diagram of the TypeScript codebase](images/ts-diagram-light.png)
+{% image "images/ts-diagram-dark.png", "A rough, hand-drawn architecture diagram of the TypeScript codebase", "light:hidden" %}
 
-<!--@@
-  backgroundColor: transparent
-  wrapperClassName: dark-only
--->
-
-! ![A rough, hand-drawn architecture diagram of the TypeScript codebase](images/ts-diagram-dark.png)
-! Whiteboarding the compiler structure. Not scientific. Not complete. Don’t @ me. Get out of here with your diagram nitpicking.
+<figcaption>
+Whiteboarding the compiler structure. Not scientific. Not complete. Don’t @ me. Get out of here with your diagram nitpicking.
+</figcaption>
+</figure>
 
 ### Know Your Nodes!
 
@@ -191,7 +186,7 @@ Finally, now that you know where to pause the debugger, you’ll want to be able
 - You can skip all the way up to a node’s source file by its `getSourceFile()` method. A source file has a `fileName` property, which is really handy for setting conditional breakpoints.
 - Many types of object have some sort of bit flags property, set to an inscrutable number at runtime. These _usually_ have an accompanying property like `__debugFlags` containing a string representation of the flags, but sometimes you wind up in a function with _just_ a variable with the flags value. In those circumstances, you can often find helper functions to format that number into a string under `ts.Debug`:
 
-![A screenshot of a VS Code debug session, paused inspecting a variable `symbolFlags`, which is a long, inscrutable number. The debug console is open showing the user typed the command, `ts.Debug.formatSymbolFlags(symbolFlags)`. The evaluation shows the string value `Property|Module|Assignment`.](images/debugging-symbol-flags.png)
+{% image "images/debugging-symbol-flags.png", "A screenshot of a VS Code debug session, paused inspecting a variable `symbolFlags`, which is a long, inscrutable number. The debug console is open showing the user typed the command, `ts.Debug.formatSymbolFlags(symbolFlags)`. The evaluation shows the string value `Property|Module|Assignment`." %}
 
 - You can access a function exported from the `ts` namespace in another file by writing its fully qualified name in the debug console. I feel like this is worth mentioning because at most places in the source code, you can drop the `ts` prefix and write functions like `isIdentifier(node)`, but in the debug console, you have to write `ts.isIdentifier(node)`.
 

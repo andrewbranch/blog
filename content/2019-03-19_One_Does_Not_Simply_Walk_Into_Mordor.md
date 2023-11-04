@@ -8,7 +8,7 @@ template: FeaturePost
 metaImage: "./images/nz/crown-range-pass.jpg"
 ---
 
-![Loaded touring bike leaning against a rock overlooking a panoramic view of the New Zealand countryside with a road winding down the mountain in the distance.](./images/nz/crown-range-pass.jpg)
+{% image "./images/nz/crown-range-pass.jpg", "Loaded touring bike leaning against a rock overlooking a panoramic view of the New Zealand countryside with a road winding down the mountain in the distance." %}
 
 <small-caps>_“Oh! Agh!”_ are the profound words</small-caps> with which I take the first pedals of a thousand mile bicycle tour across New Zealand. Two years ago, Jeb and I completed a trek of comparable length in Scandinavia, my first bike tour. I remember the first few pedal strokes of that trip as a highlight of the adventure: months of planning and the tedious logistics of schlepping a bicycle and two panniers of camping gear from San Francisco to Norway had come to fruition, and finally my world was simple. All I had to do was move my feet in a circle for two weeks. Now, though, I’m rolling out of Auckland International Airport with a rather different feeling. An unlikely mixture of panic and bewildered amusement shoots adrenaline through my veins. It’s midnight, it’s raining, and I have just turned into the oncoming traffic lane. Cars drive on the left here.
 
@@ -20,7 +20,7 @@ To my own surprise and deep gratitude, this kind of physical unpreparedness hasn
 
 ⁂
 
-![Jeb rides by on a cycle path nestled between rows of tall grass next to a green pasture in rural North Island, New Zealand.](./images/nz/cycle-path.jpg)
+{% image "./images/nz/cycle-path.jpg", "Jeb rides by on a cycle path nestled between rows of tall grass next to a green pasture in rural North Island, New Zealand." %}
 
 The first days are hard, and I know they’re probably the easiest we’ll have. I take some solace in the fact that Jeb is struggling too, because he’s probably in better shape than I am. This is a normal adjustment period. Nonetheless, it’s a little unsettling when we decide to cut our first day 20 kilometers short, partly because we’re running out of daylight.
 
@@ -46,23 +46,28 @@ Even if I could readily recall what my campsite looked like or what I ate for br
 
 Taupo feels like a ski resort village grew up and became a town. Granola-chic shops and restaurants line the lakefront, along with a green belt and shared pathway featuring a human-scale, made-for-Instagram block letter sculpture reading “<small-caps>#lovetaupo.</small-caps>” It’s a breathtakingly beautiful hub either for the modern outdoor adventurer or for someone who intends to become one through enough shopping of outdoorsy brands. Either way, it feels good to be here, as we’re finally seeing our distance from Auckland grow appreciably on the map. The next day, we tackle the longest and tallest climb of the North Island with less strain than we had expected. The weather has been kind so far. Finally, we’re getting in a groove.
 
-! ![My bare feet enter the bottom of the frame of a photo looking out on blue Lake Taupo from the rocky shore a couple hours before sunset.](./images/nz/lake-taupo.jpg)
-! After a swim at our campsite on the shore of Lake Taupo.
+<figure>
+{% image "./images/nz/lake-taupo.jpg", "My bare feet enter the bottom of the frame of a photo looking out on blue Lake Taupo from the rocky shore a couple hours before sunset." %}
+<figcaption>After a swim at our campsite on the shore of Lake Taupo.</figcaption>
+</figure>
 
 ⁂
 
 We awake in Foxton Beach just after the sun, our gear soaked through with dew. Australian magpies haunt the campground with their other-worldly songs. Barring catastrophe, it will be our last day on the North Island. The last few have been strong, and we can taste the sweetness of such a significant checkpoint already.
 
-! ![A silhouette of Jeb on the shore of Foxton Beach after sunset, the horizon glowing pinkish-orange.](./images/nz/foxton-beach.jpg)
-! Foxton Beach after sunset.
+<figure>
+{% image "./images/nz/foxton-beach.jpg", "A silhouette of Jeb on the shore of Foxton Beach after sunset, the horizon glowing pinkish-orange." %}
+<figcaption>Foxton Beach after sunset.</figcaption>
+</figure>
 
 We ride a frigid few kilometers to the local cafe for breakfast. These cafe stops are one of my favorite parts of these trips. I’m well aware of the privileged white tourist stereotype this makes me resemble, but I think it’s defensible here: New Zealand takes breakfast _seriously_. We enter the cafe minutes after it opens, rubbing our hands together for warmth. _Piano Man_ is blaring over the sound system, which feels oddly perfect. In every other way, it’s an archetypal beach cafe for a sleepy beach town, with distressed wood tables and pastel walls. Everything about it is bright and warm and adorable, including the owner. She greets us and brings us each a flat white. Feeling returns to my fingers as I cradle the mug in my hands. I think Jeb is in love.
 
 Breakfast—Eggs Benedict with prosciutto and sautéed spinach—looks like something you might find in a Michelin star restaurant. In the States, a place with this casual of a vibe can be expected to serve bran muffins. Oatmeal at best. Jeb notes his observation about Kiwis’ devotion to breakfast foods to the owner, who tells us her passion for breakfast is so great that when she opened the cafe, she intended to serve it all day. But alas, her husband, the full-time professionally trained chef, refuses to poach an egg after 12:00 PM. As I shovel the deliciously and artfully prepared egg and prosciutto into my mouth, there’s no denying her husband’s culinary prowess. But I can’t help thinking that, given the chance, Jeb would probably poach her an egg at any time of day or night.
 
-! ![A plate of Eggs Benedict in the cafe at Foxton Beach sitting on the distressed wood table. The presentation is elegant, with the prosciutto neatly wrapped into a cylinder and the hollandaise garnished with micro greens.](./images/nz/eggs-benedict.jpg)
-! Eggs Benedict in the cafe at Foxton Beach.
-
+<figure>
+{% image "./images/nz/eggs-benedict.jpg", "A plate of Eggs Benedict in the cafe at Foxton Beach sitting on the distressed wood table. The presentation is elegant, with the prosciutto neatly wrapped into a cylinder and the hollandaise garnished with micro greens." %}
+<figcaption>Eggs Benedict in the cafe at Foxton Beach.</figcaption>
+</figure>
 ⁂
 
 At the beginning of these kinds of trips, I feel a little self-conscious when we intersect too sharply with civilization. We don’t often smell great, we look ridiculous, at any given moment it’s nearly inevitable that _somehow_ I’ve smudged chain grease onto my face, and whenever we enter an establishment, we surreptitiously scan the room for power outlets to charge the small army of dying electronics we’re cradling in our arms. We look like two homeless men in skin-tight clothing. It can be a little uncomfortable.
@@ -79,8 +84,10 @@ Traffic usually constrains us to riding single-file, which makes conversation di
 
 Jeb likes to watch our progress on the elevation profile to prepare himself mentally for climbs. I listen to podcasts sometimes, with a single AirPod in the ear that faces away from traffic. But the best way to pass the time is to let your mind fall deep into some train of thought you can get totally lost in. These are the times when double-digit miles can disappear without notice. For me, this often takes the form of replaying events from the last few days over and over in my head, trying to uncover thoughts and stories to write about later. Psychologists call this mental repetition _elaborative rehearsal_, and it plays a significant role in forming long-term memories. I like to think that the long, mindless hours help me remember the highlights of these trips forever.
 
-! ![Looking across a road into a scrub desert with two mountains side-by-side in the distance, the left craggy and snow-covered, the right volcanic gray with a cinder cone.](./images/nz/national-park.jpg)
-! Mt. Ruapehu and Mt. Ngauruhoe.
+<figure>
+{% image "./images/nz/national-park.jpg", "Looking across a road into a scrub desert with two mountains side-by-side in the distance, the left craggy and snow-covered, the right volcanic gray with a cinder cone." %}
+<figcaption>Mt. Ruapehu and Mt. Ngauruhoe.</figcaption>
+</figure>
 
 Perhaps the most compelling reason to ride single-file, though, is that it’s easier. Drafting off another cyclist, minimizing the force of air resistance on yourself, makes the work significantly easier—up to 50% easier at high speeds or in the face of a strong headwind. Plus, trying to keep my front wheel within inches of Jeb’s rear wheel without causing an accident is a surprisingly effective distraction for passing the time. I used this advantage extensively on the North Island, which Jeb had planned and therefore navigated, riding in front most of the time. But now, on the South Island, it was my turn to ride in front. The increased wind resistance is a rude awakening, and most of the time, Jeb inexplicably rides several meters behind, seemingly throwing away the priceless gift being extended to him by the physics of fluid dynamics. It’s tempting to point out that if he’s going to work that hard, he may as well continue to ride in front so _I_ can draft. But, that’s not how this works. My job now is to navigate to Queenstown, and Jeb can ride wherever he likes. He would even probably switch with me from time to time if I asked, but I want to uphold my end of this tacit agreement with the same grace that he did.
 
@@ -90,8 +97,10 @@ Ugh. Grace and maturity are so hard when you’re tired.
 
 A few days into the South Island, I’m beginning to worry that the window between hitting my stride and deteriorating into crippling fatigue might be closing rapidly. We’ve been riding for ten days without a day off, and while the South Island offers a reprieve from the heavier traffic of the North Island, it brings bigger climbs, longer stretches without food or water, sand flies, and _bees_. Everyone told us how beautiful the South Island is; nobody told us it’s infested with _bees_. Sometimes it’s impossible to stop and rest without getting swarmed. Jeb and I both have stings, bites, and healing sunburns that make it hard to sleep some nights, compounding the mounting exhaustion the next day.
 
-! ![A girl sits, back turned to the camera, on the shore of a glacial lake, looking out into the mountains that frame the lake in the horizon. A dock extends a few meters into the lake on the left.](./images/nz/lake-rotoiti.jpg)
-! Lake Rotoiti at St. Arnaud.
+<figure>
+{% image "./images/nz/lake-rotoiti.jpg", "A girl sits, back turned to the camera, on the shore of a glacial lake, looking out into the mountains that frame the lake in the horizon. A dock extends a few meters into the lake on the left." %}
+<figcaption>Lake Rotoiti at St. Arnaud.</figcaption>
+</figure>
 
 As we leave St. Arnaud and head toward the West Coast, I’m expecting an easy day. Yesterday we spent the whole day climbing from sea level to several thousand feet, and today we’ll do the opposite, reaping the reward of the hard work we put in. Right?
 
@@ -111,32 +120,40 @@ Oh, right. _This_ is why I do this.
 
 ⁂
 
-! ![Distinctively layered rock formations jut out of the ocean and form a small canyon. The sky is hazy and overcast; the water fades white into the horizon.](./images/nz/pancake-rocks.jpg)
-! “Pancake Rocks”
+<figure>
+{% image "./images/nz/pancake-rocks.jpg", "Distinctively layered rock formations jut out of the ocean and form a small canyon. The sky is hazy and overcast; the water fades white into the horizon." %}
+<figcaption>“Pancake Rocks”</figcaption>
+</figure>
 
 The weather turns wet along the West Coast, alternating between rain and the threat of rain. I’ve planned for us to take our first and only day off at Fox Glacier, which my body desperately needs. Every morning, my legs threaten to go on strike, and a more insidious pain creeps into my lower back after five to ten miles of continuous riding, and becomes unbearable after five more. A ten-minute stretch break seems to fend off the pain for another ten miles or so, but I’m worried that these breaks will have to become longer and more frequent to have the same effect, especially once we head back into the mountains. Jeb and I are fairly well-matched in pace, and stamina, and stubbornness, so the idea of giving up or radically altering our plans has really never come up before, which makes this creeping pain all the more terrifying. I don’t want an injury to force that conversation.
 
 Whenever I find myself in a situation like this, I tend to convince myself that I have no pride to lose over the matter, that I have nothing I need to prove to myself. In 2014, I completed an Appalachian Trail thru-hike, five months walking through woods and over mountains from Georgia to Maine. Only a few hundred people a year successfully complete a thru-hike, and I had no idea if I had what it takes when I started. Ever since, I’ve been able to use that success to reject the idea that I have to overcome every next extreme physical challenge in order to maintain self worth. Sometimes it’s a healthy tool that helps me avoid the risk of injury, and sometimes it’s just a barrier for my ego.
 
-! ![In the early morning light, a large mountain topped with a glacier peeks out from clouds. Mist hangs above a choppy, glacial-blue stream that recedes into the horizon.](./images/nz/fox-glacier.jpg)
-! Fox Glacier peeks out at sunrise.
+<figure>
+{% image "./images/nz/fox-glacier.jpg", "In the early morning light, a large mountain topped with a glacier peeks out from clouds. Mist hangs above a choppy, glacial-blue stream that recedes into the horizon." %}
+<figcaption>Fox Glacier peeks out at sunrise.</figcaption>
+</figure>
 
 When we arrive in Fox Glacier, I make the call that we can’t take a day off. Even though I’m terrified that my body might just shut down at the foot of the next hill we encounter, there’s a more dangerous forcing function to consider. We have three days of riding left, the last two containing mountain passes—Haast Pass and Crown Range Pass—and storms are forecast four days from now. If we take a day off, we could very well end up on steep and winding climbs and descents in the rain, with wet roads, low visibility, and heavier traffic as we approach Queenstown. We have to keep moving.
 
 I can’t exactly explain how or why, but during the following day, something shifts in my mind. Even though I’m exhausted, I’m feeling confident, even excited, about the challenging terrain ahead. Realistically, Fox Glacier was my last chance to give up or change course, and it feels good that it was fully _my_ decision to keep going, even to turn up the heat by eliminating our rest day. Two more days sounds doable. I can endure anything for two days.
 
-! ![A rocky ocean shore on a sunny day. The sky is blue but a bright white haze hangs close to the coast as a few days’ worth of rain evaporates in the sun.](./images/nz/west-coast-2.jpg)
-! The sun comes out on the West Coast before we go back into the mountains.
+<figure>
+{% image "./images/nz/west-coast-2.jpg", "A rocky ocean shore on a sunny day. The sky is blue but a bright white haze hangs close to the coast as a few days’ worth of rain evaporates in the sun." %}
+<figcaption>The sun comes out on the West Coast before we go back into the mountains.</figcaption>
+</figure>
 
 The last two days and their monstrous ascents are definitely the toughest of the trip, but the closer I come to the finish line, the more unflappably optimistic I become. Haast Pass nearly does Jeb in, so I don enough positivity for both of us. We each do the same physical work day after day, carrying our own bodies, bikes, and gear for 75 miles over thousands of feet of climbing, but we bear the psychological burden in shifts. A few days ago, I might have given up if not for Jeb. At this point, he would still succeed without me, but it feels good to be the one pushing us forward to the end nonetheless.
 
 And so, as Queenstown comes into view and we cross the thousand mile threshold, I realize I was wrong. As soon as I doubted my ability to make it, I _did_ have something to prove to myself: not that I could continue to spin my feet for another 200 miles, but that I could overcome the obstacle of fear and doubt and make those miles a highlight of the trip, that I could be awestruck by the spectacular beauty of the surrounding glacial landscapes instead of being consumed by my own discomfort, and that I could keep our spirits high when Jeb needed encouragement instead of dragging both of us down.
 
-! ![Jeb looks through the viewfinder of a DSLR camera, mountains in the distance.](./images/nz/crown-range-pass-2.jpg)
-! Jeb photographs Queenstown from Crown Range Pass, the top of our last big climb.
+<figure>
+{% image "./images/nz/crown-range-pass-2.jpg", "Jeb looks through the viewfinder of a DSLR camera, mountains in the distance." %}
+<figcaption>Jeb photographs Queenstown from Crown Range Pass, the top of our last big climb.</figcaption>
+</figure>
 
 Someday, I _will_ lose the ability to bike a thousand miles in 16 days without training, but I hope I don’t lose the ability to take charge of my own happiness and find the beauty in challenging circumstances. It takes practice. It’s a muscle that has to be trained and exercised sometimes.
 
 Next time, I’ll try to prepare with some _actual_ training too, and get on the bike some before setting out. Probably.
 
-![View of Lake Wakatipu surrounded by houses and evergreens with mountains in the distance.](./images/nz/queenstown.jpg)
+{% image "./images/nz/queenstown.jpg", "View of Lake Wakatipu surrounded by houses and evergreens with mountains in the distance." %}
