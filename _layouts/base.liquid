@@ -1,0 +1,55 @@
+{%- capture fullTitle -%}
+	{% if title %}{{ title }} ∙ {{ metadata.title }}{% else %}{{ metadata.title }}{% endif %}
+{%- endcapture -%}
+
+<!doctype html>
+<html lang="{{ metadata.language }}">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{{ fullTitle }}</title>
+		<meta name="description" content="{{ description or metadata.description }}">
+		<meta name="generator" content="{{ eleventy.generator }}">
+
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="{{ fullTitle }}">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="{{ fullTitle }}">
+
+		{% css "reset" %}
+		{% include '@unocss/reset/tailwind.css' %}
+		{% endcss %}
+		{% css %}
+		{% include 'uno.css' %}
+		{% include 'main.css' %}
+		{% endcss %}
+		<link rel="stylesheet" href="{% getBundleFileUrl "css", "reset" %}">
+		<link rel="stylesheet" href="{% getBundleFileUrl "css" %}">
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/" class="home-link">{{ metadata.title }}</a>
+
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item">
+						<a
+							href="/about"
+							{% if entry.url == '/about' %}
+								aria-current="page"
+							{% endif %}
+							>About</a
+						>
+					</li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			{{ content }}
+		</main>
+
+		<footer></footer>
+	</body>
+</html>

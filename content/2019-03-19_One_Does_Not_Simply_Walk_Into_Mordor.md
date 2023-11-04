@@ -2,14 +2,15 @@
 title: One Does Not Simply Walk Into Mordor
 subtitle: Cycling a Thousand Miles in New Zealand
 date: 2019-03-19
-slug: one-does-not-simply-walk-into-mordor
+permalink: one-does-not-simply-walk-into-mordor
+tags: post
 template: FeaturePost
-metaImage: './images/nz/crown-range-pass.jpg'
+metaImage: "./images/nz/crown-range-pass.jpg"
 ---
 
 ![Loaded touring bike leaning against a rock overlooking a panoramic view of the New Zealand countryside with a road winding down the mountain in the distance.](./images/nz/crown-range-pass.jpg)
 
-<small-caps>_“Oh! Agh!”_ are the profound words</small-caps>    with which I take the first pedals of a thousand mile bicycle tour across New Zealand. Two years ago, Jeb and I completed a trek of comparable length in Scandinavia, my first bike tour. I remember the first few pedal strokes of that trip as a highlight of the adventure: months of planning and the tedious logistics of schlepping a bicycle and two panniers of camping gear from San Francisco to Norway had come to fruition, and finally my world was simple. All I had to do was move my feet in a circle for two weeks. Now, though, I’m rolling out of Auckland International Airport with a rather different feeling. An unlikely mixture of panic and bewildered amusement shoots adrenaline through my veins. It’s midnight, it’s raining, and I have just turned into the oncoming traffic lane. Cars drive on the left here.
+<small-caps>_“Oh! Agh!”_ are the profound words</small-caps> with which I take the first pedals of a thousand mile bicycle tour across New Zealand. Two years ago, Jeb and I completed a trek of comparable length in Scandinavia, my first bike tour. I remember the first few pedal strokes of that trip as a highlight of the adventure: months of planning and the tedious logistics of schlepping a bicycle and two panniers of camping gear from San Francisco to Norway had come to fruition, and finally my world was simple. All I had to do was move my feet in a circle for two weeks. Now, though, I’m rolling out of Auckland International Airport with a rather different feeling. An unlikely mixture of panic and bewildered amusement shoots adrenaline through my veins. It’s midnight, it’s raining, and I have just turned into the oncoming traffic lane. Cars drive on the left here.
 
 Of course, I knew that, on some intellectual level. But as it turns out, learning a fact about traffic patterns six weeks ago does not exactly prepare you to fight your entire life’s experience of driving and riding on the right side of the road. Especially not in the dark. And the rain.
 
@@ -35,7 +36,7 @@ As I dig rocks out of my sunburned arm and Jeb helps wrap it with gauze, I’m s
 
 ⁂
 
-Every day, without fail, someone asks me, “Where’d you start this morning?” and each time I’m caught completely off guard. I feel like one of any dozen amnesic movie characters who awakes in an unfamiliar world and must struggle through the most basic human encounters as he tries to reassemble the pieces of his forgotten life. “Um. I’m not sure. What year is it?” Put on the spot, I have no memory of this morning.  My body is trying desperately to keep my vital organs functioning in spite of the abuse I’m administering it, and there just aren’t enough resources to go around. All non-essential personnel have been escorted from the premises. The short-term memory department is vacant. My insides are squirming as I find myself utterly incapable of answering what was surely not intended to be a trick question.
+Every day, without fail, someone asks me, “Where’d you start this morning?” and each time I’m caught completely off guard. I feel like one of any dozen amnesic movie characters who awakes in an unfamiliar world and must struggle through the most basic human encounters as he tries to reassemble the pieces of his forgotten life. “Um. I’m not sure. What year is it?” Put on the spot, I have no memory of this morning. My body is trying desperately to keep my vital organs functioning in spite of the abuse I’m administering it, and there just aren’t enough resources to go around. All non-essential personnel have been escorted from the premises. The short-term memory department is vacant. My insides are squirming as I find myself utterly incapable of answering what was surely not intended to be a trick question.
 
 Even if I could readily recall what my campsite looked like or what I ate for breakfast, I still wouldn’t be able to summon the name of the town. New Zealand’s largest cities have almost caricatural British names: Queenstown, Christchurch, Wellington; but nearly everything else is named in Māori, a language that shares its name with New Zealand’s earliest inhabitants, Polynesian settlers who arrived by canoe in the 13th century. The syllables jumble hopelessly in my linguistically Western-accustomed brain, and I have no idea how to pronounce anything. Was it Tokoroa, or Rotokawa? No wait, Rotorua? Turangi or Tauranga? How exactly does one pronounce Waiouru? Hatepe? Rerewhakaaitu? It turns out that if you can’t convincingly pronounce a place to yourself as you read it on a sign, you’re not going to remember it when someone asks you ten hours later, “Where’d you start this morning?”
 
@@ -47,7 +48,6 @@ Taupo feels like a ski resort village grew up and became a town. Granola-chic sh
 
 ! ![My bare feet enter the bottom of the frame of a photo looking out on blue Lake Taupo from the rocky shore a couple hours before sunset.](./images/nz/lake-taupo.jpg)
 ! After a swim at our campsite on the shore of Lake Taupo.
-
 
 ⁂
 

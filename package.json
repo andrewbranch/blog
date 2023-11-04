@@ -1,16 +1,26 @@
 {
-  "name": "blog",
-  "private": true,
-  "version": "1.0.0",
-  "author": "Andrew Branch <andrew@wheream.io>",
-  "license": "MIT",
-  "scripts": {
-    
-  },
-  "dependencies": {
-    
-  },
-  "devDependencies": {
-    
-  }
+	"name": "blog",
+	"private": true,
+	"version": "1.0.0",
+	"author": "Andrew Branch <andrew@wheream.io>",
+	"license": "MIT",
+	"scripts": {
+		"start": "run-p dev:*",
+		"build": "run-s build:*",
+		"build:css": "unocss -c unocss.config.mjs",
+		"build:eleventy": "eleventy",
+		"dev:css": "unocss -c unocss.config.mjs --watch",
+		"dev:eleventy": "eleventy --serve"
+	},
+	"devDependencies": {
+		"@11ty/eleventy": "^2.0.1",
+		"@11ty/eleventy-plugin-bundle": "^1.0.4",
+		"@shopify/prettier-plugin-liquid": "^1.3.4",
+		"@unocss/cli": "^0.57.2",
+		"@unocss/preset-uno": "^0.57.2",
+		"@unocss/reset": "^0.57.2",
+		"npm-run-all": "^4.1.5",
+		"prettier": "^3.0.3",
+		"unocss": "^0.57.2"
+	}
 }
