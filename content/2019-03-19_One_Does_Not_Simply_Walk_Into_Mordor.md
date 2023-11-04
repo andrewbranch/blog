@@ -4,7 +4,7 @@ subtitle: Cycling a Thousand Miles in New Zealand
 date: 2019-03-19
 permalink: one-does-not-simply-walk-into-mordor/
 tags: post
-template: FeaturePost
+layout: post
 metaImage: "./images/nz/crown-range-pass.jpg"
 ---
 
@@ -18,7 +18,7 @@ We ride our first three miles (five kilometers, I remind myself) to the motel Je
 
 To my own surprise and deep gratitude, this kind of physical unpreparedness hasn’t been much of a problem in the past. In the months leading up to my Scandinavia tour, I was recovering from an injury and didn’t ride much, but didn’t have a problem adjusting to the daily rigor of touring. Lately though, it has occurred to me that this unearned and undeserved ability will not last forever. Someday, I’ll get on my bicycle after three months of sitting on the couch, with the intention of pedaling 75 miles, only to find that my muscles have finally and permanently transmuted into pizza and left me to suffer the consequences of my sloth. That day could be tomorrow, it occurs to me. Guess we’ll find out soon.
 
-⁂
+<p class="asterism">⁂</p>
 
 {% image "./images/nz/cycle-path.jpg", "Jeb rides by on a cycle path nestled between rows of tall grass next to a green pasture in rural North Island, New Zealand." %}
 
@@ -34,7 +34,7 @@ Thus hubris brings me down. As soon as I think that I’m doing well to be going
 
 As I dig rocks out of my sunburned arm and Jeb helps wrap it with gauze, I’m so annoyed with myself. “Wow, you’re out of practice,” a friend had said on Instagram that morning in reply to a picture of my sunburn. She’s right. It’s day two, and I’m making stupid mistakes that I’m going to pay for throughout the rest of the trip. I grimly concede that this fall was actually really lucky. For every way it could have gone better, there are ten ways it could have ended my trip. So I try to regard my pain with some gratitude, put those darker hypotheticals out of my head, and pedal on.
 
-⁂
+<p class="asterism">⁂</p>
 
 Every day, without fail, someone asks me, “Where’d you start this morning?” and each time I’m caught completely off guard. I feel like one of any dozen amnesic movie characters who awakes in an unfamiliar world and must struggle through the most basic human encounters as he tries to reassemble the pieces of his forgotten life. “Um. I’m not sure. What year is it?” Put on the spot, I have no memory of this morning. My body is trying desperately to keep my vital organs functioning in spite of the abuse I’m administering it, and there just aren’t enough resources to go around. All non-essential personnel have been escorted from the premises. The short-term memory department is vacant. My insides are squirming as I find myself utterly incapable of answering what was surely not intended to be a trick question.
 
@@ -42,7 +42,7 @@ Even if I could readily recall what my campsite looked like or what I ate for br
 
 “Um. North. 70 miles north. Um. 110 kilometers.” I can’t remember a single detail that would help me identify my extremely recent location on earth, but I can still do fast mental math. My survival mechanisms have weird priorities.
 
-⁂
+<p class="asterism">⁂</p>
 
 Taupo feels like a ski resort village grew up and became a town. Granola-chic shops and restaurants line the lakefront, along with a green belt and shared pathway featuring a human-scale, made-for-Instagram block letter sculpture reading “<small-caps>#lovetaupo.</small-caps>” It’s a breathtakingly beautiful hub either for the modern outdoor adventurer or for someone who intends to become one through enough shopping of outdoorsy brands. Either way, it feels good to be here, as we’re finally seeing our distance from Auckland grow appreciably on the map. The next day, we tackle the longest and tallest climb of the North Island with less strain than we had expected. The weather has been kind so far. Finally, we’re getting in a groove.
 
@@ -51,7 +51,7 @@ Taupo feels like a ski resort village grew up and became a town. Granola-chic sh
 <figcaption>After a swim at our campsite on the shore of Lake Taupo.</figcaption>
 </figure>
 
-⁂
+<p class="asterism">⁂</p>
 
 We awake in Foxton Beach just after the sun, our gear soaked through with dew. Australian magpies haunt the campground with their other-worldly songs. Barring catastrophe, it will be our last day on the North Island. The last few have been strong, and we can taste the sweetness of such a significant checkpoint already.
 
@@ -68,7 +68,7 @@ Breakfast—Eggs Benedict with prosciutto and sautéed spinach—looks like some
 {% image "./images/nz/eggs-benedict.jpg", "A plate of Eggs Benedict in the cafe at Foxton Beach sitting on the distressed wood table. The presentation is elegant, with the prosciutto neatly wrapped into a cylinder and the hollandaise garnished with micro greens." %}
 <figcaption>Eggs Benedict in the cafe at Foxton Beach.</figcaption>
 </figure>
-⁂
+<p class="asterism">⁂</p>
 
 At the beginning of these kinds of trips, I feel a little self-conscious when we intersect too sharply with civilization. We don’t often smell great, we look ridiculous, at any given moment it’s nearly inevitable that _somehow_ I’ve smudged chain grease onto my face, and whenever we enter an establishment, we surreptitiously scan the room for power outlets to charge the small army of dying electronics we’re cradling in our arms. We look like two homeless men in skin-tight clothing. It can be a little uncomfortable.
 
@@ -76,7 +76,7 @@ After about three days, though, something magic happens: all self-consciousness 
 
 No one asks how far we’ve come, but I’m sure they’re impressed anyway.
 
-⁂
+<p class="asterism">⁂</p>
 
 Someone once asked me the totally reasonable question of what Jeb and I _do_ while riding, how we pass the long hours in the saddle. Do we ride side by side? Do we talk?
 
@@ -93,7 +93,7 @@ Perhaps the most compelling reason to ride single-file, though, is that it’s e
 
 Ugh. Grace and maturity are so hard when you’re tired.
 
-⁂
+<p class="asterism">⁂</p>
 
 A few days into the South Island, I’m beginning to worry that the window between hitting my stride and deteriorating into crippling fatigue might be closing rapidly. We’ve been riding for ten days without a day off, and while the South Island offers a reprieve from the heavier traffic of the North Island, it brings bigger climbs, longer stretches without food or water, sand flies, and _bees_. Everyone told us how beautiful the South Island is; nobody told us it’s infested with _bees_. Sometimes it’s impossible to stop and rest without getting swarmed. Jeb and I both have stings, bites, and healing sunburns that make it hard to sleep some nights, compounding the mounting exhaustion the next day.
 
@@ -108,7 +108,7 @@ No such luck. The descent is gradual and rolling, and a strong headwind pushes a
 
 We pull into our camping spot at 8:00, our latest arrival yet. It’s dusk, and the air is dark with sand flies that commence biting as soon as we stop moving. Why do I do this?
 
-⁂
+<p class="asterism">⁂</p>
 
 <small-caps>I stand in front of my tent</small-caps>, facing south, and switch off my headlamp. Giving my eyes a moment to adjust, I hear the faint rush of the Buller River behind me. The air is cool and damp, and the sand flies have retreated back to wherever bugs go at night. Then, I look up and gaze out into the universe into a direction I’ve never looked before.
 
@@ -118,7 +118,7 @@ Since I can remember, I’ve felt a child-like wonder at the vastness of the cos
 
 Oh, right. _This_ is why I do this.
 
-⁂
+<p class="asterism">⁂</p>
 
 <figure>
 {% image "./images/nz/pancake-rocks.jpg", "Distinctively layered rock formations jut out of the ocean and form a small canyon. The sky is hazy and overcast; the water fades white into the horizon." %}

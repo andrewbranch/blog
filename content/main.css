@@ -1,3 +1,18 @@
+:root {
+	--rgb-primary: 0 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--rgb-primary: 255 255 255;
+	}
+}
+
+:root {
+	--color-primary: rgb(var(--rgb-primary));
+	--color-secondary: rgb(var(--rgb-primary) / 0.54);
+}
+
 /* https://www.a11yproject.com/posts/how-to-hide-content/ */
 .visually-hidden {
 	clip: rect(0 0 0 0);
@@ -7,4 +22,11 @@
 	position: absolute;
 	white-space: nowrap;
 	width: 1px;
+}
+
+.asterism {
+	color: var(--color-secondary);
+	font-family: AppleGothic, serif;
+	font-size: 1.5rem;
+	text-align: center;
 }

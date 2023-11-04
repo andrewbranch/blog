@@ -3,7 +3,7 @@ title: Overengineering a Blog
 date: 2019-02-16
 tags: archive
 permalink: overengineering-a-blog/
-template: post
+layout: post
 note: 'Disclaimer: I wrote this before joining the TypeScript team. I’m not speaking officially for TypeScript or Microsoft in any post on this blog, but I’m especially not in this one.'
 lib:
   - react

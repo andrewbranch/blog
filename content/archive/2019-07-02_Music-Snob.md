@@ -3,15 +3,11 @@ title: Music Snob
 date: 2019-07-02
 permalink: music-snob/
 tags: archive
-template: post
+layout: post
 metaImage: images/piano.jpeg
 ---
 
-<!--@@
-  maxWidth: 520
--->
-
-{% image "images/piano.jpeg", "An artsy close-up of the action of an upright piano" %}
+{% image "images/piano.jpeg", "An artsy close-up of the action of an upright piano", "", "520px" %}
 
 <small-caps>There was a brief period in my life</small-caps>, toward the end of my high school years and continuing on through most of college, during which some of my friends would have characterized me as a “music snob,” and I wouldn’t have argued. To be regarded as such by my peers was, in my estimation, an acknowledgment of my discerning taste and elevated sophistication in the aural domain. Yes, they may have defended their preference for simple, easily digested chord structures, and yes, predictable and repetitive rhythms may have triggered a dopamine reward mechanism evolved to encourage pattern recognition. But deep down, we really both knew that my music was better. One is not labeled a music snob for liking _bad music_.
 
@@ -25,7 +21,7 @@ Confronting that side of myself face-to-face for the first time was nauseating, 
 
 These days, I _do_ occasionally attend the symphony. I like to start many sleepy Sunday mornings by putting on _Kind of Blue_ and carefully crafting a pour-over coffee or cappuccino. And I still believe that the depth of experience attained by pursuing the less accessible sights, sounds, and tastes of the world is well worth the effort. I get excited when I have the opportunity to share those experiences with friends. But notably absent from my value system is the idea that others’ ability to find depth in the same outlets that I do means anything about anything.
 
-⁂
+<p class="asterism">⁂</p>
 
 My evolution in how I judge myself and others allowed me to discover albums, artists, and entire genres of music that I had previously dismissed. Admittedly, most of them still can’t exactly be considered “popular,” but as I was writing this, I became haunted by a new thought: I didn’t like mainstream music because I thought it was too simple, too easy to sell, too _obvious_. But maybe there’s something to be said for creating a piece of art that appears obvious in hindsight: when something _obvious_ exists, it seems _inevitable_ that it came to be. Almost as if its maker didn’t _create_ it, but rather _found_ it idling in the ether, waiting to be pulled out of the collective unconscious and into the spotlight. Perhaps to write a truly catchy song is to uncover something fundamental about human psychology, to find that space in your brain where songs get stuck and project its contours out into the world, to sculpt from the marble a form that was living inside all along.
 

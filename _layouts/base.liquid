@@ -14,14 +14,15 @@
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="{{ fullTitle }}">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="{{ fullTitle }}">
 
-		{% css "reset" %}
+		{% css "lib" %}
 		{% include '@unocss/reset/tailwind.css' %}
+		{% include 'katex/dist/katex.min.css' %}
 		{% endcss %}
 		{% css %}
 		{% include 'uno.css' %}
 		{% include 'main.css' %}
 		{% endcss %}
-		<link rel="stylesheet" href="{% getBundleFileUrl "css", "reset" %}">
+		<link rel="stylesheet" href="{% getBundleFileUrl "css", "lib" %}">
 		<link rel="stylesheet" href="{% getBundleFileUrl "css" %}">
 	</head>
 	<body>

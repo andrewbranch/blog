@@ -4,44 +4,6 @@ date: 2019-10-23
 permalink: debugging-the-typescript-codebase/
 tags: post
 layout: post
-preambles:
-  - file: parseTypeQuery.ts
-    text: "
-    export interface TypeQueryNode extends TypeNode {
-      kind: SyntaxKind.TypeQuery;
-      exprName: EntityName;
-    }
-    export interface TypeNode extends Node {
-      _typeNodeBrand: any;
-    }
-    export interface Node {
-      kind: SyntaxKind;
-      flags: NodeFlags;
-      parent: Node;
-    }
-    export const enum SyntaxKind {
-      Identifier,
-      TypeQuery,
-      TypeOfKeyword
-    }
-    export interface Identifier {
-      kind: SyntaxKind.Identifier;
-      escapedText: string;
-      originalKeywordKind?: SyntaxKind;
-      isInJSDocNamespace?: boolean;   
-    }
-    export interface QualifiedName extends Node {
-      kind: SyntaxKind.QualifiedName;
-      left: EntityName;
-      right: Identifier;
-    }
-    export type EntityName = Identifier | QualifiedName;
-    declare function createNode(syntaxKind: SyntaxKind): Node;
-    declare function parseExpected(syntaxKind: SyntaxKind): boolean;
-    declare function parseEntityName(allowReservedWords: boolean): EntityName;
-    declare function finishNode<T extends Node>(node: T): T;
-    \n
-    "
 ---
 
 <small-caps>When I joined the TypeScript team</small-caps>, debugging quickly became my most valuable skill, and by the same token, the debugability of the compiler became one of the codebase’s most valuable assets. The TypeScript compiler is just a Node app so it’s pretty easy to debug, but I’ve found a few useful tricks specific to the TypeScript codebase. Thanks to a [request over Twitter](https://twitter.com/JoshuaKGoldberg/status/1174770454743179265), here they are.
@@ -144,10 +106,6 @@ Whiteboarding the compiler structure. Not scientific. Not complete. Don’t @ me
 
 If most of that review was new to you, don’t worry! You don’t need to know much more than that to start debugging, and it will make more sense once you dive in. A lot can be picked up on the fly. But, if there’s one thing you might not want to skimp on, it’s learning the proper terminology for syntax. By way of example, you might see the construct `x ? y : z` and think of the term “ternary operator,” but this sequence is properly called a _ConditionalExpression_. TypeScript uses the names from the [ECMAScript language specification](https://www.ecma-international.org/ecma-262/9.0/index.html) for grammar productions that are valid in JavaScript, but it can be a little tricky to read, and there’s no corresponding document for TypeScript-specific grammar. I often use [astexplorer.net](https://astexplorer.net) (language set to JavaScript, parser set to TypeScript) to jog my memory of what a certain syntax is called and how it’s structured. If you need the reverse, and you’re really stuck—you have a SyntaxKind you’re not familiar with and want to know what code produces it—you can always _read the parser_! By way of example, if you’re not sure what a `TypeQueryNode` is, can you get an idea from this?
 
-<!--@
-  name: parseTypeQuery.ts
--->
-
 ```ts
 function parseTypeQuery(): TypeQueryNode {
 	const node = createNode(SyntaxKind.TypeQuery) as TypeQueryNode;
@@ -194,10 +152,6 @@ Finally, now that you know where to pause the debugger, you’ll want to be able
 
 If this has made contributing to TypeScript feel less daunting, peruse through the issues labeled “[good first issue](https://github.com/microsoft/TypeScript/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)” or “[help wanted](https://github.com/microsoft/TypeScript/issues?utf8=✓&q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22+).” Maybe you’ll find something that inspires you![^3]
 
-[^1]:
-
-VS Code’s [docs on debugging](https://code.visualstudio.com/docs/editor/debugging) are good if you’re not familiar with it.
-[^2]:
-I’m not sure why the debugger starts in the built tsc.js file instead of the source tsc.ts file, but once you step into a different file, the debugger will bring up the TypeScript source instead of the built JavaScript.
-[^3]:
-Orta’s [typescript-notes](https://github.com/orta/typescript-notes) also serve well as a first-time contributer’s guide.
+[^1]: VS Code’s [docs on debugging](https://code.visualstudio.com/docs/editor/debugging) are good if you’re not familiar with it.
+[^2]: I’m not sure why the debugger starts in the built tsc.js file instead of the source tsc.ts file, but once you step into a different file, the debugger will bring up the TypeScript source instead of the built JavaScript.
+[^3]: Orta’s [typescript-notes](https://github.com/orta/typescript-notes) also serve well as a first-time contributer’s guide.

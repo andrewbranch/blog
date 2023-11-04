@@ -365,12 +365,7 @@ Discriminated unions can be a powerful tool for writing better React component t
 - [Discriminated Unions · TypeScript Deep Dive](https://basarat.gitbooks.io/typescript/docs/types/discriminated-unions.html)
 - [Tagged union - Wikipedia](https://en.wikipedia.org/wiki/Tagged_union)
 
-[^1]:
-
-Interestingly, in the final case here, the explicit value `multiple={false}` is required not to pass type checking, but to get accurate inference on the argument to `onChange`. This seems like a limitation/bug to me.
-[^2]:
-My hypothesis is that in calculating the intersection of _N_ types that all include common properties, the compiler must calculate for each of _n_ common properties of type _T_ that _T_ intersected with itself _N_ times is still _T_. This is surely not a computationally expensive code path, but unless there’s a clever short circuit early in the calculation, it still has to happen _N ⨉ n_ times, all of which are unnecessary. This is purely unscientific speculation, and I would be happy for someone to correct or corroborate this theory.
-[^3]:
-This statement applies only in the type declaration space. `|` and `&` are bitwise operators in the variable declaration space. E.g., `|` is the union operator in `var x: string | number` but the bitwise _or_ operator in `var x = 0xF0 | 0x0F`.
-[^4]:
-TypeScript does successfully discriminate between these constituents, but type inference [is currently broken](https://github.com/Microsoft/TypeScript/issues/29340) for properties that have different function signatures in different constituents when any of those constituents are an intersection type.
+[^1]: Interestingly, in the final case here, the explicit value `multiple={false}` is required not to pass type checking, but to get accurate inference on the argument to `onChange`. This seems like a limitation/bug to me.
+[^2]: My hypothesis is that in calculating the intersection of _N_ types that all include common properties, the compiler must calculate for each of _n_ common properties of type _T_ that _T_ intersected with itself _N_ times is still _T_. This is surely not a computationally expensive code path, but unless there’s a clever short circuit early in the calculation, it still has to happen _N ⨉ n_ times, all of which are unnecessary. This is purely unscientific speculation, and I would be happy for someone to correct or corroborate this theory.
+[^3]: This statement applies only in the type declaration space. `|` and `&` are bitwise operators in the variable declaration space. E.g., `|` is the union operator in `var x: string | number` but the bitwise _or_ operator in `var x = 0xF0 | 0x0F`.
+[^4]: TypeScript does successfully discriminate between these constituents, but type inference [is currently broken](https://github.com/Microsoft/TypeScript/issues/29340) for properties that have different function signatures in different constituents when any of those constituents are an intersection type.

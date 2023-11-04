@@ -14,4 +14,9 @@ export default defineConfig({
 			dark: "media",
 		}),
 	],
+	theme: {
+		colors: {
+			primary: "rgb(var(--rgb-primary) / <alpha-value>)",
+		},
+	},
 });

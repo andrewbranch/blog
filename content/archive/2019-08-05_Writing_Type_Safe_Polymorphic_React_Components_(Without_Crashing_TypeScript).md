@@ -446,8 +446,5 @@ Depending on the complexity of the component, who your consumers are, and how so
 
 This ensures the class names are merged correctly, and if `ButtonInjectedProps` ever expands its definition to inject its own `onKeyDown`, both the injected one and the console-logging one provided here will be run.
 
-[^1]:
-
-You can discover this, if you want, by going into the React typings and commenting out [the `ref` property](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/86303f134e12cf701a3f3f5e24867c3559351ea2/types/react/index.d.ts#L97). The compiler error will remain, substituting `onCopy` where it previously said `ref`.
-[^2]:
-I attempt to explain this relationship intuitively, but it arises from the fact that parameters are _contravariant_ positions within function signatures. There are several [good](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-6.html) [explanations](https://www.stephanboyer.com/post/132/what-are-covariance-and-contravariance) of this topic.
+[^1]: You can discover this, if you want, by going into the React typings and commenting out [the `ref` property](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/86303f134e12cf701a3f3f5e24867c3559351ea2/types/react/index.d.ts#L97). The compiler error will remain, substituting `onCopy` where it previously said `ref`.
+[^2]: I attempt to explain this relationship intuitively, but it arises from the fact that parameters are _contravariant_ positions within function signatures. There are several [good](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-6.html) [explanations](https://www.stephanboyer.com/post/132/what-are-covariance-and-contravariance) of this topic.

@@ -30,8 +30,7 @@ module.exports = (eleventyConfig) => {
 
 	eleventyConfig.addPlugin(bundlerPlugin);
 
-	// gitignored, so needs to be specified
-	eleventyConfig.addWatchTarget("./content/uno.css");
+	eleventyConfig.addWatchTarget("./content/*.css");
 
 	eleventyConfig.addAsyncShortcode("image", async function (src, alt, className, widths, sizes) {
 		// Full list of formats here: https://www.11ty.dev/docs/plugins/image/#output-formats
@@ -50,6 +49,11 @@ module.exports = (eleventyConfig) => {
 			loading: "lazy",
 			decoding: "async",
 		});
+	});
+
+	eleventyConfig.amendLibrary("md", (md) => {
+		md.use(require("markdown-it-footnote"));
+		md.use(require("@ryanxcharles/markdown-it-katex"));
 	});
 
 	return {
