@@ -1,7 +1,7 @@
 ---
 title: Debugging the TypeScript Codebase
 date: 2019-10-23
-permalink: debugging-the-typescript-codebase
+permalink: debugging-the-typescript-codebase/
 tags: post
 layout: post
 preambles:

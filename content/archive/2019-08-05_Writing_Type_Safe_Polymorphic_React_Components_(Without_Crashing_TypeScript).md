@@ -1,7 +1,7 @@
 ---
 title: Writing Type-Safe Polymorphic React Components (Without Crashing TypeScript)
 date: 2019-08-05
-permalink: polymorphic-react-components
+permalink: polymorphic-react-components/
 tags: archive
 layout: post
 metaImage: images/rabbit-bg.png

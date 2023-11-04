@@ -2,7 +2,7 @@
 title: One Does Not Simply Walk Into Mordor
 subtitle: Cycling a Thousand Miles in New Zealand
 date: 2019-03-19
-permalink: one-does-not-simply-walk-into-mordor
+permalink: one-does-not-simply-walk-into-mordor/
 tags: post
 template: FeaturePost
 metaImage: "./images/nz/crown-range-pass.jpg"

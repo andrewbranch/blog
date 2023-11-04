@@ -1,8 +1,9 @@
 ---
 title: Music Snob
 date: 2019-07-02
+permalink: music-snob/
 tags: archive
-template: FeaturePost
+template: post
 metaImage: images/piano.jpeg
 ---
 
