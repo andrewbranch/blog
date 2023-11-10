@@ -1,4 +1,16 @@
 :root {
+	--rhythm: 1.6;
+	--font-display: "Heldane Display", Georgia, serif;
+	--font-serif: "Heldane", Georgia, serif;
+	--font-grotesk: "Founders Grotesk", "Helvetica Neue", Helvetica, -apple-system, sans-serif;
+	--font-mono: menlo, monaco, monospace;
+	--swashes: "kern", "liga", "clig", "calt", "ss04", "ss05", "ss06", "ss07", "ss08", "ss09", "ss10", "onum";
+	--dlig: "kern", "liga", "clig", "calt";
+
+	--width-plus-phone: 414;
+	--width-big-enough: 550;
+	--width-tablet: 768;
+
 	--rgb-primary: 0 0 0;
 }
 
@@ -11,6 +23,218 @@
 :root {
 	--color-primary: rgb(var(--rgb-primary));
 	--color-secondary: rgb(var(--rgb-primary) / 0.54);
+}
+
+html {
+	height: 100%;
+	min-height: 100%;
+	background-color: var(--background);
+}
+
+body {
+	color: var(--color-primary);
+	-webkit-font-smoothing: antialiased;
+	font: 112.5% / var(--rhythm) var(--font-serif);
+	font-weight: 300;
+	word-wrap: break-word;
+	font-kerning: normal;
+	-moz-font-feature-settings: var(--dlig);
+	-ms-font-feature-settings: var(--dlig);
+	-webkit-font-feature-settings: var(--dlig);
+	font-feature-settings: var(--dlig);
+
+	min-height: 100%;
+}
+
+.katex {
+	font-size: 0.9rem;
+}
+
+p > .katex,
+li > .katex {
+	padding: 0 2px;
+}
+
+.katex-display {
+	margin: 0;
+	/* Get the potential scrollbar out of the way of the content */
+	padding-bottom: calc(var(--rhythm) * 1rem);
+	/* Mask overflow */
+	overflow: auto;
+	margin: 0 calc(var(--rhythm) * -0.5rem);
+	padding: 0 calc(var(--rhythm) * 0.5rem);
+	mask-image: linear-gradient(
+		to right,
+		rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 0) calc(var(--rhythm) * 0.2rem),
+		rgba(0, 0, 0, 1) calc(var(--rhythm) * 0.5rem),
+		rgba(0, 0, 0, 1) calc(100% - calc(var(--rhythm) * 0.5rem)),
+		rgba(0, 0, 0, 0) calc(100% - calc(var(--rhythm) * 0.2rem))
+	);
+}
+
+.katex-display .katex-html .base:last-child {
+	padding-right: calc(var(--rhythm) * 0.5rem);
+}
+
+pre {
+	line-height: var(--rhythm);
+}
+
+:not(pre) > code {
+	font-family: var(--font-mono);
+	font-variant-ligatures: "none";
+	font-feature-settings: "normal";
+	font-size: 0.8rem;
+	color: var(--inlineCodeText);
+	border-radius: 3px;
+}
+
+a {
+	color: var(--color-text-link);
+	text-decoration-skip: ink;
+	text-decoration-skip-ink: auto;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a > code {
+	background: transparent;
+	padding: 0;
+	color: inherit;
+}
+
+.footnotes p {
+	display: inline;
+	font-size: 0.9rem;
+}
+
+.footnote-backref {
+	font-size: 0;
+	position: relative;
+}
+
+.footnote-backref::after {
+	content: "↩\\fe0e";
+	font-size: 1rem;
+	position: absolute;
+	left: 0;
+}
+
+@media (min-width: var(--width-big-enough)) {
+	ol,
+	ul {
+		min-width: 50rem;
+		margin-left: 2rem;
+	}
+}
+
+h1 {
+	font-family: var(--font-display);
+	-webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	-webkit-font-smoothing: auto;
+	font-feature-settings: var(--swashes);
+	line-height: 1.1;
+	color: var(--color-text-high-contrast);
+	font-weight: 300;
+	text-rendering: optimizeLegibility;
+}
+
+h1 .anchor svg,
+h2 .anchor svg,
+h3 .anchor svg,
+h4 .anchor svg,
+h5 .anchor svg,
+h6 .anchor svg {
+	fill: var(--color-text-primary);
+}
+
+.post-body .intro-caps {
+	font-variant: small-caps;
+	letter-spacing: 0.3px;
+	font-feature-settings: var(--dlig);
+}
+
+.post-body h3 {
+	font-variant: small-caps;
+	text-transform: lowercase;
+	letter-spacing: 3px;
+	font-weight: 500;
+	font-size: 1rem;
+	margin-bottom: calc(var(--rhythm) * 0.25rem);
+	font-feature-settings: var(--swashes);
+}
+
+.post-body h3 code {
+	font-size: 0.8em;
+	font-variant: normal;
+	font-weight: bold;
+}
+
+hr {
+	background: var(--color-fg20);
+}
+
+img {
+	width: 100%;
+	max-width: 100vw;
+}
+
+@media (min-width: var(--width-plus-phone)) {
+	img {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: 100%;
+	}
+}
+
+figcaption {
+	font-family: var(--font-grotesk);
+	color: var(--color-secondary);
+	margin-top: calc(var(--rhythm) * 0.4rem);
+	font-size: 0.9rem;
+	font-weight: 500;
+	text-align: center;
+}
+
+img,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hgroup,
+ul,
+ol,
+dl,
+dd,
+p,
+figure,
+pre,
+table,
+fieldset,
+blockquote {
+	margin-bottom: calc(var(--rhythm) * 1rem);
+}
+
+h1 {
+	font-size: 2.4rem;
+}
+
+h2 {
+	font-size: 1.69093rem;
 }
 
 /* https://www.a11yproject.com/posts/how-to-hide-content/ */
@@ -29,4 +253,10 @@
 	font-family: AppleGothic, serif;
 	font-size: 1.5rem;
 	text-align: center;
+}
+
+.small-caps {
+	font-variant: small-caps;
+	letter-spacing: 0.3px;
+	font-feature-settings: "kern", "liga", "clig", "calt", "ss04", "ss05", "ss06", "ss07", "ss08", "ss09", "ss10", "onum";
 }

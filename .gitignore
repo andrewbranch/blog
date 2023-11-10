@@ -1,5 +1,4 @@
 node_modules
-public/*
-!public/_redirects
+public
 .DS_Store
 content/uno.css

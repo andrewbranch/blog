@@ -34,7 +34,7 @@ compilerOptions:
     - /lib.dom.d.ts
 ---
 
-<small-caps>When designing a React component for reusability</small-caps>, you often need to be able to pass different DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
+<span class="small-caps">When designing a React component for reusability</span>, you often need to be able to pass different DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.
 
 It’s impossible for Button to predict and to handle every special context where it might be used, so there’s a reasonable argument for allowing arbitrary extra props to be passed to Button, and letting it pass extra ones it doesn’t understand through.
 

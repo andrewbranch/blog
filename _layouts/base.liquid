@@ -20,6 +20,7 @@
 		{% endcss %}
 		{% css %}
 		{% include 'uno.css' %}
+		{% include 'fonts.css' %}
 		{% include 'main.css' %}
 		{% endcss %}
 		<link rel="stylesheet" href="{% getBundleFileUrl "css", "lib" %}">
@@ -28,29 +29,31 @@
 	<body>
 		<a href="#skip" class="visually-hidden">Skip to main content</a>
 
-		<header>
-			<a href="/" class="home-link">{{ metadata.title }}</a>
+		<div class="flex flex-col justify-between h-full max-w-3xl px-3.5 my-0 mx-auto">
+			<div>
+				<header>
+					<a href="/" class="home-link">{{ metadata.title }}</a>
 
-			<nav>
-				<h2 class="visually-hidden">Top level navigation menu</h2>
-				<ul class="nav">
-					<li class="nav-item">
-						<a
-							href="/about"
-							{% if entry.url == '/about' %}
-								aria-current="page"
-							{% endif %}
-							>About</a
-						>
-					</li>
-				</ul>
-			</nav>
-		</header>
-
-		<main id="skip">
-			{{ content }}
-		</main>
-
-		<footer></footer>
+					<nav>
+						<h2 class="visually-hidden">Top level navigation menu</h2>
+						<ul class="nav">
+							<li class="nav-item">
+								<a
+									href="/about"
+									{% if entry.url == '/about' %}
+										aria-current="page"
+									{% endif %}
+									>About</a
+								>
+							</li>
+						</ul>
+					</nav>
+				</header>
+				<main id="skip">
+					{{ content }}
+				</main>
+			</div>
+			<footer></footer>
+		</div>
 	</body>
 </html>

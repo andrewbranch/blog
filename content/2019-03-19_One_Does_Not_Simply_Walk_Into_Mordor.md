@@ -10,7 +10,7 @@ metaImage: "./images/nz/crown-range-pass.jpg"
 
 {% image "./images/nz/crown-range-pass.jpg", "Loaded touring bike leaning against a rock overlooking a panoramic view of the New Zealand countryside with a road winding down the mountain in the distance." %}
 
-<small-caps>_“Oh! Agh!”_ are the profound words</small-caps> with which I take the first pedals of a thousand mile bicycle tour across New Zealand. Two years ago, Jeb and I completed a trek of comparable length in Scandinavia, my first bike tour. I remember the first few pedal strokes of that trip as a highlight of the adventure: months of planning and the tedious logistics of schlepping a bicycle and two panniers of camping gear from San Francisco to Norway had come to fruition, and finally my world was simple. All I had to do was move my feet in a circle for two weeks. Now, though, I’m rolling out of Auckland International Airport with a rather different feeling. An unlikely mixture of panic and bewildered amusement shoots adrenaline through my veins. It’s midnight, it’s raining, and I have just turned into the oncoming traffic lane. Cars drive on the left here.
+<span class="small-caps">_“Oh! Agh!”_ are the profound words</span> with which I take the first pedals of a thousand mile bicycle tour across New Zealand. Two years ago, Jeb and I completed a trek of comparable length in Scandinavia, my first bike tour. I remember the first few pedal strokes of that trip as a highlight of the adventure: months of planning and the tedious logistics of schlepping a bicycle and two panniers of camping gear from San Francisco to Norway had come to fruition, and finally my world was simple. All I had to do was move my feet in a circle for two weeks. Now, though, I’m rolling out of Auckland International Airport with a rather different feeling. An unlikely mixture of panic and bewildered amusement shoots adrenaline through my veins. It’s midnight, it’s raining, and I have just turned into the oncoming traffic lane. Cars drive on the left here.
 
 Of course, I knew that, on some intellectual level. But as it turns out, learning a fact about traffic patterns six weeks ago does not exactly prepare you to fight your entire life’s experience of driving and riding on the right side of the road. Especially not in the dark. And the rain.
 
@@ -44,7 +44,7 @@ Even if I could readily recall what my campsite looked like or what I ate for br
 
 <p class="asterism">⁂</p>
 
-Taupo feels like a ski resort village grew up and became a town. Granola-chic shops and restaurants line the lakefront, along with a green belt and shared pathway featuring a human-scale, made-for-Instagram block letter sculpture reading “<small-caps>#lovetaupo.</small-caps>” It’s a breathtakingly beautiful hub either for the modern outdoor adventurer or for someone who intends to become one through enough shopping of outdoorsy brands. Either way, it feels good to be here, as we’re finally seeing our distance from Auckland grow appreciably on the map. The next day, we tackle the longest and tallest climb of the North Island with less strain than we had expected. The weather has been kind so far. Finally, we’re getting in a groove.
+Taupo feels like a ski resort village grew up and became a town. Granola-chic shops and restaurants line the lakefront, along with a green belt and shared pathway featuring a human-scale, made-for-Instagram block letter sculpture reading “<span class="small-caps">#lovetaupo.</span>” It’s a breathtakingly beautiful hub either for the modern outdoor adventurer or for someone who intends to become one through enough shopping of outdoorsy brands. Either way, it feels good to be here, as we’re finally seeing our distance from Auckland grow appreciably on the map. The next day, we tackle the longest and tallest climb of the North Island with less strain than we had expected. The weather has been kind so far. Finally, we’re getting in a groove.
 
 <figure>
 {% image "./images/nz/lake-taupo.jpg", "My bare feet enter the bottom of the frame of a photo looking out on blue Lake Taupo from the rocky shore a couple hours before sunset." %}
@@ -110,7 +110,7 @@ We pull into our camping spot at 8:00, our latest arrival yet. It’s dusk, and 
 
 <p class="asterism">⁂</p>
 
-<small-caps>I stand in front of my tent</small-caps>, facing south, and switch off my headlamp. Giving my eyes a moment to adjust, I hear the faint rush of the Buller River behind me. The air is cool and damp, and the sand flies have retreated back to wherever bugs go at night. Then, I look up and gaze out into the universe into a direction I’ve never looked before.
+<span class="small-caps">I stand in front of my tent</span>, facing south, and switch off my headlamp. Giving my eyes a moment to adjust, I hear the faint rush of the Buller River behind me. The air is cool and damp, and the sand flies have retreated back to wherever bugs go at night. Then, I look up and gaze out into the universe into a direction I’ve never looked before.
 
 The International Space Station floats by, leading my eye east across constellations and galaxies I’ve never seen: the Large Magellanic Cloud, faintly visible. The Southern Cross. Centaurus, Corvus, Crater.
 

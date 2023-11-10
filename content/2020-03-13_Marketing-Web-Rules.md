@@ -7,7 +7,7 @@ tags: post
 layout: post
 ---
 
-<small-caps>In early 2016</small-caps>, I was working as a web developer on the marketing team at Xamarin. We had just built the event site for the third Xamarin Evolve, the company’s developer conference, to be held in Orlando in the spring. The event afforded an opportunity to our designers to push the Xamarin brand and palette into more adventurous territory, so the site materialized at a larger-than-life scale, with massive all-caps headings, hundreds of pixels between sections, and neon SVG animations, all set atop a vertical gradient background rotating through every color of a Florida sunset.
+<span class="small-caps">In early 2016</span>, I was working as a web developer on the marketing team at Xamarin. We had just built the event site for the third Xamarin Evolve, the company’s developer conference, to be held in Orlando in the spring. The event afforded an opportunity to our designers to push the Xamarin brand and palette into more adventurous territory, so the site materialized at a larger-than-life scale, with massive all-caps headings, hundreds of pixels between sections, and neon SVG animations, all set atop a vertical gradient background rotating through every color of a Florida sunset.
 
 My teammates and I also used it as an opportunity to try out some newer tech than what we had inherited in the monolithic .NET company site. React, Webpack, and CSS modules were becoming dominant forces in the frontend web world, and we were excited to bring a modern toolset into into our daily work. The result was infrastructural overkill, but it was also rapid iteration and developer happiness.
 

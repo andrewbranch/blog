@@ -6,7 +6,7 @@ tags: post
 layout: post
 ---
 
-<small-caps>When I joined the TypeScript team</small-caps>, debugging quickly became my most valuable skill, and by the same token, the debugability of the compiler became one of the codebase’s most valuable assets. The TypeScript compiler is just a Node app so it’s pretty easy to debug, but I’ve found a few useful tricks specific to the TypeScript codebase. Thanks to a [request over Twitter](https://twitter.com/JoshuaKGoldberg/status/1174770454743179265), here they are.
+<span class="small-caps">When I joined the TypeScript team</span>, debugging quickly became my most valuable skill, and by the same token, the debugability of the compiler became one of the codebase’s most valuable assets. The TypeScript compiler is just a Node app so it’s pretty easy to debug, but I’ve found a few useful tricks specific to the TypeScript codebase. Thanks to a [request over Twitter](https://twitter.com/JoshuaKGoldberg/status/1174770454743179265), here they are.
 
 The [first section](#quick-start-three-ways-to-attach) of this post is like a quick-start: I’ll get you a debug session running as quickly as possible. If you’re already somewhat familiar with the compiler, this might be all you need. But if you find yourself struggling to navigate that debug session or figure out what part of the code you want to debug, hang in there! The [second section](#going-deeper-debugging-strategies) provides tips for finding strategic breakpoint locations and inspecting the compiler state while paused.
 
