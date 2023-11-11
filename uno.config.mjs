@@ -14,10 +14,15 @@ export default defineConfig({
 		}),
 	],
 	theme: {
+		fontFamily: {
+			grotesk: "var(--font-grotesk)",
+		},
 		colors: {
 			textHighContrast: "var(--color-text-high-contrast)",
-			textDisabled: "var(--color-text-disabled)",
+			textPrimary: "var(--color-text-primary)",
 			textSecondary: "var(--color-text-secondary)",
+			textMuted: "var(--color-text-muted)",
+			textDisabled: "var(--color-text-disabled)",
 		},
 		width: {
 			content: "var(--width-content)",

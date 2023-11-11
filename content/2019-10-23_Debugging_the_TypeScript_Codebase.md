@@ -144,7 +144,7 @@ Finally, now that you know where to pause the debugger, you’ll want to be able
 - You can skip all the way up to a node’s source file by its `getSourceFile()` method. A source file has a `fileName` property, which is really handy for setting conditional breakpoints.
 - Many types of object have some sort of bit flags property, set to an inscrutable number at runtime. These _usually_ have an accompanying property like `__debugFlags` containing a string representation of the flags, but sometimes you wind up in a function with _just_ a variable with the flags value. In those circumstances, you can often find helper functions to format that number into a string under `ts.Debug`:
 
-{% image "images/debugging-symbol-flags.png", "A screenshot of a VS Code debug session, paused inspecting a variable `symbolFlags`, which is a long, inscrutable number. The debug console is open showing the user typed the command, `ts.Debug.formatSymbolFlags(symbolFlags)`. The evaluation shows the string value `Property|Module|Assignment`." %}
+  {% image "images/debugging-symbol-flags.png", "A screenshot of a VS Code debug session, paused inspecting a variable `symbolFlags`, which is a long, inscrutable number. The debug console is open showing the user typed the command, `ts.Debug.formatSymbolFlags(symbolFlags)`. The evaluation shows the string value `Property|Module|Assignment`." %}
 
 - You can access a function exported from the `ts` namespace in another file by writing its fully qualified name in the debug console. I feel like this is worth mentioning because at most places in the source code, you can drop the `ts` prefix and write functions like `isIdentifier(node)`, but in the debug console, you have to write `ts.isIdentifier(node)`.
 

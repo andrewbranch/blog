@@ -21,5 +21,12 @@ layout: base
 			</h2>
 		{% endif %}
 	</h1>
+	{% if not bigTitle %}
+		<p>
+			<time class="font-grotesk font-medium text-textMuted" datetime="{{ date | htmlDateString }}">
+				{{- date | readableDate -}}
+			</time>
+		</p>
+	{% endif %}
 	{{ content }}
 </div>

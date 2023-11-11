@@ -10,12 +10,13 @@ module.exports = (eleventyConfig) => {
 		year: "numeric",
 		month: "long",
 		day: "numeric",
+		timeZone: "America/Los_Angeles",
 	});
 
 	eleventyConfig.addFilter(
 		"readableDate",
 		/** @param {Date} dateObj */ (dateObj) => {
-			return monthDayYearFormat.format(dateObj);
+			return monthDayYearFormat.format(utcToPacific(dateObj));
 		},
 	);
 
@@ -23,7 +24,7 @@ module.exports = (eleventyConfig) => {
 		"htmlDateString",
 		/** @param {Date} dateObj */ (dateObj) => {
 			// dateObj input: https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#valid-date-string
-			return dateObj.toISOString().slice(0, 10);
+			return utcToPacific(dateObj).toISOString().slice(0, 10);
 		},
 	);
 
@@ -104,4 +105,17 @@ function relativeToInputPath(inputPath, relativeFilePath) {
 	split.pop();
 
 	return path.resolve(split.join(path.sep), relativeFilePath);
+}
+
+/**
+ * Frontmatter dates are specified as date-only but interpreted
+ * as midnight UTC. Since rendered dates include a datetime serialization,
+ * we want to adjust the date to a time that has the written date
+ * in Pacific time, where the posts are actually written.
+ *
+ * @param {Date} date
+ */
+function utcToPacific(date) {
+	const pacificOffset = 7 * 60 * 60 * 1000;
+	return new Date(date.getTime() + pacificOffset);
 }

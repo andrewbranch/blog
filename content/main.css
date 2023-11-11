@@ -44,16 +44,13 @@
 	--color-accent-dark: rgb(var(--rgb-accent-dark));
 	--rgb-accent-light: 255, 192, 192;
 	--color-accent-light: rgb(var(--rgb-accent-light));
-	--rgb-blue: #0070ae;
-	--color-blue: rgb(var(--rgb-blue));
 
 	--color-background: var(--color-bg100);
 	--color-text-primary: var(--color-fg85);
 	--color-text-muted: var(--color-fg70);
 	--color-text-secondary: var(--color-fg54);
 	--color-text-disabled: var(--color-fg32);
-	--color-text-link: var(--blue);
-	--color-text-inline-code: var(--red-dark);
+	--color-text-inline-code: var(--color-accent-dark);
 	--color-text-high-contrast: var(--color-fg100);
 }
 
@@ -86,8 +83,7 @@
 		--color-background: var(--color-bg90);
 		--color-background-alt: var(--color-bg100);
 
-		--color-text-link: #2ca7cc;
-		--color-text-inline-code: var(--red-light);
+		--color-text-inline-code: var(--color-accent-light);
 	}
 }
 /* #endregion */
@@ -96,7 +92,6 @@
 html {
 	height: 100%;
 	min-height: 100%;
-	background-color: var(--color-background);
 	font: 112.5% / var(--rhythm) var(--font-serif);
 	font-weight: 300;
 	color: var(--color-text-primary);
@@ -110,6 +105,7 @@ html {
 }
 
 body {
+	background-color: var(--color-background);
 	min-height: 100%;
 }
 /* #endregion */
@@ -127,6 +123,7 @@ h4,
 h5,
 h6,
 hgroup,
+hr,
 ul,
 ol,
 dl,
@@ -184,11 +181,12 @@ h2 {
 }
 
 h3 {
+	font-family: var(--font-grotesk);
 	font-variant: small-caps;
 	text-transform: lowercase;
 	letter-spacing: 3px;
 	font-weight: 500;
-	font-size: 1rem;
+	font-size: 1.4rem;
 	margin-bottom: calc(var(--rhythm) * 0.25rem);
 	font-feature-settings: var(--swashes);
 }
@@ -232,9 +230,26 @@ pre {
 	line-height: var(--rhythm);
 }
 
+.post-body ol,
+.post-body ul {
+	margin-left: 3.2rem;
+}
+
+.post-body ol {
+	list-style-type: decimal;
+}
+
+.post-body ul {
+	list-style-type: disc;
+}
+
+.post-body li {
+	margin-bottom: calc(var(--rhythm) * 0.5rem);
+}
+
 @media (min-width: var(--width-big-enough)) {
-	ol,
-	ul {
+	.post-body ol,
+	.post-body ul {
 		min-width: 50rem;
 		margin-left: 2rem;
 	}
@@ -266,18 +281,13 @@ figcaption {
 	font-variant-ligatures: "none";
 	font-feature-settings: "normal";
 	font-size: 0.8rem;
-	color: var(--color-inline-code);
+	color: var(--color-text-inline-code);
 	border-radius: 3px;
 }
 
 a {
-	color: var(--color-text-link);
 	text-decoration-skip: ink;
 	text-decoration-skip-ink: auto;
-	text-decoration: none;
-}
-
-a:hover {
 	text-decoration: underline;
 }
 
@@ -293,7 +303,7 @@ a > code {
 }
 
 .footnote-backref::after {
-	content: "↩\\fe0e";
+	content: "↩";
 	font-size: 1rem;
 	position: absolute;
 	left: 0;
