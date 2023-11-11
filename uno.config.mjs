@@ -1,6 +1,5 @@
 // @ts-check
-import { defineConfig } from "unocss";
-import presetUno from "@unocss/preset-uno";
+import { defineConfig, presetUno } from "unocss";
 
 export default defineConfig({
 	cli: {
@@ -16,7 +15,16 @@ export default defineConfig({
 	],
 	theme: {
 		colors: {
-			primary: "rgb(var(--rgb-primary) / <alpha-value>)",
+			textHighContrast: "var(--color-text-high-contrast)",
+			textDisabled: "var(--color-text-disabled)",
+			textSecondary: "var(--color-text-secondary)",
+		},
+		width: {
+			content: "var(--width-content)",
+		},
+		breakpoints: {
+			sm: "414px",
+			md: "550px",
 		},
 	},
 });

@@ -5,6 +5,7 @@ date: 2019-03-19
 permalink: one-does-not-simply-walk-into-mordor/
 tags: post
 layout: post
+bigTitle: true
 metaImage: "./images/nz/crown-range-pass.jpg"
 ---
 

@@ -2,6 +2,7 @@
 const path = require("path");
 const bundlerPlugin = require("@11ty/eleventy-plugin-bundle");
 const eleventyImage = require("@11ty/eleventy-img");
+const getImageSize = require("image-size");
 
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 module.exports = (eleventyConfig) => {
@@ -35,22 +36,47 @@ module.exports = (eleventyConfig) => {
 	eleventyConfig.addWatchTarget("./content/*.css");
 
 	eleventyConfig.addAsyncShortcode("image", async function (src, alt, className, widths, sizes) {
+		widths = Array.isArray(widths) ? widths : [widths || "auto"];
 		// Full list of formats here: https://www.11ty.dev/docs/plugins/image/#output-formats
-		let formats = ["webp", "auto"];
-		let file = relativeToInputPath(this.page.inputPath, src);
-		let metadata = await eleventyImage(file, {
-			widths: Array.isArray(widths) ? widths : [widths || "auto"],
+		const formats = ["webp", "auto"];
+		const originalPath = relativeToInputPath(this.page.inputPath, src);
+		const { width, type } = getImageSize(originalPath);
+		const bodyWidth = 768; // TODO: integrate with CSS theme
+		const generatePhotoLink = type === "jpg" && width > bodyWidth * 2;
+		if (generatePhotoLink) {
+			widths = [bodyWidth * 2, "auto"];
+			sizes = `(max-width: ${bodyWidth}px) 100vw, ${bodyWidth}px`;
+		}
+
+		// TODO: this wastes the full-size webp image.
+		// Could use sharp directly to save a bit.
+		const metadata = await eleventyImage(originalPath, {
+			widths,
 			formats,
 			outputDir: "public/img",
 		});
 
-		return eleventyImage.generateHTML(metadata, {
+		// Only generate picture HTML for body-sized images.
+		// The full size one is only for linking to.
+		const renderableMetadata = generatePhotoLink
+			? Object.fromEntries(
+					Object.entries(metadata).map(([type, sizes]) => {
+						return [type, [sizes[0]]];
+					}),
+			  )
+			: metadata;
+
+		const pictureHtml = eleventyImage.generateHTML(renderableMetadata, {
 			alt,
-			class: className,
+			class: className || "",
 			sizes,
 			loading: "lazy",
 			decoding: "async",
 		});
+
+		return generatePhotoLink
+			? `<a class="photo-link" target="_blank" href="${metadata.jpeg.at(-1).url}">${pictureHtml}</a>`
+			: pictureHtml;
 	});
 
 	eleventyConfig.amendLibrary("md", (md) => {

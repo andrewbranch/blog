@@ -1,5 +1,25 @@
 ---
 layout: base
 ---
-<h1>{{ title }}</h1>
-<div class="post-body">{{ content }}</div>
+<div class="post-body">
+	<h1
+		{% if bigTitle %}
+			class="font-normal text-center text-textHighContrast text-[2.4rem] md:text-[3.4rem]"
+		{% endif %}
+	>
+		{{ title }}
+		{% if subtitle %}
+			<h2
+				class="
+					before:content-['~'] before:pr-[.64rem] before:text-textDisabled
+					after:content-['~'] after:pl-[.64rem] after:text-textDisabled
+					antialiased text-center text-[1.2rem] italic text-textSecondary
+					justify-center
+				"
+			>
+				{{ subtitle }}
+			</h2>
+		{% endif %}
+	</h1>
+	{{ content }}
+</div>
