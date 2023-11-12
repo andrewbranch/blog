@@ -1,0 +1,93 @@
+---
+layout: base
+---
+<div class="post-body slide-enter-content">
+	<h1
+		{% if bigTitle %}
+			class="font-normal text-center text-textHighContrast text-[2.8rem] md:text-[3.4rem]"
+		{% elsif subtitle %}
+			class="mb-2"
+		{% endif %}
+	>
+		{{ title }}
+		{% if subtitle %}
+			<h2
+				class="
+					antialiased text-[1.2rem] italic text-textSecondary
+					{% if bigTitle %}
+						before:content-['~'] before:pr-[.64rem] before:text-textDisabled
+						after:content-['~'] after:pl-[.64rem] after:text-textDisabled
+						flex justify-center items-center text-center
+					{% endif %}
+				"
+			>
+				{{ subtitle }}
+			</h2>
+		{% endif %}
+	</h1>
+	{% if note %}
+		<p class="font-grotesk rounded-lg bg-[var(--color-fg05)] p-2">
+			{{ note }}
+		</p>
+	{% endif %}
+	{% if not bigTitle %}
+		<p>
+			<time class="font-grotesk font-medium text-textMuted" datetime="{{ date | htmlDateString }}">
+				{{- date | readableDate -}}
+			</time>
+		</p>
+	{% endif %}
+	{{ content }}
+
+	{% for post in collections.post %}
+		{% if post.url == page.url %}
+			{% unless forloop.last %}
+				{% assign newerIndex = forloop.index0 | plus: 1 %}
+				{% assign newer = collections.post[newerIndex] %}
+			{% endunless %}
+			{% unless forloop.first %}
+				{% assign olderIndex = forloop.index0 | minus: 1 %}
+				{% assign older = collections.post[olderIndex] %}
+			{% endunless %}
+			{% break %}
+		{% endif %}
+	{% endfor %}
+
+	<div class="flex flex-col md:flex-row justify-between divide-y md:divide-x md:divide-y-0 p-2 mt-8">
+		<div class="basis-1/2">
+			{% if newer %}
+				<a href="{{ newer.url }}" class="rounded inline-block no-underline pb-2 md:pr-2 md:pb-0">
+					<div class="text-textSecondary flex items-center">
+						<span aria-hidden="true" class="inline-block i-mdi:arrow-left-thin-circle-outline mr-1"></span>
+						<span class="font-grotesk font-medium">newer</span>
+					</div>
+					<span class="font-grotesk underline">
+						{{ newer.data.title }}
+						{%- if newer.data.subtitle -%}
+							: {{ newer.data.subtitle }}
+						{%- endif -%}
+					</span>
+				</a>
+			{% endif %}
+		</div>
+		<div class="basis-1/2">
+			{% if older %}
+				<a
+					href="{{ older.url }}"
+					class="rounded md:text-right inline-block no-underline pt-2 md:pl-2 md:pt-0"
+				>
+					<div class="text-textSecondary flex items-center justify-end">
+						<span class="font-grotesk font-medium">older</span>
+						<span aria-hidden="true" class="inline-block i-mdi:arrow-right-thin-circle-outline ml-1"></span>
+					</div>
+					<span class="font-grotesk underline">
+						{{ older.data.title }}
+						{%- if older.data.subtitle -%}
+							: {{ older.data.subtitle }}
+						{%- endif -%}
+					</span>
+				</a>
+			{% endif %}
+		</div>
+	</div>
+</div>

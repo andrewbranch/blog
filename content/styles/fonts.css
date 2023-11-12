@@ -1,0 +1,60 @@
+@font-face {
+	font-family: "Heldane";
+	src:
+		url("/styles/fonts/HeldaneTextWeb-Regular.woff2") format("woff2"),
+		url("/styles/fonts/HeldaneTextWeb-Regular.woff") format("woff");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Heldane";
+	src:
+		url("/styles/fonts/HeldaneTextWeb-RegularItalic.woff2") format("woff2"),
+		url("/styles/fonts/HeldaneTextWeb-RegularItalic.woff") format("woff");
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "Heldane";
+	src:
+		url("/styles/fonts/HeldaneTextWeb-Medium.woff2") format("woff2"),
+		url("/styles/fonts/HeldaneTextWeb-Medium.woff") format("woff");
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Heldane";
+	src:
+		url("/styles/fonts/HeldaneTextWeb-MediumItalic.woff2") format("woff2"),
+		url("/styles/fonts/HeldaneTextWeb-MediumItalic.woff") format("woff");
+	font-weight: 500;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "Heldane Display";
+	src:
+		url("/styles/fonts/HeldaneDisplayWeb-Regular.woff2") format("woff2"),
+		url("/styles/fonts/HeldaneDisplayWeb-Regular.woff") format("woff");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Founders Grotesk";
+	src: url("/styles/fonts/FoundersGroteskWeb-Regular.woff2") format("woff2");
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Founders Grotesk";
+	src:
+		url("/styles/fonts/FoundersGroteskWeb-Medium.woff2") format("woff2"),
+		url("/styles/fonts/FoundersGroteskWeb-Medium.woff") format("woff");
+	font-weight: 500;
+	font-style: normal;
+}

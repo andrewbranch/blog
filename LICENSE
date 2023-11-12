@@ -1,11 +1,11 @@
 ### SPDX-License-Identifier: MIT
 
-**Except as otherwise noted (below and/or in individual files), this project is copyrighted (c) 2019 Andrew Branch and licensed under the [MIT License](LICENSE-MIT) ([online](https://opensource.org/licenses/MIT)).**
+**Except as otherwise noted (below and/or in individual files), this project is copyrighted (c) 2023 Andrew Branch and licensed under the [MIT License](LICENSE-MIT) ([online](https://opensource.org/licenses/MIT)).**
 
 ### SPDX-License-Identifier: CC-BY-4.0
 
-- Content in [`posts`](posts) is licensed under a [Creative Commons Attribution 4.0 International License](LICENSE-CC-BY-4.0) ([online](https://creativecommons.org/licenses/by/4.0/legalcode)).
+- Markdown content in [`content/posts`](./content/posts) (excluding images) is licensed under a [Creative Commons Attribution 4.0 International License](LICENSE-CC-BY-4.0) ([online](https://creativecommons.org/licenses/by/4.0/legalcode)).
 
 ### All Rights Reserved
 
-- [`icons.sketch`](icons.sketch), [`src/favicon.png`](src/favicon.png), and the contents of [`src/images`](src/images) are copyrighted (c) 2019 Andrew Branch, All Rights Reserved.
+- [`icons.sketch`](icons.sketch) and the contents of [`content/images`](./content/images), [`content/posts/images`](./content/posts/images), and [`content/posts/archive/images`](./content/posts/archive/images) are copyrighted (c) 2023 Andrew Branch, All Rights Reserved.
