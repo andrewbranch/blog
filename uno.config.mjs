@@ -5,7 +5,7 @@ export default defineConfig({
 	cli: {
 		entry: {
 			patterns: ["{content,_layouts}/**/*.{html,md,liquid}", "eleventy.config.js"],
-			outFile: "content/uno.css",
+			outFile: "content/styles/uno.css",
 		},
 	},
 	presets: [

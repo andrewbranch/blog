@@ -92,15 +92,9 @@ Both `tsc` and the language service use the [Program](https://github.com/microso
 3. The [checker](https://github.com/microsoft/TypeScript/blob/master/src/compiler/checker.ts) gathers all the SourceFiles and walks their parse trees, creating [types](https://github.com/microsoft/TypeScript/blob/10e3f11c0d88b991eaca600ff71d01a603a769a3/src/compiler/types.ts#L4074) for symbols and ensuring that the relationships between them make sense.
 4. The [transformer](https://github.com/microsoft/TypeScript/blob/master/src/compiler/transformer.ts) transforms the TypeScript parse tree to a plain JavaScript syntax tree and/or a declaration file syntax tree (stripping away type annotations, converting fancy new syntax ES5-compatible syntax, etc.), and the [emitter](https://github.com/microsoft/TypeScript/blob/master/src/compiler/emitter.ts) writes those trees to text.
 
-<figure>
 {% image "images/ts-diagram-light.png", "A rough, hand-drawn architecture diagram of the TypeScript codebase", "dark:hidden" %}
 
 {% image "images/ts-diagram-dark.png", "A rough, hand-drawn architecture diagram of the TypeScript codebase", "light:hidden" %}
-
-<figcaption>
-Whiteboarding the compiler structure. Not scientific. Not complete. Don’t @ me. Get out of here with your diagram nitpicking.
-</figcaption>
-</figure>
 
 ### Know Your Nodes!
 
