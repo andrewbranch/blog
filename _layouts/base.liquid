@@ -8,11 +8,11 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<title>{{ fullTitle }}</title>
-		<meta name="description" content="{{ description or metadata.description }}">
+		<meta name="description" content="{{ description | default: metadata.description }}">
 		<meta name="generator" content="{{ eleventy.generator }}">
 
 		<meta name="og:title" content="{{ fullTitle }}">
-		<meta name="og:description" content="{{ description or metadata.description }}">
+		<meta name="og:description" content="{{ description | default: metadata.description }}">
 		<meta name="og:type" content="website">
 		<meta name="og:url" content="{{ page.url }}">
 		{% ogImage metaImage %}

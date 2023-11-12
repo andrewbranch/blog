@@ -1,7 +1,7 @@
 ---
 title: One Does Not Simply Walk Into Mordor
 subtitle: Cycling a Thousand Miles in New Zealand
-tagline: Thoughts and photos from a two-week cycling tour from Auckland to Queenstown.
+description: Thoughts and photos from a two-week cycling tour from Auckland to Queenstown.
 date: 2019-03-19
 permalink: one-does-not-simply-walk-into-mordor/
 tags: post
