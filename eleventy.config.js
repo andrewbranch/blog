@@ -4,6 +4,7 @@ const bundlerPlugin = require("@11ty/eleventy-plugin-bundle");
 const eleventyImage = require("@11ty/eleventy-img");
 const getImageSize = require("image-size");
 
+const anchor = require("markdown-it-anchor");
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 module.exports = (eleventyConfig) => {
 	const monthDayYearFormat = new Intl.DateTimeFormat("en-US", {
@@ -83,6 +84,11 @@ module.exports = (eleventyConfig) => {
 	eleventyConfig.amendLibrary("md", (md) => {
 		md.use(require("markdown-it-footnote"));
 		md.use(require("@ryanxcharles/markdown-it-katex"));
+		md.use(anchor, {
+			permalink: anchor.permalink.headerLink({
+				class: "no-underline",
+			}),
+		});
 	});
 
 	return {

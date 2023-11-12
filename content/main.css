@@ -184,7 +184,7 @@ h3 {
 	font-family: var(--font-grotesk);
 	font-variant: small-caps;
 	text-transform: lowercase;
-	letter-spacing: 3px;
+	letter-spacing: 1px;
 	font-weight: 500;
 	font-size: 1.4rem;
 	margin-bottom: calc(var(--rhythm) * 0.25rem);
