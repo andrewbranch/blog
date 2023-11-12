@@ -14,6 +14,16 @@ export default defineConfig({
 		}),
 	],
 	theme: {
+		spacing: {
+			1: "calc(var(--rhythm) * .25rem * 1)",
+			2: "calc(var(--rhythm) * .25rem * 2)",
+			3: "calc(var(--rhythm) * .25rem * 3)",
+			4: "calc(var(--rhythm) * .25rem * 4)",
+			5: "calc(var(--rhythm) * .25rem * 5)",
+			6: "calc(var(--rhythm) * .25rem * 6)",
+			7: "calc(var(--rhythm) * .25rem * 7)",
+			8: "calc(var(--rhythm) * .25rem * 8)",
+		},
 		fontFamily: {
 			grotesk: "var(--font-grotesk)",
 		},

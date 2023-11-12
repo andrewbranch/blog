@@ -5,16 +5,20 @@ layout: base
 	<h1
 		{% if bigTitle %}
 			class="font-normal text-center text-textHighContrast text-[2.8rem] md:text-[3.4rem]"
+		{% elsif subtitle %}
+			class="mb-2"
 		{% endif %}
 	>
 		{{ title }}
 		{% if subtitle %}
 			<h2
 				class="
-					before:content-['~'] before:pr-[.64rem] before:text-textDisabled
-					after:content-['~'] after:pl-[.64rem] after:text-textDisabled
-					antialiased text-center text-[1.2rem] italic text-textSecondary
-					flex justify-center items-center
+					antialiased text-[1.2rem] italic text-textSecondary
+					{% if bigTitle %}
+						before:content-['~'] before:pr-[.64rem] before:text-textDisabled
+						after:content-['~'] after:pl-[.64rem] after:text-textDisabled
+						flex justify-center items-center text-center
+					{% endif %}
 				"
 			>
 				{{ subtitle }}
