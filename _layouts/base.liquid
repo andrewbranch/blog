@@ -1,5 +1,5 @@
 {%- capture fullTitle -%}
-	{% if title %}{{ title }} ∙ {{ metadata.title }}{% else %}{{ metadata.title }}{% endif %}
+	{% if title %}{{ title }}{% if subtitle %}: {{ subtitle }}{% endif %} ∙ {{ metadata.title }}{% else %}{{ metadata.title }}{% endif %}
 {%- endcapture -%}
 
 <!doctype html>

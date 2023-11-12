@@ -1,4 +1,5 @@
 // @ts-check
+const util = require("util");
 const path = require("path");
 const bundlerPlugin = require("@11ty/eleventy-plugin-bundle");
 const eleventyImage = require("@11ty/eleventy-img");
@@ -32,7 +33,7 @@ module.exports = (eleventyConfig) => {
 		},
 	);
 
-	eleventyConfig.addFilter("inspect", (value) => `<pre>${JSON.stringify(value, null, 2)}</pre>`);
+	eleventyConfig.addFilter("inspect", (value) => `<pre>${util.inspect(value)}</pre>`);
 
 	eleventyConfig.addPlugin(bundlerPlugin);
 	eleventyConfig.addPassthroughCopy("content/images");
