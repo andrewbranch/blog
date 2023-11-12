@@ -2,9 +2,11 @@
 const path = require("path");
 const bundlerPlugin = require("@11ty/eleventy-plugin-bundle");
 const eleventyImage = require("@11ty/eleventy-img");
-const getImageSize = require("image-size");
+const getImageSize = require("image-size").default;
+const anchor = require("markdown-it-anchor").default;
+const { loadTheme } = require("shiki");
+const shikiMarkdown = require("markdown-it-shiki").default;
 
-const anchor = require("markdown-it-anchor");
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 module.exports = (eleventyConfig) => {
 	const monthDayYearFormat = new Intl.DateTimeFormat("en-US", {
@@ -39,12 +41,10 @@ module.exports = (eleventyConfig) => {
 
 	eleventyConfig.addAsyncShortcode("image", async function (src, alt, className, widths, sizes) {
 		widths = Array.isArray(widths) ? widths : [widths || "auto"];
-		// Full list of formats here: https://www.11ty.dev/docs/plugins/image/#output-formats
-		const formats = ["webp", "auto"];
 		const originalPath = relativeToInputPath(this.page.inputPath, src);
 		const { width, type } = getImageSize(originalPath);
 		const bodyWidth = 768; // TODO: integrate with CSS theme
-		const generatePhotoLink = type === "jpg" && width > bodyWidth * 2;
+		const generatePhotoLink = type === "jpg" && (width ?? 0) > bodyWidth * 2;
 		if (generatePhotoLink) {
 			widths = [bodyWidth * 2, "auto"];
 			sizes = `(max-width: ${bodyWidth}px) 100vw, ${bodyWidth}px`;
@@ -54,7 +54,7 @@ module.exports = (eleventyConfig) => {
 		// Could use sharp directly to save a bit.
 		const metadata = await eleventyImage(originalPath, {
 			widths,
-			formats,
+			formats: ["webp", "auto"],
 			outputDir: "public/img",
 		});
 
@@ -77,17 +77,24 @@ module.exports = (eleventyConfig) => {
 		});
 
 		return generatePhotoLink
-			? `<a class="photo-link" target="_blank" href="${metadata.jpeg.at(-1).url}">${pictureHtml}</a>`
+			? `<a class="photo-link" target="_blank" href="${
+					/** @type {any} */ (metadata.jpeg).at(-1).url
+			  }">${pictureHtml}</a>`
 			: pictureHtml;
 	});
 
-	eleventyConfig.amendLibrary("md", (md) => {
+	eleventyConfig.amendLibrary("md", async (/** @type {import("markdown-it")} */ md) => {
+		const theme = await loadTheme(path.join(__dirname, "dark_modern.json"));
 		md.use(require("markdown-it-footnote"));
 		md.use(require("@ryanxcharles/markdown-it-katex"));
 		md.use(anchor, {
 			permalink: anchor.permalink.headerLink({
 				class: "no-underline",
 			}),
+		});
+		md.use(shikiMarkdown, {
+			theme,
+			useBackground: true,
 		});
 	});
 

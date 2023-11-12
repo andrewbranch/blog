@@ -228,11 +228,23 @@ li > .katex {
 /* #region: others */
 pre {
 	line-height: var(--rhythm);
+	font-size: 0.75rem;
+	padding: calc(var(--rhythm) * 0.5rem);
+	border-radius: calc(var(--rhythm) * 0.25rem);
+	-webkit-font-smoothing: auto;
+	overflow: auto;
 }
 
 .post-body ol,
 .post-body ul {
-	margin-left: 3.2rem;
+	margin-left: calc(var(--rhythm) * 1rem);
+}
+
+@media (min-width: 550px) {
+	.post-body ol,
+	.post-body ul {
+		margin-left: calc(var(--rhythm) * 2rem);
+	}
 }
 
 .post-body ol {
@@ -245,14 +257,6 @@ pre {
 
 .post-body li {
 	margin-bottom: calc(var(--rhythm) * 0.5rem);
-}
-
-@media (min-width: var(--width-big-enough)) {
-	.post-body ol,
-	.post-body ul {
-		min-width: 50rem;
-		margin-left: 2rem;
-	}
 }
 
 figure img {
@@ -276,13 +280,15 @@ figcaption {
 /* #endregion */
 
 /* #region: inlines */
-:not(pre) > code {
+code {
 	font-family: var(--font-mono);
 	font-variant-ligatures: "none";
 	font-feature-settings: "normal";
+}
+
+:not(pre) > code {
 	font-size: 0.8rem;
 	color: var(--color-text-inline-code);
-	border-radius: 3px;
 }
 
 a {
