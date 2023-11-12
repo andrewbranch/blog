@@ -56,7 +56,7 @@ layout: base
 	<div class="flex flex-col md:flex-row justify-between divide-y md:divide-x md:divide-y-0 p-2 mt-8">
 		<div class="basis-1/2">
 			{% if newer %}
-				<a href="{{ newer.url }}" class="rounded inline-block no-underline pb-2 md:pr-2 md:pb-0">
+				<a href="{{ newer.url }}" class="block no-underline pb-2 md:pr-2 md:pb-0">
 					<div class="text-textSecondary flex items-center">
 						<span aria-hidden="true" class="inline-block i-mdi:arrow-left-thin-circle-outline mr-1"></span>
 						<span class="font-grotesk font-medium">newer</span>
@@ -74,7 +74,7 @@ layout: base
 			{% if older %}
 				<a
 					href="{{ older.url }}"
-					class="rounded md:text-right inline-block no-underline pt-2 md:pl-2 md:pt-0"
+					class="text-right block no-underline pt-2 md:pl-2 md:pt-0"
 				>
 					<div class="text-textSecondary flex items-center justify-end">
 						<span class="font-grotesk font-medium">older</span>
