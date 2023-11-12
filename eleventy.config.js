@@ -42,7 +42,7 @@ module.exports = (eleventyConfig) => {
 		"node_modules/katex/dist/fonts": "bundle/fonts",
 	});
 
-	eleventyConfig.addWatchTarget("./content/*.css");
+	eleventyConfig.addWatchTarget("./content/styles/*.css");
 
 	eleventyConfig.addAsyncShortcode("ogImage", async function (src) {
 		if (src) {

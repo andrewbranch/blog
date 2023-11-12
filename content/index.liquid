@@ -2,7 +2,7 @@
 layout: index.liquid
 title: Blog Posts
 ---
-<ol reversed>
+<ol reversed class="slide-enter-content">
 	{% for post in collections.post reversed %}
 		<li class="mb-4">
 			<a href="{{ post.url }}" class="no-underline">
