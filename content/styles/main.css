@@ -310,18 +310,6 @@ a > code {
 	padding: 0;
 	color: inherit;
 }
-
-.footnote-backref {
-	font-size: 0;
-	position: relative;
-}
-
-.footnote-backref::after {
-	content: "↩";
-	font-size: 1rem;
-	position: absolute;
-	left: 0;
-}
 /* #endregion */
 
 /* #endregion */
