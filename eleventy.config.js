@@ -6,6 +6,7 @@ const getImageSize = require("image-size").default;
 const anchor = require("markdown-it-anchor").default;
 const { loadTheme } = require("shiki");
 const shikiMarkdown = require("markdown-it-shiki").default;
+const faviconsPlugin = require("eleventy-plugin-gen-favicons");
 
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 module.exports = (eleventyConfig) => {
@@ -37,9 +38,34 @@ module.exports = (eleventyConfig) => {
 	eleventyConfig.addPassthroughCopy("content/images");
 	eleventyConfig.addPassthroughCopy("content/styles/fonts");
 	eleventyConfig.addPassthroughCopy("content/_redirects");
+	eleventyConfig.addPassthroughCopy({
+		"node_modules/katex/dist/fonts": "bundle/fonts",
+	});
 
 	eleventyConfig.addWatchTarget("./content/*.css");
 
+	eleventyConfig.addAsyncShortcode("ogImage", async function (src) {
+		if (src) {
+			const originalPath = relativeToInputPath(this.page.inputPath, src);
+			const metadata = await eleventyImage(originalPath, {
+				widths: [1200],
+				formats: ["jpeg"],
+				outputDir: "public/img",
+			});
+			const jpeg = metadata.jpeg[0];
+			const url = new URL(jpeg.url, new URL("https://blog.andrewbran.ch"));
+			return `<meta property="og:image" content="${url.toString()}" />`;
+		} else {
+			const metadata = await eleventyImage(path.join(__dirname, "content/images/logo.svg"), {
+				widths: [1200],
+				formats: ["png"],
+				outputDir: "public/img",
+			});
+			const png = metadata.png[0];
+			const url = new URL(png.url, new URL("https://blog.andrewbran.ch"));
+			return `<meta property="og:image" content="${url.toString()}" />`;
+		}
+	});
 	eleventyConfig.addAsyncShortcode("image", async function (src, alt, className, widths, sizes) {
 		widths = Array.isArray(widths) ? widths : [widths || "auto"];
 		const originalPath = relativeToInputPath(this.page.inputPath, src);
@@ -97,6 +123,10 @@ module.exports = (eleventyConfig) => {
 			theme,
 			useBackground: true,
 		});
+	});
+
+	eleventyConfig.addPlugin(faviconsPlugin, {
+		outputDir: "public",
 	});
 
 	return {

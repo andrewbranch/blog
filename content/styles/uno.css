@@ -27,11 +27,14 @@
 .mr-6{margin-right:calc(var(--rhythm) * .25rem * 6);}
 .ms{margin-inline-start:1rem;}
 .mt-4{margin-top:calc(var(--rhythm) * .25rem * 4);}
+.mt-8{margin-top:calc(var(--rhythm) * .25rem * 8);}
 .block{display:block;}
 .contents{display:contents;}
 .h-full{height:100%;}
 .max-w-\[var\(--width-content\)\]{max-width:var(--width-content);}
+.min-h-screen{min-height:100vh;}
 .flex{display:flex;}
+.shrink-to-fit\=no{flex-shrink:1;}
 .grow{flex-grow:1;}
 .flex-col{flex-direction:column;}
 .items-center{align-items:center;}

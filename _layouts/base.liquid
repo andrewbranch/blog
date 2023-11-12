@@ -6,10 +6,17 @@
 <html lang="{{ metadata.language }}">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
 		<title>{{ fullTitle }}</title>
 		<meta name="description" content="{{ description or metadata.description }}">
 		<meta name="generator" content="{{ eleventy.generator }}">
+
+		<meta name="og:title" content="{{ fullTitle }}">
+		<meta name="og:description" content="{{ description or metadata.description }}">
+		<meta name="og:type" content="website">
+		<meta name="og:url" content="{{ page.url }}">
+		{% ogImage metaImage %}
+		{% favicons 'content/images/logo.svg' %}
 
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="{{ fullTitle }}">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="{{ fullTitle }}">
@@ -29,13 +36,13 @@
 	<body>
 		<a href="#skip" class="visually-hidden">Skip to main content</a>
 
-		<div class="flex flex-col justify-between h-full max-w-[var(--width-content)] px-[0.8rem] my-0 mx-auto">
+		<div class="flex flex-col justify-between h-full max-w-[var(--width-content)] px-[0.8rem] my-0 mx-auto min-h-screen">
 			<div>
 				<header class="mt-4 mb-8 flex items-center justify-between">
 					<nav>
 						<h2 class="visually-hidden">Top level navigation menu</h2>
 
-						<ul class="flex items-center m-0">
+						<ul class="flex items-center m-0 font-grotesk font-medium text-textSecondary lowercase">
 							<li class="mr-6">
 								<a href="/">
 									<img src="/images/logo.svg" width="64" height="64" class="m-0" alt="Andrew Branch">
@@ -45,7 +52,7 @@
 							<li class="pt-4">
 								<a
 									href="/about"
-									class="font-grotesk text-textSecondary lowercase no-underline hover:underline"
+									class="{% if entry.url != '/about' %}no-underline hover:underline{% endif %}"
 									{% if entry.url == '/about' %}
 										aria-current="page"
 									{% endif %}
@@ -66,7 +73,15 @@
 					{{ content }}
 				</main>
 			</div>
-			<footer></footer>
+
+			<footer class="mt-8">
+				<p class="font-grotesk text-center text-textSecondary">
+					<small
+						>&copy; {{ 'now' | date: '%Y' }} Andrew Branch / Licensed under
+						<a href="http://creativecommons.org/licenses/by/4.0/legalcode">CC-BY-4.0</a></small
+					>
+				</p>
+			</footer>
 		</div>
 	</body>
 </html>
