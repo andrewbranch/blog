@@ -1,5 +1,6 @@
 ---
 title: Debugging the TypeScript Codebase
+tagline: The TypeScript codebase can be intimidatingly large. The best way to learn your way around it is to set some breakpoints and step through it.
 date: 2019-10-23
 permalink: debugging-the-typescript-codebase/
 tags: post

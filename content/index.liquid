@@ -4,9 +4,22 @@ title: Blog Posts
 ---
 <ol reversed>
 	{% for post in collections.post reversed %}
-		<li>
-			<a href="{{ post.url }}">{{ post.data.title }}</a>
-			<time datetime="{{ post.date | htmlDateString }}">{{ post.date | readableDate }}</time>
+		<li class="mb-4">
+			<a href="{{ post.url }}" class="no-underline">
+				<time
+					class="block italic text-textSecondary text-[0.8rem]"
+					datetime="{{ post.date | htmlDateString }}"
+				>
+					{{- post.date | readableDate -}}
+				</time>
+				<h2 class="my-1 text-[1.419rem]">
+					{{- post.data.title -}}
+					{%- if post.data.subtitle -%}
+						: {{ post.data.subtitle }}
+					{% endif %}
+				</h2>
+				<p class="font-grotesk text-textSecondary">{{ post.data.tagline }}</p>
+			</a>
 		</li>
 	{% endfor %}
 </ol>

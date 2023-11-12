@@ -22,6 +22,7 @@
 	--color-fg54: rgba(0, 0, 0, 0.54);
 	--color-fg60: rgba(0, 0, 0, 0.6);
 	--color-fg70: rgba(0, 0, 0, 0.7);
+	--color-fg80: rgba(0, 0, 0, 0.8);
 	--color-fg85: rgba(0, 0, 0, 0.85);
 	--color-fg90: rgba(0, 0, 0, 0.9);
 	--color-fg100: rgba(0, 0, 0, 1);
@@ -46,7 +47,7 @@
 	--color-accent-light: rgb(var(--rgb-accent-light));
 
 	--color-background: var(--color-bg100);
-	--color-text-primary: var(--color-fg85);
+	--color-text-primary: var(--color-fg80);
 	--color-text-muted: var(--color-fg70);
 	--color-text-secondary: var(--color-fg54);
 	--color-text-disabled: var(--color-fg32);
@@ -64,6 +65,7 @@
 		--color-fg54: rgba(255, 255, 255, 0.54);
 		--color-fg60: rgba(255, 255, 255, 0.6);
 		--color-fg70: rgba(255, 255, 255, 0.7);
+		--color-fg80: rgba(255, 255, 255, 0.8);
 		--color-fg85: rgba(255, 255, 255, 0.85);
 		--color-fg90: rgba(255, 255, 255, 0.9);
 		--color-fg100: rgba(255, 255, 255, 1);
@@ -95,7 +97,6 @@ html {
 	font: 112.5% / var(--rhythm) var(--font-serif);
 	font-weight: 300;
 	color: var(--color-text-primary);
-	-webkit-font-smoothing: antialiased;
 	word-wrap: break-word;
 	font-kerning: normal;
 	-moz-font-feature-settings: var(--dlig);
@@ -145,7 +146,6 @@ h3,
 h4,
 h5,
 h6 {
-	-webkit-font-smoothing: auto;
 	font-feature-settings: var(--swashes);
 	line-height: 1.1;
 	color: var(--color-text-high-contrast);
@@ -231,7 +231,6 @@ pre {
 	font-size: 0.75rem;
 	padding: calc(var(--rhythm) * 0.5rem);
 	border-radius: calc(var(--rhythm) * 0.25rem);
-	-webkit-font-smoothing: auto;
 	overflow: auto;
 }
 

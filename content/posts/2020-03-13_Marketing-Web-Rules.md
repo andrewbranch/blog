@@ -1,6 +1,7 @@
 ---
 title: Marketing Web Rules
 subtitle: A Tale of CSS Modules and Whimsy
+tagline: Works on my machine?
 date: 2020-03-13
 permalink: marketing-web-rules/
 tags: post
