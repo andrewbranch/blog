@@ -8,6 +8,7 @@ const anchor = require("markdown-it-anchor").default;
 const { loadTheme } = require("shiki");
 const shikiMarkdown = require("markdown-it-shiki").default;
 const faviconsPlugin = require("eleventy-plugin-gen-favicons");
+const pluginRss = require("@11ty/eleventy-plugin-rss");
 
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 module.exports = (eleventyConfig) => {
@@ -36,6 +37,7 @@ module.exports = (eleventyConfig) => {
 	eleventyConfig.addFilter("inspect", (value) => `<pre>${util.inspect(value)}</pre>`);
 
 	eleventyConfig.addPlugin(bundlerPlugin);
+	eleventyConfig.addPlugin(pluginRss);
 	eleventyConfig.addPassthroughCopy("content/images");
 	eleventyConfig.addPassthroughCopy("content/styles/fonts");
 	eleventyConfig.addPassthroughCopy("content/_redirects");
