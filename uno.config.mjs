@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig, presetUno } from "unocss";
+import { defineConfig, presetUno, presetIcons } from "unocss";
 
 export default defineConfig({
 	cli: {
@@ -9,6 +9,7 @@ export default defineConfig({
 		},
 	},
 	presets: [
+		presetIcons(),
 		presetUno({
 			dark: "media",
 		}),

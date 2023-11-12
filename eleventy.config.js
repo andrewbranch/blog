@@ -34,6 +34,7 @@ module.exports = (eleventyConfig) => {
 	eleventyConfig.addFilter("inspect", (value) => `<pre>${JSON.stringify(value, null, 2)}</pre>`);
 
 	eleventyConfig.addPlugin(bundlerPlugin);
+	eleventyConfig.addPassthroughCopy("content/images");
 	eleventyConfig.addPassthroughCopy("content/styles/fonts");
 	eleventyConfig.addPassthroughCopy("content/_redirects");
 
