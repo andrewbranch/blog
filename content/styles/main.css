@@ -258,6 +258,15 @@ pre {
 	margin-bottom: calc(var(--rhythm) * 0.5rem);
 }
 
+picture {
+	display: block;
+	text-align: center;
+}
+
+picture img {
+	display: inline-block;
+}
+
 figure img {
 	margin-bottom: 0;
 }

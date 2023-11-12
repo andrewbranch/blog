@@ -5,33 +5,14 @@ permalink: polymorphic-react-components/
 tags: archive
 layout: post
 metaImage: images/rabbit-bg.png
-globalPreamble: "
-  import * as React from 'react';
-  interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> { to: string }
-  declare function Link(props: LinkProps): JSX.Element;
-  declare function Icon(props: any): JSX.Element;
-  declare function FlexContainer(props: any): JSX.Element;
-  declare function getClassName(color: ColorName | undefined, ...others: (string | undefined)[]): string;
-  declare enum ColorName { Blue = 'blue' };
-  declare enum IconName {};
-  type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;\n
-  "
-preambles:
-  - file: GoodButton.tsx
-    text: "
-      declare function mergeProps<T extends {}[]>(...props: T): {
-      [K in keyof UnionToIntersection<T[number]>]:
-      K extends 'className' ? string :
-      K extends 'style' ? UnionToIntersection<T[number]>[K] :
-      Extract<T[number], { [Q in K]: unknown; }>[K]; }\n
-      "
-lib:
-  - react
-  - dom
-compilerOptions:
-  lib:
-    - /lib.es2015.d.ts
-    - /lib.dom.d.ts
+note: |
+  This post has been archived and delisted. The code examples relied on my
+  <a href="/overengineering-a-blog">previous blog infrastructure</a>, which showed
+  live TypeScript errors and type information. Ultimately, that was not worth the
+  upkeep and has been removed. Consequently, this post may not make sense without
+  seeing the errors that are supposed to be rendered. The content also refers to
+  very old versions of TypeScript, React, and <code>@types/react</code> and may
+  no longer be accurate.
 ---
 
 <span class="small-caps">When designing a React component for reusability</span>, you often need to be able to pass different DOM attributes to the component’s container in different situations. Let’s say you’re building a `<Button />`. At first, you just need to allow a custom `className` to be merged in, but later, you need to support a wide range of attributes and event handlers that aren’t related to the component itself, but rather the context in which it’s used—say, `aria-describedby` when composed with a Tooltip component, or `tabIndex` and `onKeyDown` when contained in a component that manages focus with arrow keys.

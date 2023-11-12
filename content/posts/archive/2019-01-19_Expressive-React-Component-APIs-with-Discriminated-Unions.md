@@ -4,22 +4,14 @@ date: 2019-02-06
 permalink: expressive-react-component-apis-with-discriminated-unions/
 tags: archive
 layout: post
-globalPreamble: "declare var onChange: () => void;declare var console: { log: Function };\n"
-preambles:
-  - file: select-1.tsx
-    text: "import React from 'react';\n"
-  - file: select-2.tsx
-    text: "import React from 'react';\n"
-  - file: select-3.tsx
-    text: "import React from 'react';\n"
-lib:
-  - react
-note: '
-When I wrote this piece, I realized it would be much easier to explain if I could show you how the TypeScript compiler handles the code I’m talking about, as if we were both sitting in front of your favorite code editor with language support. So, I built this blog to imitate that experience. Hover (or tap) on code underlined in red to see errors, hover identifiers to see type information, and even edit the samples if you want. I also <a href="/overengineering-a-blog-prologue-an-ode-to-red-squigglies/">wrote more</a> about why I did this.
-
-
-Disclaimer: I wrote this before joining the TypeScript team. I’m not speaking officially for TypeScript or Microsoft in
-any post on this blog, but I’m especially not in this one.'
+note: |
+  This post has been archived and delisted. The code examples relied on my
+  <a href="/overengineering-a-blog">previous blog infrastructure</a>, which showed
+  live TypeScript errors and type information. Ultimately, that was not worth the
+  upkeep and has been removed. Consequently, this post may not make sense without
+  seeing the errors that are supposed to be rendered. The content also refers to
+  very old versions of TypeScript, React, and <code>@types/react</code> and may
+  no longer be accurate.
 ---
 
 One of TypeScript’s most underrated features is _discriminated union types_. Borrowed primarily from functional programming (FP) languages, they match an elegant FP concept to a pattern people intuitively write in JavaScript. Discriminated unions also enable a useful pattern for typing complex React component props more safely and expressively. But first, we’ll review what discriminated unions look like independent of React.

@@ -4,7 +4,11 @@ date: 2019-02-16
 tags: archive
 permalink: overengineering-a-blog/
 layout: post
-note: 'Disclaimer: I wrote this before joining the TypeScript team. I’m not speaking officially for TypeScript or Microsoft in any post on this blog, but I’m especially not in this one.'
+note: |
+  This post describes the infrastructure of this blog before a more recent rewrite,
+  where I removed all the cool features described herein. The blog is now made with
+  <a href="https://11ty.dev">eleventy</a> and doesn’t have interactive code blocks.
+  Ultimately, it wasn’t worth the upkeep.
 lib:
   - react
 preambles:
@@ -135,7 +139,11 @@ I’m telling this piece of the story a little out of order, because I think it�
 
 <figure>
 {% image "./images/bundle-analysis.png", "A graphical representation of the blog’s assets by size, as provided by webpack-bundle-analyzer. TypeScript takes up the entire left half of the chart, plus some." %}
-<figcaption>[webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) shows TypeScript’s size relative to everything else.</figcaption>
+<figcaption>
+
+[webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) shows TypeScript’s size relative to everything else.
+
+</figcaption>
 </figure>
 
 I also realized that none of the really heavy pieces are necessary until the moment a reader starts _editing_ a code sample. I could analyze the initial code at build time, generate syntax highlighting information, type information, and compiler diagnostics as static data, inject it with GraphQL, and reference it during render, all for a fraction of the weight of the compiler and syntax highlighter itself.

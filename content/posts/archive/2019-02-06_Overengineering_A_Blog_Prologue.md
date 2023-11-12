@@ -1,10 +1,15 @@
 ---
 title: Overengineering a Blog, Prologue
 subtitle: An Ode to Red Squigglies
-permalink: overengineering-a-blog-prologue-an-ode-to-red-squigglies/
+permalink: overengineering-a-blog-prologue/
 date: 2019-02-07
 tags: archive
 layout: post
+note: |
+  This post describes the infrastructure of this blog before a more recent rewrite,
+  where I removed all the cool features described herein. The blog is now made with
+  <a href="https://11ty.dev">eleventy</a> and doesn’t have interactive code blocks.
+  Ultimately, it wasn’t worth the upkeep.
 ---
 
 <span class="small-caps">It’s all about the red squigglies.</span> Red squigglies in Microsoft products have been saving me from looking stupid since the second grade, and now they save me from writing stupid code on a minutely basis. Well, significantly less stupid code. You know the red squigglies I’m talking about? The red squigglies that tell you that no, it’s not spelled “bureauacracy,” and, more frequently for me lately, that object is possibly `undefined`.

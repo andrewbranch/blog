@@ -25,6 +25,11 @@ layout: base
 			</h2>
 		{% endif %}
 	</h1>
+	{% if note %}
+		<p class="font-grotesk rounded-lg bg-[var(--color-fg05)] p-2">
+			{{ note }}
+		</p>
+	{% endif %}
 	{% if not bigTitle %}
 		<p>
 			<time class="font-grotesk font-medium text-textMuted" datetime="{{ date | htmlDateString }}">
