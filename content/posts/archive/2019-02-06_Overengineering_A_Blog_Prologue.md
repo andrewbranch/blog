@@ -1,7 +1,7 @@
 ---
 title: Overengineering a Blog, Prologue
 subtitle: An Ode to Red Squigglies
-permalink: overengineering-a-blog-prologue/
+permalink: overengineering-a-blog-prologue-an-ode-to-red-squigglies/
 date: 2019-02-07
 tags: archive
 layout: post
