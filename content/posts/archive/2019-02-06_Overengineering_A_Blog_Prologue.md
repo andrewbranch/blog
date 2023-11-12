@@ -6,7 +6,8 @@ date: 2019-02-07
 tags: archive
 layout: post
 note: |
-  This post describes the infrastructure of this blog before a more recent rewrite,
+  This post describes the infrastructure of this blog before a 
+  <a href="/new-blog/">more recent rewrite</a>,
   where I removed all the cool features described herein. The blog is now made with
   <a href="https://11ty.dev">eleventy</a> and doesn’t have interactive code blocks.
   Ultimately, it wasn’t worth the upkeep.
