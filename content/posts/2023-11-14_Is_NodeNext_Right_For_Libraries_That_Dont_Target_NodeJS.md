@@ -32,7 +32,7 @@ I think that if you transpile TS code with `NodeNext`, that will be compatible w
 
 I _mostly_ agree with Matt, and his advice earlier in the thread more or less matches what I published in TypeScript’s [Choosing Compiler Options](https://www.typescriptlang.org/docs/handbook/modules/guides/choosing-compiler-options.html#im-writing-a-library) guide for modules.
 
-It’s worth unpacking some of the nuances here. Something important about Tim’s position, and about how `tsc` works, is lost to the Twitter shorthand in Matt’s characterization above. `moduleResolution` doesn’t affect `tsc`’s emit, so producing two different outputs toggling that option alone would do nothing for consumers. But as Matt and Tim both know, it’s not possible to toggle _just_ `moduleResolution` between `bundler` and `nodenext`, because each of these enforce a corresponding `module` option, which _does_ affect emit:
+It’s worth unpacking some of the nuances here. Something important about Tim’s position, and about how `tsc` works, is lost to the Twitter shorthand in Matt’s characterization above. `moduleResolution` doesn’t affect `tsc`’s emit, so producing two different outputs toggling that option alone would do nothing for consumers. But as Matt and Tim both know, it’s not possible to toggle _just_ `moduleResolution` between `bundler` and `nodenext`, because each of these enforces a corresponding `module` option, which _does_ affect emit:
 
 - `moduleResolution: bundler` requires `module: esnext`
 - `moduleResolution: nodenext` requires `module: nodenext`
