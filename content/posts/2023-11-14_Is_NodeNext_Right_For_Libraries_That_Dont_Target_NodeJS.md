@@ -142,7 +142,7 @@ But Tim is right that this is imperfect. It’s definitely possible to construct
 
 I think I would summarize as:
 
-- `nodenext` is the write option for authoring libraries, because it prevents you from emitting ESM with module specifiers that _only_ work in bundlers but will crash in Node.js. When writing conventional code, using common sense, and relying on high-quality dependencies, its output is usually highly compatible with bundlers and other runtimes.
+- `nodenext` is the right option for authoring libraries, because it prevents you from emitting ESM with module specifiers that _only_ work in bundlers but will crash in Node.js. When writing conventional code, using common sense, and relying on high-quality dependencies, its output is usually highly compatible with bundlers and other runtimes.
 - There is no TypeScript option specifically meant to enforce patterns that result in maximum cross-environment portability.
 - When stronger guarantees of portability are needed, there is no substitute for runtime testing your output.
 - However, a lower effort and reasonably good confidence booster would be to run `tsc --noEmit` under different `module`/`moduleResolution` options.
