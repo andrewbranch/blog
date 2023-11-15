@@ -304,6 +304,10 @@ code {
 	color: var(--color-text-inline-code);
 }
 
+strong {
+	font-weight: 500;
+}
+
 a {
 	text-decoration-skip: ink;
 	text-decoration-skip-ink: auto;
