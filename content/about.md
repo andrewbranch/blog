@@ -9,7 +9,7 @@ layout: base
 I live in beautiful Marin County, California, ten miles north of San Francisco, where I moved in 2015 and lived until the pandemic made me want to go somewhere with easier access to the outdoors.
 
 <figure>
-{% image "./images/tam.jpeg" "Mountain landscape at dusk, film grain and vignette, full moon, dry grassy hills and dark conifers" "max-w-[500px]" %}
+{% image "./images/tam.jpeg" "Mountain landscape at dusk, film grain and vignette, full moon, dry grassy hills and dark conifers" "" 500 %}
 <figcaption>
 Mount Tamalpais, my neighborhood mountain
 </figcaption>
