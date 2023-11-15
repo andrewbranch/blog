@@ -9,6 +9,10 @@ const { loadTheme } = require("shiki");
 const shikiMarkdown = require("markdown-it-shiki").default;
 const faviconsPlugin = require("eleventy-plugin-gen-favicons");
 const pluginRss = require("@11ty/eleventy-plugin-rss");
+const markdownIt = require("markdown-it");
+const md = markdownIt({
+	html: true,
+});
 
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 module.exports = (eleventyConfig) => {
@@ -47,6 +51,9 @@ module.exports = (eleventyConfig) => {
 
 	eleventyConfig.addWatchTarget("./content/styles/*.css");
 
+	eleventyConfig.addShortcode("md", (/** @type {string} */ content) => {
+		return md.renderInline(content);
+	});
 	eleventyConfig.addAsyncShortcode("ogImage", async function (src) {
 		if (src) {
 			const originalPath = relativeToInputPath(this.page.inputPath, src);
@@ -113,6 +120,7 @@ module.exports = (eleventyConfig) => {
 			: pictureHtml;
 	});
 
+	eleventyConfig.setLibrary("md", md);
 	eleventyConfig.amendLibrary("md", async (/** @type {import("markdown-it")} */ md) => {
 		const theme = await loadTheme(path.join(__dirname, "dark_modern.json"));
 		md.use(require("markdown-it-footnote"));
@@ -163,6 +171,6 @@ function relativeToInputPath(inputPath, relativeFilePath) {
  * @param {Date} date
  */
 function utcToPacific(date) {
-	const pacificOffset = 7 * 60 * 60 * 1000;
+	const pacificOffset = 8 * 60 * 60 * 1000;
 	return new Date(date.getTime() + pacificOffset);
 }

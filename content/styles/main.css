@@ -226,6 +226,11 @@ li > .katex {
 /* #endregion */
 
 /* #region: others */
+blockquote {
+	border-left: calc(var(--rhythm) * 0.25rem) solid var(--color-fg32);
+	padding-left: calc(var(--rhythm) * 0.5rem);
+}
+
 pre {
 	line-height: var(--rhythm);
 	font-size: 0.75rem;
@@ -295,7 +300,7 @@ code {
 }
 
 :not(pre) > code {
-	font-size: 0.8rem;
+	font-size: 0.8em;
 	color: var(--color-text-inline-code);
 }
 

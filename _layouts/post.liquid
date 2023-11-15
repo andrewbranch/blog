@@ -9,7 +9,7 @@ layout: base
 			class="mb-2"
 		{% endif %}
 	>
-		{{ title }}
+		{% md title %}
 		{% if subtitle %}
 			<h2
 				class="
@@ -21,7 +21,7 @@ layout: base
 					{% endif %}
 				"
 			>
-				{{ subtitle }}
+				{% md subtitle %}
 			</h2>
 		{% endif %}
 	</h1>

@@ -13,12 +13,12 @@ title: Blog Posts
 					{{- post.date | readableDate -}}
 				</time>
 				<h2 class="my-1 text-[1.419rem]">
-					{{- post.data.title -}}
+					{%- md post.data.title -%}
 					{%- if post.data.subtitle -%}
-						: {{ post.data.subtitle }}
+						: {% md post.data.subtitle %}
 					{% endif %}
 				</h2>
-				<p class="font-grotesk text-textSecondary lh-[1.25]">{{ post.data.description }}</p>
+				<p class="font-grotesk text-textSecondary lh-[1.25]">{% md post.data.description %}</p>
 			</a>
 		</li>
 	{% endfor %}
