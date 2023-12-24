@@ -5,11 +5,10 @@ const bundlerPlugin = require("@11ty/eleventy-plugin-bundle");
 const eleventyImage = require("@11ty/eleventy-img");
 const getImageSize = require("image-size").default;
 const anchor = require("markdown-it-anchor").default;
-const { loadTheme } = require("shiki");
-const shikiMarkdown = require("markdown-it-shiki").default;
 const faviconsPlugin = require("eleventy-plugin-gen-favicons");
 const pluginRss = require("@11ty/eleventy-plugin-rss");
 const markdownIt = require("markdown-it");
+const { readFile } = require("fs/promises");
 const md = markdownIt({
 	html: true,
 });
@@ -122,7 +121,12 @@ module.exports = (eleventyConfig) => {
 
 	eleventyConfig.setLibrary("md", md);
 	eleventyConfig.amendLibrary("md", async (/** @type {import("markdown-it")} */ md) => {
-		const theme = await loadTheme(path.join(__dirname, "dark_modern.json"));
+		const { getHighlighter } = await import("shikiji");
+		const { fromHighlighter } = await import("markdown-it-shikiji/core");
+		const highlighter = await getHighlighter();
+		const theme = JSON.parse(await readFile(path.join(__dirname, "dark_modern.json"), "utf8"));
+		await highlighter.loadTheme(theme);
+		await highlighter.loadLanguage("css", "js", "json", "shell", "tsx", "typescript");
 		md.use(require("markdown-it-footnote"));
 		md.use(require("@ryanxcharles/markdown-it-katex"));
 		md.use(anchor, {
@@ -130,10 +134,11 @@ module.exports = (eleventyConfig) => {
 				class: "no-underline",
 			}),
 		});
-		md.use(shikiMarkdown, {
-			theme,
-			useBackground: true,
-		});
+		md.use(
+			fromHighlighter(highlighter, {
+				theme: "dark-modern",
+			}),
+		);
 	});
 
 	eleventyConfig.addPlugin(faviconsPlugin, {
