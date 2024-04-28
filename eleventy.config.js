@@ -123,10 +123,14 @@ module.exports = (eleventyConfig) => {
 	eleventyConfig.amendLibrary("md", async (/** @type {import("markdown-it")} */ md) => {
 		const { getHighlighter } = await import("shikiji");
 		const { fromHighlighter } = await import("markdown-it-shikiji/core");
-		const highlighter = await getHighlighter();
+		const { transformerNotationDiff } = await import("shikiji-transformers");
+		const highlighter = await getHighlighter({
+			langAlias: { kdl: "KDL" },
+		});
 		const theme = JSON.parse(await readFile(path.join(__dirname, "dark_modern.json"), "utf8"));
+		const kdl = JSON.parse(await readFile(require.resolve("kdl/syntaxes/kdl.tmLanguage.json"), "utf8"));
 		await highlighter.loadTheme(theme);
-		await highlighter.loadLanguage("css", "js", "json", "shell", "tsx", "typescript");
+		await highlighter.loadLanguage("css", kdl, "js", "json", "shell", "tsx", "typescript");
 		md.use(require("markdown-it-footnote"));
 		md.use(require("@ryanxcharles/markdown-it-katex"));
 		md.use(anchor, {
@@ -137,6 +141,7 @@ module.exports = (eleventyConfig) => {
 		md.use(
 			fromHighlighter(highlighter, {
 				theme: "dark-modern",
+				transformers: [transformerNotationDiff()],
 			}),
 		);
 	});

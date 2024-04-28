@@ -234,9 +234,20 @@ blockquote {
 pre {
 	line-height: var(--rhythm);
 	font-size: 0.75rem;
-	padding: calc(var(--rhythm) * 0.5rem);
 	border-radius: calc(var(--rhythm) * 0.25rem);
 	overflow: auto;
+	padding: calc(var(--rhythm) * 0.5rem) 0;
+}
+pre code .line {
+	display: inline-block;
+	width: 100%;
+	padding: 0 calc(var(--rhythm) * 0.5rem);
+}
+pre code .line:last-child {
+	display: none; /* shikiji is adding a blank line at the end for some reason */
+}
+pre code .line.diff.add {
+	background-color: rgb(150 255 100 / 0.15);
 }
 
 .post-body ol,
@@ -288,6 +299,23 @@ figcaption {
 	display: inline;
 	font-size: 0.9rem;
 }
+
+.post-body ol {
+	list-style-type: decimal;
+}
+.post-body ol ol {
+	margin: 0 0 0 calc(var(--rhythm) * 0.8rem);
+	list-style-type: lower-alpha;
+}
+.post-body ol ol ol {
+	list-style-type: lower-roman;
+}
+.post-body ol ol ol ol {
+	list-style-type: lower-greek;
+}
+.post-body ol ol li {
+	margin-bottom: 0;
+}
 /* #endregion */
 
 /* #endregion */
@@ -295,8 +323,8 @@ figcaption {
 /* #region: inlines */
 code {
 	font-family: var(--font-mono);
-	font-variant-ligatures: "none";
-	font-feature-settings: "normal";
+	font-variant-ligatures: none;
+	font-feature-settings: normal;
 }
 
 :not(pre) > code {
