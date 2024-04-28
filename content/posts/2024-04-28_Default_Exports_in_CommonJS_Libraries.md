@@ -131,8 +131,8 @@ exports.default = "Hello, world";
 
 // main.mjs
 import hello from "hello";
-console.log(greetings);         // { default: "Hello, world" }
-console.log(greetings.default); // "Hello, world"
+console.log(hello);         // { default: "Hello, world" }
+console.log(hello.default); // "Hello, world"
 ```
 
 Our _real_ default import fails to bind to our _transformed_ default export—we still need to access the `.default` property! This can make it nearly impossible to write code that works both in Node.js and in all bundlers. So, while the behavior with transformed `export default` in `tsc` is understandable and predictable, it is indeed problematic for libraries.
