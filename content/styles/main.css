@@ -246,8 +246,29 @@ pre code .line {
 pre code .line:last-child {
 	display: none; /* shikiji is adding a blank line at the end for some reason */
 }
+pre.has-diff code .line {
+	padding-left: calc(var(--rhythm) * 1.25rem);
+	position: relative;
+}
 pre code .line.diff.add {
-	background-color: rgb(150 255 100 / 0.15);
+	background-color: rgb(150 255 100 / 0.2);
+}
+pre code .line.diff.add::before {
+	content: "+";
+	color: white;
+	display: inline-block;
+	position: absolute;
+	left: calc(var(--rhythm) * 0.5rem);
+}
+pre code .line.diff.remove {
+	background-color: rgb(255 100 100 / 0.2);
+}
+pre code .line.diff.remove::before {
+	content: "-";
+	color: white;
+	display: inline-block;
+	position: absolute;
+	left: calc(var(--rhythm) * 0.5rem);
 }
 
 .post-body ol,
