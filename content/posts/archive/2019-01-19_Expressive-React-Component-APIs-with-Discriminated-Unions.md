@@ -301,7 +301,7 @@ $$
 and set theory says the exact same thing about unions and intersections:
 
 $$
-Z \cap (A \cup B) \cap (C \cup D) = (Z \cap A \cap B) \cup (Z \cap A \cap D) \cup (Z \cap B \cap C) \cup (Z \cap B \cap D)
+Z \cap (A \cup B) \cap (C \cup D) = (Z \cap A \cap C) \cup (Z \cap A \cap D) \cup (Z \cap B \cap C) \cup (Z \cap B \cap D)
 $$
 
 If, like me, you haven’t studied computer science in an academic setting, this may look intimidatingly theoretical, but quickly make the following mental substitutions:
